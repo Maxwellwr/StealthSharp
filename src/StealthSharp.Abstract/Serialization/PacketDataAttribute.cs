@@ -2,8 +2,8 @@ using System;
 
 namespace StealthSharp.Serialization
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public class TcpDataAttribute: Attribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    public class PacketDataAttribute: Attribute
     {
         /// <summary>
         /// Property position in Byte Array.
@@ -24,14 +24,14 @@ namespace StealthSharp.Serialization
         /// <summary>
         /// Sets the serialization rule for this property.
         /// </summary>
-        public TcpDataType TcpDataType { get; set; } = TcpDataType.MetaData;
+        public PacketDataType PacketDataType { get; set; } = PacketDataType.MetaData;
 
-        public TcpDataAttribute(int index, int length = 0)
+        public PacketDataAttribute(int index, int length = 0)
         {
             Index = index;
             Length = length;
         }
 
-        public override string ToString() => $"{Index.ToString()}, {Length.ToString()}, {TcpDataType.ToString()}";
+        public override string ToString() => $"{Index.ToString()}, {Length.ToString()}, {PacketDataType.ToString()}";
     }
 }

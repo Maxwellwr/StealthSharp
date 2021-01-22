@@ -1,108 +1,163 @@
 using System;
-using System.Buffers;
-using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 namespace StealthSharp.Serialization
 {
-    public class PacketSerializer: IPacketSerializer
+    public class PacketSerializer : IPacketSerializer
     {
         private readonly IReflectionCache _reflectionCache;
+        private readonly IBitConvert _bitConvert;
 
-        public PacketSerializer(IReflectionCache reflectionCache)
+        public PacketSerializer(IReflectionCache reflectionCache, IBitConvert bitConvert)
         {
             _reflectionCache = reflectionCache ?? throw new ArgumentNullException(nameof(reflectionCache));
+            _bitConvert = bitConvert ?? throw new ArgumentNullException(nameof(bitConvert));
         }
-        
-        public IEnumerable<byte> Serialize<T>(T data)
+
+        public int LengthSize => _bitConvert.LengthSize;
+
+        public ISerializationResult Serialize(object data)
         {
-            int realLength;
-            byte[] serializedBody = null;
-            SerializationResult serializationResult = null;
-            var examined = 0;
-            ReflectionMetadata reflection = _reflectionCache.GetMetadata<T>();
-            if (reflection.BodyProperty != null)
+            if (data == null) throw new ArgumentNullException(nameof(data));
+
+            var reflectionMetadata = _reflectionCache.GetMetadata(data.GetType());
+            var realLength = CalculateRealLength(reflectionMetadata, data);
+
+            if (reflectionMetadata != null && reflectionMetadata.Contains(PacketDataType.Length))
             {
-                var bodyValue = reflection.BodyProperty.Get(data);
-                
-                if (bodyValue == null)
-                    throw SerializationException.SerializerBodyPropertyIsNull();
-                
-                serializedBody = _bitConverter.ConvertToBytes(bodyValue, reflection.BodyProperty.PropertyType, reflection.BodyProperty.Attribute.Endianness);
-                realLength = CalculateRealLength(reflection.LengthProperty, ref data, reflection.MetaLength, serializedBody.Length);
+                var lengthProperty = reflectionMetadata[PacketDataType.Length];
+                var lengthValue = lengthProperty.PropertyType == typeof(int)
+                    ? realLength
+                    : Convert.ChangeType(realLength, lengthProperty.PropertyType);
+
+                lengthProperty.Set(data, lengthValue);
             }
-            else if (reflection.ComposeProperty != null)
+
+            var serializationResult = new SerializationResult(realLength);
+
+            InnerSerialize(reflectionMetadata, serializationResult.Memory, data);
+
+            return serializationResult;
+        }
+
+        public T Deserialize<T>(ISerializationResult data)
+        {
+            var reflectionMetadata = _reflectionCache.GetMetadata(typeof(T));
+
+            InnerDeserialize(reflectionMetadata, data.Memory, out var deserializationResult, typeof(T));
+
+            return (T) deserializationResult;
+        }
+
+        private void InnerSerialize(IReflectionMetadata? reflectionMetadata, in Memory<byte> memory, object data)
+        {
+            if (reflectionMetadata != null)
             {
-                var composeValue = reflection.ComposeProperty.Get(data);
-
-                if (composeValue == null)
-                    throw SerializationException.SerializerComposePropertyIsNull();
-
-                if (reflection.ComposeProperty.PropertyType.IsPrimitive)
+                foreach (var property in reflectionMetadata.Properties)
                 {
-                    serializedBody = _bitConverter.ConvertToBytes(composeValue, reflection.ComposeProperty.PropertyType, reflection.ComposeProperty.Attribute.Reverse);
-                    realLength = CalculateRealLength(reflection.LengthProperty, ref data, reflection.MetaLength, serializedBody.Length);
-                }
-                else
-                {
-                    serializationResult = reflection.ComposeProperty.Composition.Serialize(composeValue);
-                    realLength = CalculateRealLength(reflection.LengthProperty, ref data, reflection.MetaLength, serializationResult.RealLength);   
+                    var propertyValue = property.Get(data);
+                    if (property.Attribute.PacketDataType == PacketDataType.Body)
+                    {
+                        if (propertyValue != null)
+                        {
+                            if (reflectionMetadata.BodyMetadata == null)
+                            {
+                                _bitConvert.ConvertToBytes(
+                                    propertyValue,
+                                    memory.Slice(property.Attribute.Index).Span,
+                                    property.Attribute.Endianness);
+                            }
+                            else
+                            {
+                                InnerSerialize(reflectionMetadata.BodyMetadata, memory.Slice(property.Attribute.Index),
+                                    propertyValue);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (propertyValue != null)
+                        {
+                            _bitConvert.ConvertToBytes(
+                                propertyValue,
+                                memory.Slice(property.Attribute.Index, property.Attribute.Length).Span,
+                                property.Attribute.Endianness);
+                        }
+                    }
                 }
             }
             else
-                realLength = reflection.MetaLength;
-
-            var rentedArray = _byteArrayFactory(realLength);
-
-            foreach (var property in reflection.Properties)
             {
-                if (!property.PropertyType.IsPrimitive && property.Attribute.TcpDataType == TcpDataType.Compose && serializationResult != null)
-                    Array.Copy(
-                        serializationResult.RentedArray,
-                        0,
-                        rentedArray,
-                        property.Attribute.Index,
-                        serializationResult.RealLength
-                    );
-                else
-                {
-                    var value = property.Attribute.TcpDataType == TcpDataType.Body || property.Attribute.TcpDataType == TcpDataType.Compose
-                        ? serializedBody ?? throw SerializationException.SerializerBodyPropertyIsNull()
-                        : _bitConverter.ConvertToBytes(property.Get(data), property.PropertyType, property.Attribute.Reverse);
-
-                    var valueLength = value.Length;
-
-                    if (property.Attribute.TcpDataType != TcpDataType.Body && property.Attribute.TcpDataType != TcpDataType.Compose && valueLength > property.Attribute.Length)
-                        throw SerializationException.SerializerLengthOutOfRange(property.PropertyType.ToString(), valueLength.ToString(), property.Attribute.Length.ToString());
-
-                    value.CopyTo(rentedArray, property.Attribute.Index);
-                }
-
-                if (++examined == reflection.Properties.Count)
-                    break;
+                _bitConvert.ConvertToBytes(
+                    data,
+                    memory.Span);
             }
+        }
 
-            return new SerializedRequest(rentedArray, realLength, serializationResult);
-
-            static int CalculateRealLength(TcpProperty lengthProperty, ref T data, int metaLength, int dataLength)
+        private void InnerDeserialize(IReflectionMetadata? reflectionMetadata, in Memory<byte> memory, out object data,
+            Type dataType)
+        {
+            if (reflectionMetadata != null)
             {
-                var lengthValue = lengthProperty.PropertyType == typeof(int)
-                    ? dataLength
-                    : Convert.ChangeType(dataLength, lengthProperty.PropertyType);
-
-                if (lengthProperty.IsValueType)
-                    data = (TData) lengthProperty.Set(data, lengthValue);
-                else
-                    lengthProperty.Set(data, lengthValue);
-
-                try
+                data = Activator.CreateInstance(dataType) ??
+                       throw SerializationException.SerializerBodyPropertyIsNull();
+                foreach (var property in reflectionMetadata.Properties)
                 {
-                    return (int) lengthValue + metaLength;
-                }
-                catch (InvalidCastException)
-                {
-                    return Convert.ToInt32(lengthValue) + metaLength;
+                    object? propertyValue = null;
+                    if (property.Attribute.PacketDataType == PacketDataType.Body)
+                    {
+                        if (!memory.Slice(property.Attribute.Index).IsEmpty)
+                        {
+                            if (reflectionMetadata.BodyMetadata == null)
+                            {
+                                _bitConvert.ConvertFromBytes(
+                                    out propertyValue,
+                                    property.PropertyType,
+                                    memory.Slice(property.Attribute.Index).Span,
+                                    property.Attribute.Endianness);
+                            }
+                            else
+                            {
+                                InnerDeserialize(reflectionMetadata.BodyMetadata, memory.Slice(property.Attribute.Index),
+                                    out propertyValue, property.PropertyType);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!memory.Slice(property.Attribute.Index, property.Attribute.Length).IsEmpty)
+                        {
+                            _bitConvert.ConvertFromBytes(
+                                out propertyValue,
+                                property.PropertyType,
+                                memory.Slice(property.Attribute.Index, property.Attribute.Length).Span,
+                                property.Attribute.Endianness);
+                        }
+                    }
+
+                    property.Set(data, propertyValue);
                 }
             }
+            else
+            {
+                _bitConvert.ConvertFromBytes(out data, dataType, memory.Span);
+            }
+        }
+
+        private int CalculateRealLength(IReflectionMetadata? refMetadata, object bodyData)
+        {
+            if (refMetadata == null)
+                return BitConvert.SizeOf(bodyData);
+
+            var bodySize = refMetadata.Contains(PacketDataType.Body)
+                ? CalculateRealLength(refMetadata.BodyMetadata, refMetadata[PacketDataType.Body].Get(bodyData)!)
+                : 0;
+
+            var length = bodySize
+                         + refMetadata.MetaLength
+                         + refMetadata.IdLength
+                         + refMetadata.LengthLength;
+            return length;
         }
     }
 }

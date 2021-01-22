@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using StealthSharp.Serialization;
 
 // ReSharper disable CheckNamespace Microsoft DI Extension methods recommend to place in Microsoft namespace https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage#register-services-for-di  
@@ -6,10 +7,15 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceProviderExtensions
     {
-        public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection,
+            IConfiguration configuration)
         {
-            serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>();
-            serviceCollection.AddSingleton<IPacketDeserializer, PacketDeserializer>();
+            serviceCollection.Configure<SerializationOptions>(
+                configuration.GetSection(SerializationOptions.ConfigSection));
+
+            serviceCollection.AddSingleton<IBitConvert, BitConvert>();
+            serviceCollection.AddSingleton<IReflectionCache, ReflectionCache>();
+            serviceCollection.AddTransient<IPacketSerializer, PacketSerializer>();
 
             return serviceCollection;
         }

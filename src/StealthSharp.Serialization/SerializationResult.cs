@@ -3,21 +3,23 @@ using System.Buffers;
 
 namespace StealthSharp.Serialization
 {
-    public class SerializationResult: IDisposable
+    public class SerializationResult: ISerializationResult
     {
         private readonly ArrayPool<byte> _arrayPool;
-
-        public byte[] RentedArray { get; }
+        private readonly byte[] _rentedArray;
+        private readonly int _size;
+        public Memory<byte> Memory => _rentedArray.AsMemory().Slice(0,_size);
         
-        public SerializationResult(ArrayPool<byte> arrayPool, int size)
+        public SerializationResult(int size)
         {
-            _arrayPool = arrayPool;
-            RentedArray = _arrayPool.Rent(size);
+            _arrayPool = ArrayPool<byte>.Shared;
+            _rentedArray = _arrayPool.Rent(size);
+            _size = size;
         }
         
         public void Dispose()
         {
-            _arrayPool.Return(RentedArray, false);
+            _arrayPool.Return(_rentedArray, false);
         }
     }
 }

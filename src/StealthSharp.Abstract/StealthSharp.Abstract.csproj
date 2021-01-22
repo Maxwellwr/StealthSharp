@@ -3,6 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>StealthSharp</RootNamespace>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="System.IO.Pipelines" Version="5.0.1" />
+    </ItemGroup>
 
 </Project>

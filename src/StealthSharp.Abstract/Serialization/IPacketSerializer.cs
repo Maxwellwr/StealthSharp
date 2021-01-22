@@ -1,9 +1,11 @@
-using System.Collections.Generic;
+using System;
 
 namespace StealthSharp.Serialization
 {
     public interface IPacketSerializer
     {
-        IEnumerable<byte> Serialize<T>(T data);
+        int LengthSize { get; }
+        ISerializationResult Serialize(object data);
+        T Deserialize<T>(ISerializationResult data);
     }
 }
