@@ -8,6 +8,7 @@ namespace StealthSharp.Serialization
         int MetaLength { get; }
         int IdLength { get; }
         int LengthLength { get; }
+        int TypeMapperLength { get; }
         PacketProperty this[PacketDataType index] { get; }
         bool Contains(PacketDataType packetDataType);
         IReflectionMetadata? BodyMetadata { get; }

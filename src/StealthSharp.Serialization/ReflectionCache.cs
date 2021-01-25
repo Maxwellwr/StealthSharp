@@ -6,19 +6,18 @@ namespace StealthSharp.Serialization
 {
     public class ReflectionCache: IReflectionCache, IReflectionLevelCache
     {
-        private readonly Dictionary<Type, IReflectionMetadata> _dictionary = new();
-        public IReflectionMetadata GetMetadata(Type type) => 
+        private readonly Dictionary<Type, IReflectionMetadata?> _dictionary = new();
+        public IReflectionMetadata? GetMetadata(Type type) => 
             ((IReflectionLevelCache)this).GetMetadata(type, true);
 
-        IReflectionMetadata IReflectionLevelCache.GetMetadata(Type type, bool firstLevel)
+        IReflectionMetadata? IReflectionLevelCache.GetMetadata(Type type, bool firstLevel)
         {
             if (!_dictionary.ContainsKey(type))
             {
                 if (type
                     .GetProperties()
                     .SelectMany(p => p.GetCustomAttributes(false).OfType<PacketDataAttribute>())
-                    .Any(attr =>
-                        attr.PacketDataType == PacketDataType.MetaData || attr.PacketDataType == PacketDataType.Body))
+                    .Any())
 
                     _dictionary[type] = new ReflectionMetadata(type, this, firstLevel);
                 else

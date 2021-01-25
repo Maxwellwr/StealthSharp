@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Extensions.Options;
 
 namespace StealthSharp.Serialization
@@ -16,9 +17,6 @@ namespace StealthSharp.Serialization
         {
             _options = options?.Value ?? new SerializationOptions();   
         }
-
-        public int LengthSize => SizeOf(_options.ArrayCountType);
-        public Type LengthType => _options.ArrayCountType;
 
         public void ConvertToBytes(
             object? propertyValue,
@@ -80,7 +78,7 @@ namespace StealthSharp.Serialization
                 default:
                     if (propertyValue is IList collection)
                     {
-                        var sizeType = typeof(int);
+                        var sizeType = _options.ArrayCountType;
                         if (span.Length < SizeOf(propertyValue))
                             throw new ArgumentOutOfRangeException(nameof(span),
                                 $"Array length lower, then size of {collection.GetType().GetElementType()} array ");
@@ -182,11 +180,15 @@ namespace StealthSharp.Serialization
                 CheckSpanSize<double>(span);
                 propertyValue = Unsafe.ReadUnaligned<double>(ref MemoryMarshal.GetReference(span));
             }
+            else if (propertyType == typeof(string))
+            {
+                propertyValue = Encoding.Unicode.GetString(span);
+            }
             else
             {
                 if (propertyType.GetInterfaces().Any(i => i == typeof(IList)))
                 {
-                    var sizeType = typeof(int);
+                    var sizeType = _options.ArrayCountType;
                     if (span.Length < SizeOf(sizeType))
                         throw new ArgumentOutOfRangeException(nameof(span),
                             $"Array length lower, then size of {sizeType} ");

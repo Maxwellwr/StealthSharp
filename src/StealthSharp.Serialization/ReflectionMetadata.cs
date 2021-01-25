@@ -24,6 +24,12 @@ namespace StealthSharp.Serialization
             Properties
                 .Where(p => p.Attribute.PacketDataType == PacketDataType.Length)
                 .Sum(p => p.Attribute.Length);
+        
+        public int TypeMapperLength =>
+            Properties
+                .Where(p => p.Attribute.PacketDataType == PacketDataType.TypeMapper)
+                .Sum(p => p.Attribute.Length);
+        
         public PacketProperty this[PacketDataType index] => _packetProperties[index];
 
         public bool Contains(PacketDataType packetDataType) => _packetProperties.ContainsKey(packetDataType);
@@ -74,17 +80,12 @@ namespace StealthSharp.Serialization
             
             if (firstLevel)
             {
-                if (body.Count == 1)
-                {
-                    // ReSharper disable once ConvertIfStatementToSwitchStatement
-                    if (length.Count == 0)
-                        throw SerializationException.AttributeLengthRequired(type.ToString(), nameof(PacketDataType.Body));
+                // ReSharper disable once ConvertIfStatementToSwitchStatement
+                if (length.Count == 0)
+                    throw SerializationException.AttributeLengthRequired(type.ToString(), nameof(PacketDataType.Body));
 
-                    if (length.Count == 1 && !CanReadWrite(length.Single()))
-                        throw SerializationException.PropertyCanReadWrite(type.ToString(), nameof(PacketDataType.Length));
-                }
-                else if (length.Count == 1)
-                    throw SerializationException.AttributeRequiredWithLength(type.ToString());
+                if (length.Count == 1 && !CanReadWrite(length.Single()))
+                    throw SerializationException.PropertyCanReadWrite(type.ToString(), nameof(PacketDataType.Length));
             }
             else
             {

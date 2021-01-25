@@ -20,6 +20,11 @@ namespace StealthSharp.Serialization
         /// <summary>
         /// Packet body
         /// </summary>
-        Body
+        Body,
+        
+        /// <summary>
+        /// Field for TypeMapper
+        /// </summary>
+        TypeMapper
     }
 }

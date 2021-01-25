@@ -14,8 +14,6 @@ namespace StealthSharp.Serialization
             _bitConvert = bitConvert ?? throw new ArgumentNullException(nameof(bitConvert));
         }
 
-        public int LengthSize => _bitConvert.LengthSize;
-
         public ISerializationResult Serialize(object data)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
@@ -33,20 +31,20 @@ namespace StealthSharp.Serialization
                 lengthProperty.Set(data, lengthValue);
             }
 
-            var serializationResult = new SerializationResult(realLength);
+            var serializationResult = new SerializationResult(realLength + (reflectionMetadata?.LengthLength ?? 0));
 
             InnerSerialize(reflectionMetadata, serializationResult.Memory, data);
 
             return serializationResult;
         }
 
-        public T Deserialize<T>(ISerializationResult data)
+        public object Deserialize(ISerializationResult data, Type targetType)
         {
-            var reflectionMetadata = _reflectionCache.GetMetadata(typeof(T));
+            var reflectionMetadata = _reflectionCache.GetMetadata(targetType);
 
-            InnerDeserialize(reflectionMetadata, data.Memory, out var deserializationResult, typeof(T));
+            InnerDeserialize(reflectionMetadata, data.Memory, out var deserializationResult, targetType);
 
-            return (T) deserializationResult;
+            return deserializationResult;
         }
 
         private void InnerSerialize(IReflectionMetadata? reflectionMetadata, in Memory<byte> memory, object data)
@@ -156,7 +154,7 @@ namespace StealthSharp.Serialization
             var length = bodySize
                          + refMetadata.MetaLength
                          + refMetadata.IdLength
-                         + refMetadata.LengthLength;
+                         + refMetadata.TypeMapperLength;
             return length;
         }
     }

@@ -13,6 +13,11 @@ namespace Microsoft.Extensions.DependencyInjection
             serviceCollection.Configure<SerializationOptions>(
                 configuration.GetSection(SerializationOptions.ConfigSection));
 
+            return serviceCollection.AddStealthSharpSerialization();
+        }
+        
+        public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection)
+        {
             serviceCollection.AddSingleton<IBitConvert, BitConvert>();
             serviceCollection.AddSingleton<IReflectionCache, ReflectionCache>();
             serviceCollection.AddTransient<IPacketSerializer, PacketSerializer>();
