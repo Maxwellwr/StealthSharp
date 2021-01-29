@@ -1,5 +1,15 @@
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="SerializerBenchmark.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
 using System;
-using System.Security.Cryptography;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Microsoft.Extensions.Options;
@@ -8,6 +18,7 @@ using StealthSharp.Serialization;
 
 namespace StealthSharp.Benchmark
 {
+    [MarkdownExporter, HtmlExporter]
     [SimpleJob(RunStrategy.Throughput, launchCount: 1)]
     [MemoryDiagnoser]
     public class SerializerBenchmark
@@ -17,8 +28,13 @@ namespace StealthSharp.Benchmark
 
         public SerializerBenchmark()
         {
-            _serializer = new PacketSerializer(new ReflectionCache(),
-                new BitConvert(new Mock<IOptions<SerializationOptions>>().Object));
+            var refCache = new ReflectionCache();
+            var spMock = new Mock<IServiceProvider>();
+            var bitConverter =new BitConvert(refCache);
+            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,refCache, new CustomConverterFactory(spMock.Object), bitConverter);
+            spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<DateTime>))))
+                .Returns(new DateTimeConverter(_serializer));
+
             _testData = new Packet<AboutData>()
             {
                 Method = 25,

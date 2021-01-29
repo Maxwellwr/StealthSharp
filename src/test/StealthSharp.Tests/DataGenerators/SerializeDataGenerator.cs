@@ -1,10 +1,19 @@
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="SerializeDataGenerator.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
-using Xunit;
 
 namespace StealthSharp.Tests.DataGenerators
 {
@@ -51,7 +60,7 @@ namespace StealthSharp.Tests.DataGenerators
         }
     }
 
-    public class Packet<TId, TSize, TMapping> : IPacket<TId, TSize, TMapping>
+    public class TestPacket<TId, TSize, TMapping> : IPacket<TId, TSize, TMapping>
         where TId : unmanaged
         where TSize : unmanaged
         where TMapping : unmanaged
@@ -69,11 +78,11 @@ namespace StealthSharp.Tests.DataGenerators
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Packet<TId, TSize, TMapping>)) return false;
-            return Equals((Packet<TId, TSize, TMapping>) obj);
+            if (obj.GetType() != typeof(TestPacket<TId, TSize, TMapping>)) return false;
+            return Equals((TestPacket<TId, TSize, TMapping>) obj);
         }
 
-        protected bool Equals(Packet<TId, TSize, TMapping> other)
+        protected bool Equals(TestPacket<TId, TSize, TMapping> other)
         {
             return Length.Equals(other.Length) && TypeId.Equals(other.TypeId) &&
                    CorrelationId.Equals(other.CorrelationId);
@@ -84,18 +93,18 @@ namespace StealthSharp.Tests.DataGenerators
             return HashCode.Combine(Length, TypeId, CorrelationId);
         }
 
-        public static bool operator ==(Packet<TId, TSize, TMapping> left, Packet<TId, TSize, TMapping> right)
+        public static bool operator ==(TestPacket<TId, TSize, TMapping> left, TestPacket<TId, TSize, TMapping> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Packet<TId, TSize, TMapping> left, Packet<TId, TSize, TMapping> right)
+        public static bool operator !=(TestPacket<TId, TSize, TMapping> left, TestPacket<TId, TSize, TMapping> right)
         {
             return !Equals(left, right);
         }
     }
 
-    public class Packet<TId, TSize, TMapping, T> : Packet<TId, TSize, TMapping>, IPacket<TId, TSize, TMapping, T>
+    public class TestPacket<TId, TSize, TMapping, T> : TestPacket<TId, TSize, TMapping>, IPacket<TId, TSize, TMapping, T>
         where TId : unmanaged
         where TSize : unmanaged
         where TMapping : unmanaged
@@ -107,11 +116,11 @@ namespace StealthSharp.Tests.DataGenerators
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(Packet<TId, TSize, TMapping, T>)) return false;
-            return Equals((Packet<TId, TSize, TMapping, T>) obj);
+            if (obj.GetType() != typeof(TestPacket<TId, TSize, TMapping, T>)) return false;
+            return Equals((TestPacket<TId, TSize, TMapping, T>) obj);
         }
 
-        protected bool Equals(Packet<TId, TSize, TMapping, T> other)
+        protected bool Equals(TestPacket<TId, TSize, TMapping, T> other)
         {
             return Length.Equals(other.Length) && TypeId.Equals(other.TypeId) &&
                    CorrelationId.Equals(other.CorrelationId);
@@ -122,12 +131,12 @@ namespace StealthSharp.Tests.DataGenerators
             return HashCode.Combine(Length, TypeId, CorrelationId);
         }
 
-        public static bool operator ==(Packet<TId, TSize, TMapping, T> left, Packet<TId, TSize, TMapping, T> right)
+        public static bool operator ==(TestPacket<TId, TSize, TMapping, T> left, TestPacket<TId, TSize, TMapping, T> right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Packet<TId, TSize, TMapping, T> left, Packet<TId, TSize, TMapping, T> right)
+        public static bool operator !=(TestPacket<TId, TSize, TMapping, T> left, TestPacket<TId, TSize, TMapping, T> right)
         {
             return !Equals(left, right);
         }
@@ -172,9 +181,11 @@ namespace StealthSharp.Tests.DataGenerators
     {
         [PacketData(0, 10)] public ushort[] StealthVersion { get; set; }
         [PacketData(10, 2)] public ushort Build { get; set; }
-        [PacketData(12, 8)] public double BuildDate { get; set; }
+        [PacketData(12, 8)] public DateTime BuildDate { get; set; }
         [PacketData(20, 2)] public ushort GITRevNumber { get; set; }
-        [PacketData(22, PacketDataType = PacketDataType.Body)] public string GITRevision { get; set; }
+
+        [PacketData(22, PacketDataType = PacketDataType.Body)]
+        public string GITRevision { get; set; }
 
         protected bool Equals(AboutData other)
         {
@@ -205,13 +216,45 @@ namespace StealthSharp.Tests.DataGenerators
         }
     }
 
+    public class TypeWithListString
+    {
+        [PacketData(0, 4)] public uint ClilocID { get; set; }
+
+        [PacketData(4, PacketDataType = PacketDataType.Body)]
+        public List<string> Params { get; set; }
+    }
+
+    public class TypeWithDynamicBody
+    {
+        [PacketData(0, 4)] public uint ClilocID { get; set; }
+
+        [PacketData(4, PacketDataType = PacketDataType.Dynamic)]
+        public DynamicBody ExtData { get; set; }
+    }
+
+    public class DynamicBody
+    {
+        public int[] Arr1 { get; set; }
+        public short[] Arr2 { get; set; }
+        public TypeWithListString[] Arr3 {
+            get;
+            set;
+        }
+    }
+
+    public enum TestEnum
+    {
+        Value1,
+        Value2
+    }
+    
     public class SerializeDataGenerator : IEnumerable<object[]>
     {
         private readonly List<object[]> _data = new()
         {
             new object[]
             {
-                new Packet<ushort, uint, ushort, byte[]>()
+                new TestPacket<ushort, uint, ushort, byte[]>()
                 {
                     Length = 13,
                     TypeId = 12,
@@ -222,7 +265,7 @@ namespace StealthSharp.Tests.DataGenerators
             },
             new object[]
             {
-                new Packet<ushort, uint, ushort, short[]>()
+                new TestPacket<ushort, uint, ushort, short[]>()
                 {
                     Length = 14,
                     TypeId = 12,
@@ -233,7 +276,7 @@ namespace StealthSharp.Tests.DataGenerators
             },
             new object[]
             {
-                new Packet<ushort, uint, ushort, int>()
+                new TestPacket<ushort, uint, ushort, int>()
                 {
                     Length = 8,
                     TypeId = 12,
@@ -244,7 +287,7 @@ namespace StealthSharp.Tests.DataGenerators
             },
             new object[]
             {
-                new Packet<ushort, uint, ushort, TestAboutData>()
+                new TestPacket<ushort, uint, ushort, TestAboutData>()
                 {
                     Length = 10,
                     TypeId = 12,
@@ -260,21 +303,21 @@ namespace StealthSharp.Tests.DataGenerators
             },
             new object[]
             {
-                new Packet<ushort, uint, ushort, AboutData>()
+                new TestPacket<ushort, uint, ushort, AboutData>()
                 {
-                    Length = 40,
+                    Length = 46,
                     TypeId = 12,
                     CorrelationId = 1,
                     Body = new()
                     {
-                        StealthVersion = new[] {(ushort) 1, (ushort) 1, (ushort) 1},
-                        Build = 12321,
-                        BuildDate = 155.2,
-                        GITRevision = "new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}",
-                        GITRevNumber = 555
+                        StealthVersion = new[] {(ushort) 8, (ushort) 11, (ushort) 4},
+                        Build = 0,
+                        BuildDate = new DateTime(2021,1,27, 15,0,31),
+                        GITRevision = "566c18d9",
+                        GITRevNumber = 1422
                     }
                 },
-                "280000000C00010003000000010001000100213066666666666663402B020A00000001020304050607080900"
+                "2E0000000C0001000300000008000B00040000004B73F002F497E5408E051000000035003600360063003100380064003900"
             },
         };
 

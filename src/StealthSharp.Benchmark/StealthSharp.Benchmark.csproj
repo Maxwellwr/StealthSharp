@@ -13,6 +13,19 @@
     <ItemGroup>
       <ProjectReference Include="..\StealthSharp.Abstract\StealthSharp.Abstract.csproj" />
       <ProjectReference Include="..\StealthSharp.Serialization\StealthSharp.Serialization.csproj" />
+      <ProjectReference Include="..\StealthSharp\StealthSharp.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="publish\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="publish\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="publish\**" />
     </ItemGroup>
 
 </Project>

@@ -27,6 +27,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\StealthSharp.Network\StealthSharp.Network.csproj" />
       <ProjectReference Include="..\..\StealthSharp.Serialization\StealthSharp.Serialization.csproj" />
+      <ProjectReference Include="..\..\StealthSharp\StealthSharp.csproj" />
     </ItemGroup>
 
 </Project>

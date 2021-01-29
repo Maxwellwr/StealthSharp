@@ -1,9 +1,21 @@
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="ITypeMapper.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
 using System;
+using System.Threading.Tasks;
 
 namespace StealthSharp.Network
 {
-    public interface ITypeMapper<T>
+    public interface ITypeMapper<TMapping, TId>
     {
-        Type? GetMappedType(T typeIdentify, T requestType);
+        Task<Type?> GetMappedTypeAsync(TMapping mappingId, TId correlationId);
     }
 }

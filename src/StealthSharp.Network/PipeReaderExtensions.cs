@@ -1,3 +1,14 @@
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="PipeReaderExtensions.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
 using System;
 using System.Buffers;
 using System.IO;
@@ -40,7 +51,9 @@ namespace StealthSharp.Network
 
         public static void Examine(this PipeReader reader, SequencePosition consumed, SequencePosition examined) =>
             reader.AdvanceTo(consumed, examined);
+
         public static void Consume(this PipeReader reader, SequencePosition consume) => reader.AdvanceTo(consume);
+
         public static ReadOnlySequence<byte> Slice(in this ReadResult readResult, int start, int length) =>
             readResult.Buffer.Slice(start, length);
     }

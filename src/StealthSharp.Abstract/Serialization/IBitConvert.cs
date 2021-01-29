@@ -1,13 +1,21 @@
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="IBitConvert.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
 using System;
 
 namespace StealthSharp.Serialization
 {
     public interface IBitConvert
     {
-        void ConvertToBytes(object propertyValue, in Span<byte> memory, Endianness endianness = Endianness.LittleEndian);
-
-        void ConvertFromBytes(out object propertyValue, Type propertyType, in Span<byte> memory,
-            Endianness endianness = Endianness.LittleEndian);
-        
+        int SizeOf(object? element);
+        int SizeOf(Type type);
     }
 }

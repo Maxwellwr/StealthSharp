@@ -1,3 +1,14 @@
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="StealthSharpClient.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -19,13 +30,14 @@ using StealthSharp.Serialization;
 
 namespace StealthSharp.Network
 {
-    public class StealthSharpClient<TId, TSize, TMapping> : IStealthSharpClient<TId, TSize, TMapping> 
+    public class StealthSharpClient<TId, TSize, TMapping> : IStealthSharpClient<TId, TSize, TMapping>
         where TId : unmanaged
         where TSize : unmanaged
         where TMapping : unmanaged
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ITypeMapper<TMapping> _typeMapper;
+        private readonly IPacketCorrelationGenerator<TId> _correlationGenerator;
+        private readonly ITypeMapper<TMapping, TId> _typeMapper;
         private readonly Dictionary<TId, TMapping> _requestTypes;
         private readonly CancellationTokenSource _baseCancellationTokenSource;
         private readonly CancellationToken _baseCancellationToken;
@@ -37,12 +49,11 @@ namespace StealthSharp.Network
         private readonly IReflectionCache _reflectionCache;
         private readonly AsyncManualResetEvent _writeResetEvent;
         private readonly AsyncManualResetEvent _readResetEvent;
-        private readonly AsyncManualResetEvent _consumingResetEvent;
         private readonly PipeReader _deserializePipeReader;
         private readonly PipeWriter _deserializePipeWriter;
         private readonly StealthSharpClientOptions _options;
-        private readonly ILogger<StealthSharpClient<TId, TSize, TMapping>> _logger;
-        private Exception _internalException;
+        private readonly ILogger<StealthSharpClient<TId, TSize, TMapping>>? _logger;
+        private Exception? _internalException;
         private PipeReader _networkStreamPipeReader;
         private PipeWriter _networkStreamPipeWriter;
         private bool _pipelineReadEnded;
@@ -50,35 +61,43 @@ namespace StealthSharp.Network
         private bool _disposing;
         private long _bytesWrite;
         private long _bytesRead;
-        PipeReader IDuplexPipe.Input => _networkStreamPipeReader;
-        PipeWriter IDuplexPipe.Output => _networkStreamPipeWriter;
+
+        PipeReader IDuplexPipe.Input =>
+            _networkStreamPipeReader;
+
+        PipeWriter IDuplexPipe.Output =>
+            _networkStreamPipeWriter;
 
         /// <summary>
-        /// Gets the number of total bytes written to the <see cref="NetworkStream"/>.
+        ///     Gets the number of total bytes written to the <see cref="NetworkStream" />.
         /// </summary>
         public long BytesWrite => _bytesWrite;
 
         /// <summary>
-        /// Gets the number of total bytes read from the <see cref="NetworkStream"/>.
+        ///     Gets the number of total bytes read from the <see cref="NetworkStream" />.
         /// </summary>
         public long BytesRead => _bytesRead;
 
         /// <summary>
-        /// Gets the number of responses to receive or the number of responses ready to receive.
+        ///     Gets the number of responses to receive or the number of responses ready to receive.
         /// </summary>
         public int Waiters => _completeResponses.Count;
 
         /// <summary>
-        /// Gets the number of requests ready to send.
+        ///     Gets the number of requests ready to send.
         /// </summary>
         public int Requests => _bufferBlockRequests.Count;
 
         /// <summary>
-        /// Gets an immutable snapshot of responses to receive (id, null) or responses ready to receive (id, <see cref="object"/>).
+        ///     Gets an immutable snapshot of responses to receive (id, null) or responses ready to receive (id,
+        ///     <see cref="object" />).
         /// </summary>
         public ImmutableDictionary<TId, WaiterInfo<object>> GetWaiters()
             => _completeResponses
                 .ToImmutableDictionary(pair => pair.Key, pair => new WaiterInfo<object>(pair.Value.Task));
+
+        public ITypeMapper<TMapping, TId> TypeMapper =>
+            _typeMapper;
 
         public void Connect(IPAddress address, int port)
         {
@@ -92,12 +111,14 @@ namespace StealthSharp.Network
             IBitConvert bitConvert,
             IReflectionCache reflectionCache,
             IServiceProvider serviceProvider,
-            ITypeMapper<TMapping> typeMapper,
-            IOptions<StealthSharpClientOptions> options,
-            ILogger<StealthSharpClient<TId, TSize, TMapping>> logger)
+            ITypeMapper<TMapping, TId> typeMapper,
+            IPacketCorrelationGenerator<TId> correlationGenerator,
+            IOptions<StealthSharpClientOptions>? options,
+            ILogger<StealthSharpClient<TId, TSize, TMapping>>? logger)
         {
             var pipe = new Pipe();
             _serviceProvider = serviceProvider;
+            _correlationGenerator = correlationGenerator;
             _typeMapper = typeMapper;
             _tcpClient = new TcpClient();
             _logger = logger;
@@ -115,25 +136,30 @@ namespace StealthSharp.Network
                         tcs.TrySetCanceled();
                     else if (!_disposing && _pipelineReadEnded)
                         tcs.TrySetException(StealthSharpClientException.ConnectionBroken());
-                })
-                .RegisterCompletionActionInSet(() => _consumingResetEvent.Set());
+                });
             _completeResponses = new WaitingDictionary<TId, object>(middleware);
             _serializer = serializer;
             _writeResetEvent = new AsyncManualResetEvent();
             _readResetEvent = new AsyncManualResetEvent();
-            _consumingResetEvent = new AsyncManualResetEvent();
             _deserializePipeReader = pipe.Reader;
             _deserializePipeWriter = pipe.Writer;
+            _networkStreamPipeReader = pipe.Reader;
+            _networkStreamPipeWriter = pipe.Writer;
         }
 
+
         /// <summary>
-        /// Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient{TId, TSize, TMapping}"/> object.
+        ///     Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient{TId, TSize, TMapping}" />
+        ///     object.
         /// </summary>
         /// <param name="request"></param>
         /// <param name="token"></param>
-        /// <returns><see cref="bool"/></returns>
+        /// <returns>
+        ///     <see cref="bool" />
+        /// </returns>
         /// <exception cref="StealthSharpClientException"></exception>
-        public async Task<bool> SendAsync<TBody>(IPacket<TId,TSize,TMapping,TBody> request, CancellationToken token = default)
+        public async Task<(bool status, TId correlationId)> SendAsync(IPacket<TId, TSize, TMapping> request,
+            CancellationToken token = default)
         {
             try
             {
@@ -143,54 +169,35 @@ namespace StealthSharp.Network
                 if (!_disposing && _pipelineWriteEnded)
                     throw StealthSharpClientException.ConnectionBroken();
 
+                if (EqualityComparer<TId>.Default.Equals(request.CorrelationId, default))
+                    request.CorrelationId = _correlationGenerator.GetNextCorrelationId();
                 var serializedRequest = _serializer.Serialize(request);
-                return await _bufferBlockRequests.SendAsync(serializedRequest, token == default ? _baseCancellationToken : token);
-            }
-            catch (Exception e)
-            {
-                _logger?.LogError($"{nameof(SendAsync)} Got {e.GetType()}: {e.Message}");
-                throw;
-            }
-        }
-        
-        /// <summary>
-        /// Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient{TId, TSize, TMapping}"/> object.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="token"></param>
-        /// <returns><see cref="bool"/></returns>
-        /// <exception cref="StealthSharpClientException"></exception>
-        public async Task<bool> SendAsync(IPacket<TId,TSize,TMapping> request, CancellationToken token = default)
-        {
-            try
-            {
-                if (_disposing)
-                    throw new ObjectDisposedException(nameof(_tcpClient));
 
-                if (!_disposing && _pipelineWriteEnded)
-                    throw StealthSharpClientException.ConnectionBroken();
-
-                var serializedRequest = _serializer.Serialize(request);
                 if (!request.CorrelationId.Equals(default(TId)))
                     _requestTypes[request.CorrelationId] = request.TypeId;
-                return await _bufferBlockRequests.SendAsync(serializedRequest, token == default ? _baseCancellationToken : token);
+                return (await _bufferBlockRequests.SendAsync(serializedRequest,
+                    token == default ? _baseCancellationToken : token), request.CorrelationId);
             }
             catch (Exception e)
             {
-                _logger?.LogError($"{nameof(SendAsync)} Got {e.GetType()}: {e.Message}");
+                _logger?.LogError("{FunctionName} Got {ExceptionType}: {ExceptionMessage}", nameof(SendAsync),
+                    e.GetType(), e.Message);
                 throw;
             }
         }
 
         /// <summary>
-        /// Begins an asynchronous request to receive response associated with the specified ID from a
-        /// connected <see cref="StealthSharpClient{TId, TSize, TMapping}"/> object.
+        ///     Begins an asynchronous request to receive response associated with the specified ID from a
+        ///     connected <see cref="StealthSharpClient{TId, TSize, TMapping}" /> object.
         /// </summary>
         /// <param name="responseId"></param>
         /// <param name="token"></param>
-        /// <returns><see cref="IPacket{TId, TSize, TMapping, TBody}"/></returns>
+        /// <returns>
+        ///     <see cref="IPacket{TId, TSize, TMapping, TBody}" />
+        /// </returns>
         /// <exception cref="StealthSharpClientException"></exception>
-        public async Task<IPacket<TId, TSize, TMapping, TBody>> ReceiveAsync<TBody>(TId responseId, CancellationToken token = default)
+        public async Task<IPacket<TId, TSize, TMapping, TBody>> ReceiveAsync<TBody>(TId responseId,
+            CancellationToken token = default)
         {
             if (_disposing)
                 throw new ObjectDisposedException(nameof(_tcpClient));
@@ -198,16 +205,19 @@ namespace StealthSharp.Network
             if (!_disposing && _pipelineReadEnded)
                 throw StealthSharpClientException.ConnectionBroken();
 
-            return (IPacket<TId, TSize, TMapping, TBody>)(await _completeResponses.WaitAsync(responseId, token));
+            var p = await _completeResponses.WaitAsync(responseId, token);
+            return (IPacket<TId, TSize, TMapping, TBody>) p;
         }
-        
+
         /// <summary>
-        /// Begins an asynchronous request to receive response associated with the specified ID from a
-        /// connected <see cref="StealthSharpClient{TId, TSize, TMapping}"/> object.
+        ///     Begins an asynchronous request to receive response associated with the specified ID from a
+        ///     connected <see cref="StealthSharpClient{TId, TSize, TMapping}" /> object.
         /// </summary>
         /// <param name="responseId"></param>
         /// <param name="token"></param>
-        /// <returns><see cref="IPacket{TId, TSize, TMapping, TBody}"/></returns>
+        /// <returns>
+        ///     <see cref="IPacket{TId, TSize, TMapping, TBody}" />
+        /// </returns>
         /// <exception cref="StealthSharpClientException"></exception>
         public async Task<IPacket<TId, TSize, TMapping>> ReceiveAsync(TId responseId, CancellationToken token = default)
         {
@@ -217,7 +227,7 @@ namespace StealthSharp.Network
             if (!_disposing && _pipelineReadEnded)
                 throw StealthSharpClientException.ConnectionBroken();
 
-            return (IPacket<TId, TSize, TMapping>)(await _completeResponses.WaitAsync(responseId, token));
+            return (IPacket<TId, TSize, TMapping>) (await _completeResponses.WaitAsync(responseId, token));
         }
 
         public async ValueTask DisposeAsync()
@@ -371,36 +381,37 @@ namespace StealthSharp.Network
                     var lenResult =
                         await _deserializePipeReader.ReadLengthAsync(lenEnd, _baseCancellationToken);
                     var sequence = lenResult.Slice(lengthStart, metadata.LengthLength);
-                    _bitConvert.ConvertFromBytes(out var size,
+                    _serializer.Deserialize(sequence.ToArray(),
                         metadata[PacketDataType.Length].PropertyType,
-                        sequence.ToArray());
+                        out var size);
                     var dataSize = Convert.ToInt32(size);
 
                     _deserializePipeReader.Examine(sequence.Start, sequence.End);
-                    
+
                     var dataResult = await _deserializePipeReader.ReadLengthAsync(metadata.LengthLength + dataSize,
                         _baseCancellationToken);
 
                     var typeMapperStart = metadata[PacketDataType.TypeMapper].Attribute.Index;
                     sequence = dataResult.Slice(typeMapperStart, metadata.TypeMapperLength);
-                    _bitConvert.ConvertFromBytes(out var typeId,
+                    _serializer.Deserialize(sequence.ToArray(),
                         metadata[PacketDataType.TypeMapper].PropertyType,
-                        sequence.ToArray());
-                    
+                        out var typeId);
+
                     var correlationStart = metadata[PacketDataType.Id].Attribute.Index;
-                    sequence = dataResult.Slice(typeMapperStart, metadata.IdLength);
-                    _bitConvert.ConvertFromBytes(out var correlationId,
+                    sequence = dataResult.Slice(correlationStart, metadata.IdLength);
+                    _serializer.Deserialize(sequence.ToArray(),
                         metadata[PacketDataType.Id].PropertyType,
-                        sequence.ToArray());
+                        out var correlationId);
 
                     sequence = dataResult.Slice(0, metadata.LengthLength + dataSize);
                     var result = new SerializationResult(metadata.LengthLength + dataSize);
                     sequence.CopyTo(result.Memory.Span);
                     var realType =
                         _serviceProvider.GetRequiredService(
-                            CreateGeneric(_typeMapper.GetMappedType((TMapping) typeId, _requestTypes[(TId)correlationId])));
+                            CreateGeneric(await _typeMapper.GetMappedTypeAsync((TMapping) typeId,
+                                (TId) correlationId)));
                     var response = _serializer.Deserialize(result, realType.GetType());
-                    await _completeResponses.SetAsync((TId)correlationId, response, true);
+                    await _completeResponses.SetAsync((TId) correlationId, response, true);
                     _deserializePipeReader.Consume(sequence.End);
                 }
             }
@@ -425,7 +436,7 @@ namespace StealthSharp.Network
         private Type CreateGeneric(Type? body)
         {
             if (body is null)
-                return typeof(IPacket<,,>).MakeGenericType(typeof(TId), typeof(TSize), typeof(TMapping));    
+                return typeof(IPacket<,,>).MakeGenericType(typeof(TId), typeof(TSize), typeof(TMapping));
             return typeof(IPacket<,,,>).MakeGenericType(typeof(TId), typeof(TSize), typeof(TMapping), body);
         }
 

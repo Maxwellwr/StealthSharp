@@ -1,4 +1,15 @@
-using Microsoft.Extensions.Configuration;
+#region Copyright
+
+// -----------------------------------------------------------------------
+// <copyright file="ServiceProviderExtensions.cs" company="StealthSharp">
+// Copyright (c) StealthSharp. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+// </copyright>
+// -----------------------------------------------------------------------
+
+#endregion
+
+using System;
 using StealthSharp.Serialization;
 
 // ReSharper disable CheckNamespace Microsoft DI Extension methods recommend to place in Microsoft namespace https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage#register-services-for-di  
@@ -8,21 +19,19 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceProviderExtensions
     {
         public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection,
-            IConfiguration configuration)
+            Action<SerializationOptions> configAction)
         {
-            serviceCollection.Configure<SerializationOptions>(
-                configuration.GetSection(SerializationOptions.ConfigSection));
+            serviceCollection.Configure<SerializationOptions>(configAction);
 
-            return serviceCollection.AddStealthSharpSerialization();
-        }
-        
-        public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection)
-        {
             serviceCollection.AddSingleton<IBitConvert, BitConvert>();
             serviceCollection.AddSingleton<IReflectionCache, ReflectionCache>();
+            serviceCollection.AddSingleton<ICustomConverterFactory, CustomConverterFactory>();
             serviceCollection.AddTransient<IPacketSerializer, PacketSerializer>();
 
             return serviceCollection;
         }
+
+        public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection)
+            => AddStealthSharpSerialization(serviceCollection, opt => { });
     }
 }

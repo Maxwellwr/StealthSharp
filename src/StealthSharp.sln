@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthSharp.Benchmark", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthSharp.Network", "StealthSharp.Network\StealthSharp.Network.csproj", "{E0353BB4-8FC9-4BD9-821E-6D7A82CB995F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestScript", "TestScript\TestScript.csproj", "{DBE45084-73E8-4F83-8FEA-B6F5146B6443}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,9 +59,16 @@ Global
 		{E0353BB4-8FC9-4BD9-821E-6D7A82CB995F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0353BB4-8FC9-4BD9-821E-6D7A82CB995F}.Benchmark|Any CPU.ActiveCfg = Debug|Any CPU
 		{E0353BB4-8FC9-4BD9-821E-6D7A82CB995F}.Benchmark|Any CPU.Build.0 = Debug|Any CPU
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Benchmark|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Benchmark|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FA50A283-B4E4-4531-989F-D06BD2EF30E2} = {0359C859-D551-4642-B3C3-EA01D2834717}
 		{757A29A8-33C0-488D-94CD-729EA76A3A87} = {0359C859-D551-4642-B3C3-EA01D2834717}
+		{DBE45084-73E8-4F83-8FEA-B6F5146B6443} = {0359C859-D551-4642-B3C3-EA01D2834717}
 	EndGlobalSection
 EndGlobal
