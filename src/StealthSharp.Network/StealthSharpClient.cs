@@ -38,63 +38,24 @@ namespace StealthSharp.Network
         private readonly IServiceProvider _serviceProvider;
         private readonly IPacketCorrelationGenerator<TId> _correlationGenerator;
         private readonly ITypeMapper<TMapping, TId> _typeMapper;
-        private readonly Dictionary<TId, TMapping> _requestTypes;
         private readonly CancellationTokenSource _baseCancellationTokenSource;
         private readonly CancellationToken _baseCancellationToken;
         private readonly TcpClient _tcpClient;
-        private readonly BufferBlock<ISerializationResult> _bufferBlockRequests;
         private readonly WaitingDictionary<TId, object> _completeResponses;
         private readonly IPacketSerializer _serializer;
-        private readonly IBitConvert _bitConvert;
         private readonly IReflectionCache _reflectionCache;
-        private readonly AsyncManualResetEvent _writeResetEvent;
-        private readonly AsyncManualResetEvent _readResetEvent;
-        private readonly PipeReader _deserializePipeReader;
-        private readonly PipeWriter _deserializePipeWriter;
         private readonly StealthSharpClientOptions _options;
         private readonly ILogger<StealthSharpClient<TId, TSize, TMapping>>? _logger;
         private Exception? _internalException;
         private PipeReader _networkStreamPipeReader;
         private PipeWriter _networkStreamPipeWriter;
-        private bool _pipelineReadEnded;
-        private bool _pipelineWriteEnded;
         private bool _disposing;
-        private long _bytesWrite;
-        private long _bytesRead;
 
         PipeReader IDuplexPipe.Input =>
             _networkStreamPipeReader;
 
         PipeWriter IDuplexPipe.Output =>
             _networkStreamPipeWriter;
-
-        /// <summary>
-        ///     Gets the number of total bytes written to the <see cref="NetworkStream" />.
-        /// </summary>
-        public long BytesWrite => _bytesWrite;
-
-        /// <summary>
-        ///     Gets the number of total bytes read from the <see cref="NetworkStream" />.
-        /// </summary>
-        public long BytesRead => _bytesRead;
-
-        /// <summary>
-        ///     Gets the number of responses to receive or the number of responses ready to receive.
-        /// </summary>
-        public int Waiters => _completeResponses.Count;
-
-        /// <summary>
-        ///     Gets the number of requests ready to send.
-        /// </summary>
-        public int Requests => _bufferBlockRequests.Count;
-
-        /// <summary>
-        ///     Gets an immutable snapshot of responses to receive (id, null) or responses ready to receive (id,
-        ///     <see cref="object" />).
-        /// </summary>
-        public ImmutableDictionary<TId, WaiterInfo<object>> GetWaiters()
-            => _completeResponses
-                .ToImmutableDictionary(pair => pair.Key, pair => new WaiterInfo<object>(pair.Value.Task));
 
         public ITypeMapper<TMapping, TId> TypeMapper =>
             _typeMapper;
@@ -108,7 +69,6 @@ namespace StealthSharp.Network
 
         public StealthSharpClient(
             IPacketSerializer serializer,
-            IBitConvert bitConvert,
             IReflectionCache reflectionCache,
             IServiceProvider serviceProvider,
             ITypeMapper<TMapping, TId> typeMapper,
@@ -125,24 +85,17 @@ namespace StealthSharp.Network
             _options = options?.Value ?? StealthSharpClientOptions.Default;
             _baseCancellationTokenSource = new CancellationTokenSource();
             _baseCancellationToken = _baseCancellationTokenSource.Token;
-            _bufferBlockRequests = new BufferBlock<ISerializationResult>();
-            _requestTypes = new Dictionary<TId, TMapping>();
-            _bitConvert = bitConvert;
             _reflectionCache = reflectionCache;
             var middleware = new MiddlewareBuilder<object>()
                 .RegisterCancellationActionInWait((tcs, hasOwnToken) =>
                 {
                     if (_disposing || hasOwnToken)
                         tcs.TrySetCanceled();
-                    else if (!_disposing && _pipelineReadEnded)
+                    else if (!_disposing)
                         tcs.TrySetException(StealthSharpClientException.ConnectionBroken());
                 });
             _completeResponses = new WaitingDictionary<TId, object>(middleware);
             _serializer = serializer;
-            _writeResetEvent = new AsyncManualResetEvent();
-            _readResetEvent = new AsyncManualResetEvent();
-            _deserializePipeReader = pipe.Reader;
-            _deserializePipeWriter = pipe.Writer;
             _networkStreamPipeReader = pipe.Reader;
             _networkStreamPipeWriter = pipe.Writer;
         }
@@ -166,17 +119,17 @@ namespace StealthSharp.Network
                 if (_disposing)
                     throw new ObjectDisposedException(nameof(_tcpClient));
 
-                if (!_disposing && _pipelineWriteEnded)
-                    throw StealthSharpClientException.ConnectionBroken();
-
                 if (EqualityComparer<TId>.Default.Equals(request.CorrelationId, default))
                     request.CorrelationId = _correlationGenerator.GetNextCorrelationId();
                 var serializedRequest = _serializer.Serialize(request);
 
-                if (!request.CorrelationId.Equals(default(TId)))
-                    _requestTypes[request.CorrelationId] = request.TypeId;
-                return (await _bufferBlockRequests.SendAsync(serializedRequest,
-                    token == default ? _baseCancellationToken : token), request.CorrelationId);
+                var writeResult =
+                    await _networkStreamPipeWriter.WriteAsync(serializedRequest.Memory, _baseCancellationToken).ConfigureAwait(false);
+
+                if (writeResult.IsCanceled || writeResult.IsCompleted)
+                    return (false, request.CorrelationId);
+
+                return (true, request.CorrelationId);
             }
             catch (Exception e)
             {
@@ -186,6 +139,22 @@ namespace StealthSharp.Network
             }
         }
 
+        public async Task<(bool status, TId correlationId)> SendAsync<TResponse>(IPacket<TId, TSize, TMapping> request,
+            CancellationToken token = default)
+        {
+            try
+            {
+                var result = await SendAsync(request, token).ConfigureAwait(false);
+                _ = _typeMapper.SetMappedTypeAsync(result.correlationId, typeof(TResponse));
+                return result;
+            }
+            catch (Exception e)
+            {
+                _logger?.LogError("{FunctionName} Got {ExceptionType}: {ExceptionMessage}", nameof(SendAsync),
+                    e.GetType(), e.Message);
+                throw;
+            }
+        }
         /// <summary>
         ///     Begins an asynchronous request to receive response associated with the specified ID from a
         ///     connected <see cref="StealthSharpClient{TId, TSize, TMapping}" /> object.
@@ -202,10 +171,7 @@ namespace StealthSharp.Network
             if (_disposing)
                 throw new ObjectDisposedException(nameof(_tcpClient));
 
-            if (!_disposing && _pipelineReadEnded)
-                throw StealthSharpClientException.ConnectionBroken();
-
-            var p = await _completeResponses.WaitAsync(responseId, token);
+            var p = await _completeResponses.WaitAsync(responseId, token).ConfigureAwait(false);
             return (IPacket<TId, TSize, TMapping, TBody>) p;
         }
 
@@ -224,13 +190,10 @@ namespace StealthSharp.Network
             if (_disposing)
                 throw new ObjectDisposedException(nameof(_tcpClient));
 
-            if (!_disposing && _pipelineReadEnded)
-                throw StealthSharpClientException.ConnectionBroken();
-
-            return (IPacket<TId, TSize, TMapping>) (await _completeResponses.WaitAsync(responseId, token));
+            return (IPacket<TId, TSize, TMapping>) (await _completeResponses.WaitAsync(responseId, token).ConfigureAwait(false));
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
             _logger?.LogInformation("Dispose started");
             _disposing = true;
@@ -239,13 +202,6 @@ namespace StealthSharp.Network
                 _baseCancellationTokenSource.Cancel();
 
             _completeResponses?.Dispose();
-
-            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60)))
-            {
-                var token = cts.Token;
-                await _writeResetEvent.WaitAsync(token);
-                await _readResetEvent.WaitAsync(token);
-            }
 
             _baseCancellationTokenSource?.Dispose();
             _tcpClient?.Dispose();
@@ -266,99 +222,14 @@ namespace StealthSharp.Network
 
         private void SetupTasks()
         {
-            _ = TcpWriteAsync();
-            _ = TcpReadAsync().ContinueWith(antecedent =>
+            _ = DeserializeResponseAsync().ContinueWith(antecedent =>
             {
-                if (_disposing || !_pipelineReadEnded)
+                if (_disposing)
                     return;
 
                 foreach (var kv in _completeResponses.ToArray())
                     kv.Value.TrySetException(StealthSharpClientException.ConnectionBroken());
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
-            _ = DeserializeResponseAsync();
-        }
-
-        private async Task TcpWriteAsync()
-        {
-            try
-            {
-                while (true)
-                {
-                    _baseCancellationToken.ThrowIfCancellationRequested();
-
-                    if (!await _bufferBlockRequests.OutputAvailableAsync(_baseCancellationToken))
-                        continue;
-
-                    using var serializedRequest = await _bufferBlockRequests.ReceiveAsync(_baseCancellationToken);
-                    var writeResult =
-                        await _networkStreamPipeWriter.WriteAsync(serializedRequest.Memory, _baseCancellationToken);
-
-                    if (writeResult.IsCanceled || writeResult.IsCompleted)
-                        break;
-
-                    Interlocked.Add(ref _bytesWrite, serializedRequest.Memory.Length);
-                }
-            }
-            catch (OperationCanceledException canceledException)
-            {
-                _internalException = canceledException;
-            }
-            catch (Exception exception)
-            {
-                var exceptionType = exception.GetType();
-                _logger?.LogCritical("TcpWriteAsync Got {ExceptionType}, {Message}", exceptionType, exception.Message);
-                _internalException = exception;
-                throw;
-            }
-            finally
-            {
-                _pipelineWriteEnded = true;
-                StopWriter(_internalException);
-                _writeResetEvent.Set();
-            }
-        }
-
-        private async Task TcpReadAsync()
-        {
-            try
-            {
-                while (true)
-                {
-                    _baseCancellationToken.ThrowIfCancellationRequested();
-                    var readResult = await _networkStreamPipeReader.ReadAsync(_baseCancellationToken);
-
-                    if (readResult.IsCanceled || readResult.IsCompleted)
-                        break;
-
-                    if (readResult.Buffer.IsEmpty)
-                        continue;
-
-                    foreach (var buffer in readResult.Buffer)
-                    {
-                        await _deserializePipeWriter.WriteAsync(buffer, _baseCancellationToken);
-                        Interlocked.Add(ref _bytesRead, buffer.Length);
-                    }
-
-                    _networkStreamPipeReader.AdvanceTo(readResult.Buffer.End);
-                }
-            }
-            catch (OperationCanceledException canceledException)
-            {
-                _internalException = canceledException;
-            }
-            catch (Exception exception)
-            {
-                var exceptionType = exception.GetType();
-                _logger?.LogCritical("TcpReadAsync Got {ExceptionType}, {Message}", exceptionType, exception.Message);
-                _internalException = exception;
-                throw;
-            }
-            finally
-            {
-                _pipelineReadEnded = true;
-                StopReader(_internalException);
-                _readResetEvent.Set();
-            }
         }
 
         private async Task DeserializeResponseAsync()
@@ -379,17 +250,17 @@ namespace StealthSharp.Network
                     var lenEnd = metadata[PacketDataType.Length].Attribute.Index + metadata.LengthLength;
 
                     var lenResult =
-                        await _deserializePipeReader.ReadLengthAsync(lenEnd, _baseCancellationToken);
+                        await _networkStreamPipeReader.ReadLengthAsync(lenEnd, _baseCancellationToken).ConfigureAwait(false);
                     var sequence = lenResult.Slice(lengthStart, metadata.LengthLength);
                     _serializer.Deserialize(sequence.ToArray(),
                         metadata[PacketDataType.Length].PropertyType,
                         out var size);
                     var dataSize = Convert.ToInt32(size);
 
-                    _deserializePipeReader.Examine(sequence.Start, sequence.End);
+                    _networkStreamPipeReader.Examine(sequence.Start, sequence.End);
 
-                    var dataResult = await _deserializePipeReader.ReadLengthAsync(metadata.LengthLength + dataSize,
-                        _baseCancellationToken);
+                    var dataResult = await _networkStreamPipeReader.ReadLengthAsync(metadata.LengthLength + dataSize,
+                        _baseCancellationToken).ConfigureAwait(false);
 
                     var typeMapperStart = metadata[PacketDataType.TypeMapper].Attribute.Index;
                     sequence = dataResult.Slice(typeMapperStart, metadata.TypeMapperLength);
@@ -409,10 +280,10 @@ namespace StealthSharp.Network
                     var realType =
                         _serviceProvider.GetRequiredService(
                             CreateGeneric(await _typeMapper.GetMappedTypeAsync((TMapping) typeId,
-                                (TId) correlationId)));
+                                (TId) correlationId).ConfigureAwait(false)));
                     var response = _serializer.Deserialize(result, realType.GetType());
-                    await _completeResponses.SetAsync((TId) correlationId, response, true);
-                    _deserializePipeReader.Consume(sequence.End);
+                    await _completeResponses.SetAsync((TId) correlationId, response, true).ConfigureAwait(false);
+                    _networkStreamPipeReader.Consume(sequence.End);
                 }
             }
             catch (OperationCanceledException canceledException)
@@ -442,16 +313,6 @@ namespace StealthSharp.Network
 
         private void StopDeserializeWriterReader(Exception exception)
         {
-            Debug.WriteLine("Completion Deserializer PipeWriter and PipeReader started");
-            _deserializePipeWriter.CancelPendingFlush();
-            _deserializePipeReader.CancelPendingRead();
-
-            if (_tcpClient.Client.Connected)
-            {
-                _deserializePipeWriter.Complete(exception);
-                _deserializePipeReader.Complete(exception);
-            }
-
             if (!_baseCancellationTokenSource.IsCancellationRequested)
             {
                 Debug.WriteLine("Cancelling _baseCancellationTokenSource from StopDeserializeWriterReader");
@@ -459,55 +320,6 @@ namespace StealthSharp.Network
             }
 
             Debug.WriteLine("Completion Deserializer PipeWriter and PipeReader ended");
-        }
-
-        private void StopReader(Exception exception)
-        {
-            Debug.WriteLine("Completion NetworkStream PipeReader started");
-
-            if (_disposing)
-            {
-                foreach (var completedResponse in _completeResponses.Where(tcs =>
-                    tcs.Value.Task.Status == TaskStatus.WaitingForActivation))
-                {
-                    var innerException = exception ?? new OperationCanceledException();
-                    Debug.WriteLine(
-                        $"Set force {innerException.GetType()} in {nameof(TaskCompletionSource<object>)} in {nameof(TaskStatus.WaitingForActivation)}");
-                    completedResponse.Value.TrySetException(innerException);
-                }
-            }
-
-            _networkStreamPipeReader.CancelPendingRead();
-
-            if (_tcpClient.Client.Connected)
-                _networkStreamPipeReader.Complete(exception);
-
-            if (!_baseCancellationTokenSource.IsCancellationRequested)
-            {
-                Debug.WriteLine("Cancelling _baseCancellationTokenSource from StopReader");
-                _baseCancellationTokenSource.Cancel();
-            }
-
-            Debug.WriteLine("Completion NetworkStream PipeReader ended");
-        }
-
-        private void StopWriter(Exception exception)
-        {
-            Debug.WriteLine("Completion NetworkStream PipeWriter started");
-            _networkStreamPipeWriter.CancelPendingFlush();
-
-            if (_tcpClient.Client.Connected)
-                _networkStreamPipeWriter.Complete(exception);
-
-            _bufferBlockRequests.Complete();
-
-            if (!_baseCancellationTokenSource.IsCancellationRequested)
-            {
-                Debug.WriteLine("Cancelling _baseCancellationTokenSource from StopWriter");
-                _baseCancellationTokenSource.Cancel();
-            }
-
-            Debug.WriteLine("Completion NetworkStream PipeWriter ended");
         }
     }
 }

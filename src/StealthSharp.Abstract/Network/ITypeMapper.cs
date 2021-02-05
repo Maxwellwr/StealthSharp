@@ -16,6 +16,7 @@ namespace StealthSharp.Network
 {
     public interface ITypeMapper<TMapping, TId>
     {
+        Task SetMappedTypeAsync(TId request, Type? responseType);
         Task<Type?> GetMappedTypeAsync(TMapping mappingId, TId correlationId);
     }
 }

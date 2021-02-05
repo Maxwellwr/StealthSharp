@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace StealthSharp.Network
 {
-    public interface IStealthSharpClient<TId, TSize, TMapping> : IAsyncDisposable, IDuplexPipe
+    public interface IStealthSharpClient<TId, TSize, TMapping> : IDisposable, IDuplexPipe
         where TId : unmanaged
         where TSize : unmanaged
         where TMapping : unmanaged
@@ -37,6 +37,19 @@ namespace StealthSharp.Network
         Task<(bool status, TId correlationId)> SendAsync<TBody>(IPacket<TId, TSize, TMapping, TBody> request,
             CancellationToken token = default) =>
             SendAsync((IPacket<TId, TSize, TMapping>) request, token);
+        
+        /// <summary>
+        ///     Serialize and sends data asynchronously to a connected <see cref="TcpClientIo{TRequest,TResponse}" /> object.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="token"></param>
+        /// <returns>
+        ///     <see cref="bool" />
+        /// </returns>
+        /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
+        Task<(bool status, TId correlationId)> SendAsync<TBody, TResult>(IPacket<TId, TSize, TMapping, TBody> request,
+            CancellationToken token = default) =>
+            SendAsync<TResult>((IPacket<TId, TSize, TMapping>) request, token);
 
         /// <summary>
         ///     Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient" /> object.
@@ -48,6 +61,18 @@ namespace StealthSharp.Network
         /// </returns>
         /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
         Task<(bool status, TId correlationId)> SendAsync(IPacket<TId, TSize, TMapping> request,
+            CancellationToken token = default);
+        
+        /// <summary>
+        ///     Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient" /> object.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="token"></param>
+        /// <returns>
+        ///     <see cref="bool" />
+        /// </returns>
+        /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
+        Task<(bool status, TId correlationId)> SendAsync<TResult>(IPacket<TId, TSize, TMapping> request,
             CancellationToken token = default);
 
         /// <summary>

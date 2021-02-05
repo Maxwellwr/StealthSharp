@@ -19,7 +19,7 @@ using StealthSharp.Network;
 
 namespace StealthSharp
 {
-    public class StealthTypeMapper : IStealthTypeMapper<ushort, ushort>
+    public class StealthTypeMapper : ITypeMapper<ushort, ushort>
     {
         private readonly WaitingDictionary<ushort, Type?> _requestTypeMapper;
         public StealthTypeMapper()

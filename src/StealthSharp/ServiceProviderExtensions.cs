@@ -29,8 +29,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 c.ArrayCountType = typeof(uint);
                 c.StringSizeType = typeof(uint);
             });
-            serviceCollection.AddTransient(sp =>
-                (IStealthTypeMapper<ushort, ushort>)sp.GetRequiredService<ITypeMapper<ushort, ushort>>());
             serviceCollection.AddSingleton<IPacketCorrelationGenerator<ushort>, PacketCorrelationGenerator>();
             serviceCollection.AddSingleton<ICustomConverter<DateTime>, DateTimeConverter>();
             serviceCollection.AddTransient(typeof(IPacket<,,,>), typeof(Packet<,,,>));

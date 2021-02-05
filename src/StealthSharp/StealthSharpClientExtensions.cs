@@ -24,10 +24,9 @@ namespace StealthSharp
             {
                 TypeId = (ushort)packetType
             };
-            var (status, correlationId) = await client.SendAsync(packet);
+            var (status, correlationId) = await client.SendAsync<TResult>(packet);
             if (!status)
                 throw new InvalidOperationException("Fail to send packet");
-            await ((IStealthTypeMapper<ushort, ushort>) client.TypeMapper).SetMappedTypeAsync(correlationId, typeof(TResult));
             var recv = await client.ReceiveAsync<TResult>(correlationId);
             return recv.Body;
         }
@@ -39,10 +38,9 @@ namespace StealthSharp
                 TypeId = (ushort)packetType,
                 Body = body
             };
-            var (status, correlationId) = await client.SendAsync(packet);
+            var (status, correlationId) = await client.SendAsync<TResult>(packet);
             if (!status)
                 throw new InvalidOperationException("Fail to send packet");
-            await ((IStealthTypeMapper<ushort, ushort>) client.TypeMapper).SetMappedTypeAsync(correlationId, typeof(TResult));
             var recv = await client.ReceiveAsync<TResult>(correlationId);
             return recv.Body;
         }

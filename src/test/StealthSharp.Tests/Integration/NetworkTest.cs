@@ -22,7 +22,7 @@ using Xunit;
 
 namespace StealthSharp.Tests.Integration
 {
-    public class NetworkTest : IAsyncDisposable
+    public class NetworkTest : IDisposable
     {
         private IStealthSharpClient<ushort, uint, ushort> _client;
 
@@ -53,9 +53,8 @@ namespace StealthSharp.Tests.Integration
             await _client.SendAsync(new TestPacket<ushort, uint, ushort, (byte, byte, byte, byte, byte)>
                 {CorrelationId = 0, TypeId = 5, Body = (3, 2, 2, 0, 1)});
 
-            await _client.SendAsync(new TestPacket<ushort, uint, ushort>
+            await _client.SendAsync<AboutData>(new TestPacket<ushort, uint, ushort>
                 {CorrelationId = 1, TypeId = 12});
-            await ((IStealthTypeMapper<ushort, ushort>) _client.TypeMapper).SetMappedTypeAsync(1, typeof(AboutData));
             var res = await _client.ReceiveAsync<AboutData>(1);
             Assert.Equal(new ushort[] {8, 11, 4}, res.Body.StealthVersion);
         }
@@ -81,29 +80,9 @@ namespace StealthSharp.Tests.Integration
             }
         }
 
-        public ValueTask DisposeAsync()
-        {
-            return _client.DisposeAsync();
-        }
-    }
-
-    public class SimpleTypeMapper : ITypeMapper<ushort, ushort>
-    {
-        public async Task<Type?> GetMappedTypeAsync(ushort typeIdentify, ushort requestTypeIdentify)
-        {
-            switch (typeIdentify)
-            {
-                case 1:
-                    switch (requestTypeIdentify)
-                    {
-                        case 12:
-                            return typeof(AboutData);
-                    }
-
-                    break;
-            }
-
-            return null;
+        public void Dispose()
+        { 
+            _client.Dispose();
         }
     }
 }

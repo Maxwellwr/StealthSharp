@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using StealthSharp;
+using StealthSharp.Services;
 
 namespace TestScript
 {
@@ -11,7 +12,7 @@ namespace TestScript
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddStealthSharp();
-            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "10.211.55.3");
+            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "192.168.117.2");
             var provider = serviceCollection.BuildServiceProvider();
 
             var stealth = provider.GetRequiredService<Stealth>();
@@ -120,6 +121,9 @@ namespace TestScript
                     case ConsoleKey.O:
                         break;
                     case ConsoleKey.P:
+                        var s = stealth.GetStealthService<IStealthService>();
+                            var n = await s.GetProfileNameAsync();
+                        Console.WriteLine(n);
                         break;
                     case ConsoleKey.Q:
                         break;
