@@ -23,9 +23,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task SetAutoBuyDelayAsync(ushort value)
+        public void SetAutoBuyDelay(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetAutoBuyDelay, value);
+            Client.SendPacket(PacketType.SCSetAutoBuyDelay, value);
         }
 
         public Task<ushort> GetAutoBuyDelayAsync()
@@ -33,9 +33,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetAutoBuyDelay);
         }
 
-        public Task SetAutoSellDelayAsync(ushort value)
+        public void SetAutoSellDelay(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetAutoSellDelay, value);
+            Client.SendPacket(PacketType.SCSetAutoSellDelay, value);
         }
 
         public Task<ushort> GetAutoSellDelayAsync()
@@ -48,24 +48,24 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<List<string>>(PacketType.SCGetShopList);
         }
 
-        public Task AutoBuyAsync(ushort itemType, ushort itemColor, ushort quantity)
+        public void AutoBuy(ushort itemType, ushort itemColor, ushort quantity)
         {
-             return Client.SendPacketAsync(PacketType.SCAutoBuy, (itemType, itemColor, quantity));
+             Client.SendPacket(PacketType.SCAutoBuy, (itemType, itemColor, quantity));
         }
 
-        public Task AutoBuyExAsync(ushort itemType, ushort itemColor, ushort quantity, uint price, string name)
+        public void AutoBuyEx(ushort itemType, ushort itemColor, ushort quantity, uint price, string name)
         {
-            return Client.SendPacketAsync(PacketType.SCAutoBuyEx, (itemType, itemColor, quantity, price, name));
+            Client.SendPacket(PacketType.SCAutoBuyEx, (itemType, itemColor, quantity, price, name));
         }
 
-        public Task AutoSellAsync(ushort itemType, ushort itemColor, ushort quantity)
+        public void AutoSell(ushort itemType, ushort itemColor, ushort quantity)
         {
-            return Client.SendPacketAsync(PacketType.SCAutoSell, (itemType, itemColor, quantity));
+            Client.SendPacket(PacketType.SCAutoSell, (itemType, itemColor, quantity));
         }
 
-        public Task ClearShopListAsync()
+        public void ClearShopList()
         {
-            return Client.SendPacketAsync(PacketType.SCClearShopList);
+            Client.SendPacket(PacketType.SCClearShopList);
         }
     }
 }

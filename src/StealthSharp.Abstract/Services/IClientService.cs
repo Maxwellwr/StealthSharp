@@ -18,14 +18,14 @@ namespace StealthSharp.Services
     {
         Task<bool> ClientHideAsync(uint iD);
 
-        Task ClientPrintAsync(string text);
+        void ClientPrint(string text);
 
-        Task ClientPrintExAsync(uint senderID, ushort color, ushort font, string text);
+        void ClientPrintEx(uint senderID, ushort color, ushort font, string text);
 
-        Task CloseClientUIWindowAsync(UIWindowType uIWindowType, uint iD);
+        void CloseClientUIWindow(UIWindowType uIWindowType, uint iD);
 
-        Task UOSayAsync(string text);
+        void UOSay(string text);
 
-        Task UOSayColorAsync(string text, ushort color);
+        void UOSayColor(string text, ushort color);
     }
 }

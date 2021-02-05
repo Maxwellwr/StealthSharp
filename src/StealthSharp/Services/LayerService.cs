@@ -36,9 +36,9 @@ namespace StealthSharp.Services
             _moveItemService = moveItemService;
         }
 
-        public Task SetDressSpeedAsync(ushort value)
+        public void SetDressSpeed(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetDressSpeed, value);
+            Client.SendPacket(PacketType.SCSetDressSpeed, value);
         }
 
         public Task<ushort> GetDressSpeedAsync()
@@ -106,7 +106,7 @@ namespace StealthSharp.Services
             }
             else
             {
-                await Client.SendPacketAsync(PacketType.SCEquipItemsSetMacro);
+                Client.SendPacket(PacketType.SCEquipItemsSetMacro);
             }
 
             return result;
@@ -148,9 +148,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<(Layer, uint), uint>(PacketType.SCObjAtLayerEx, (layer, playerId));
         }
 
-        public Task SetDressAsync()
+        public void SetDress()
         {
-            return Client.SendPacketAsync(PacketType.SCSetDress);
+            Client.SendPacket(PacketType.SCSetDress);
         }
 
         public async Task<bool> UndressAsync()
@@ -170,7 +170,7 @@ namespace StealthSharp.Services
             }
             else
             {
-                await Client.SendPacketAsync(PacketType.SCUnequipItemsSetMacro);
+                Client.SendPacket(PacketType.SCUnequipItemsSetMacro);
             }
 
             return result;
@@ -212,8 +212,8 @@ namespace StealthSharp.Services
                 return false;
             }
 
-            await Client.SendPacketAsync(PacketType.SCWearItem, (layer, objId));
-            await _moveItemService.SetPickedUpItemAsync(0);
+            Client.SendPacket(PacketType.SCWearItem, (layer, objId));
+            _moveItemService.SetPickedUpItem(0);
             Thread.Sleep(1000);
             var objAtLayer = await ObjAtLayerAsync(layer);
             return objAtLayer == objId;

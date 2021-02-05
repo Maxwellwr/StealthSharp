@@ -19,20 +19,20 @@ namespace StealthSharp.Services
 
         Task<uint[]> GetPartyMembersListAsync();
 
-        Task InviteToPartyAsync(uint iD);
+        void InviteToParty(uint iD);
 
-        Task PartyAcceptInviteAsync();
+        void PartyAcceptInvite();
 
-        Task PartyCanLootMeAsync(bool value);
+        void PartyCanLootMe(bool value);
 
-        Task PartyDeclineInviteAsync();
+        void PartyDeclineInvite();
 
-        Task PartyLeaveAsync();
+        void PartyLeave();
 
-        Task PartyPrivateMessageToAsync(uint iD, string msg);
+        void PartyPrivateMessageTo(uint iD, string msg);
 
-        Task PartySayAsync(string msg);
+        void PartySay(string msg);
 
-        Task RemoveFromPartyAsync(uint iD);
+        void RemoveFromParty(uint iD);
     }
 }

@@ -21,15 +21,15 @@ namespace StealthSharp.Services
 
         Task<bool> GetIsGumpAsync();
 
-        Task AddGumpIgnoreByIDAsync(uint id);
+        void AddGumpIgnoreByID(uint id);
 
-        Task AddGumpIgnoreBySerialAsync(uint serial);
+        void AddGumpIgnoreBySerial(uint serial);
 
-        Task ClearGumpsIgnoreAsync();
+        void ClearGumpsIgnore();
 
-        Task CloseClientGumpAsync(uint id);
+        void CloseClientGump(uint id);
 
-        Task CloseSimpleGumpAsync(ushort gumpIndex);
+        void CloseSimpleGump(ushort gumpIndex);
 
         Task<List<string>> GetGumpButtonsDescriptionAsync(ushort gumpIndex);
 
@@ -45,11 +45,11 @@ namespace StealthSharp.Services
 
         Task<List<string>> GetGumpTextLinesAsync(ushort gumpIndex);
 
-        Task GumpAutoCheckBoxAsync(int checkboxId, int value);
+        void GumpAutoCheckBox(int checkboxId, int value);
 
-        Task GumpAutoRadiobuttonAsync(int radiobuttonId, int value);
+        void GumpAutoRadiobutton(int radiobuttonId, int value);
 
-        Task GumpAutoTextEntryAsync(int textEntryId, string value);
+        void GumpAutoTextEntry(int textEntryId, string value);
 
         Task<bool> IsGumpCanBeClosedAsync(ushort gumpIndex);
 
@@ -61,10 +61,10 @@ namespace StealthSharp.Services
 
         Task<bool> NumGumpTextEntryAsync(ushort gumpIndex, int textentryId, string value);
 
-        Task WaitGumpAsync(string value);
+        void WaitGump(string value);
 
-        Task WaitGumpAsync(int value);
+        void WaitGump(int value);
 
-        Task WaitTextEntryAsync(string value);
+        void WaitTextEntry(string value);
     }
 }

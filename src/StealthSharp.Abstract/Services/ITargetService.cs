@@ -26,38 +26,38 @@ namespace StealthSharp.Services
 
         Task<uint> GetLastTargetAsync();
 
-        Task CancelTargetAsync();
+        void CancelTarget();
 
-        Task CancelWaitTargetAsync();
+        void CancelWaitTarget();
 
         Task<bool> CheckLOSAsync(ushort xf, ushort yf, sbyte zf, ushort xt, ushort yt, sbyte zt, byte worldNum);
 
-        Task ClientRequestObjectTargetAsync();
+        void ClientRequestObjectTarget();
 
-        Task ClientRequestTileTargetAsync();
+        void ClientRequestTileTarget();
 
-        Task TargetToObjectAsync(uint objectID);
+        void TargetToObject(uint objectID);
 
-        Task TargetToTileAsync(ushort tileModel, ushort x, ushort y, sbyte z);
+        void TargetToTile(ushort tileModel, ushort x, ushort y, sbyte z);
 
-        Task TargetToXYZAsync(ushort x, ushort y, sbyte z);
+        void TargetToXYZ(ushort x, ushort y, sbyte z);
 
         Task<bool> WaitForClientTargetResponseAsync(int maxWaitTimeMS);
 
         Task<bool> WaitForTargetAsync(int maxWaitTimeMS);
 
-        Task WaitTargetGroundAsync(ushort objType);
+        void WaitTargetGround(ushort objType);
 
-        Task WaitTargetLastAsync();
+        void WaitTargetLast();
 
-        Task WaitTargetObjectAsync(uint objID);
+        void WaitTargetObject(uint objID);
 
-        Task WaitTargetSelfAsync();
+        void WaitTargetSelf();
 
-        Task WaitTargetTileAsync(ushort tile, ushort x, ushort y, sbyte z);
+        void WaitTargetTile(ushort tile, ushort x, ushort y, sbyte z);
 
-        Task WaitTargetTypeAsync(ushort objType);
+        void WaitTargetType(ushort objType);
 
-        Task WaitTargetXYZAsync(ushort x, ushort y, sbyte z);
+        void WaitTargetXYZ(ushort x, ushort y, sbyte z);
     }
 }

@@ -16,20 +16,20 @@ namespace StealthSharp.Services
 {
     public interface IMarketService
     {
-        Task SetAutoBuyDelayAsync(ushort value);
+        void SetAutoBuyDelay(ushort value);
         Task<ushort> GetAutoBuyDelayAsync();
 
-        Task SetAutoSellDelayAsync(ushort value);
+        void SetAutoSellDelay(ushort value);
         Task<ushort> GetAutoSellDelayAsync();
 
         Task<List<string>> GetShopListAsync();
 
-        Task AutoBuyAsync(ushort itemType, ushort itemColor, ushort quantity);
+        void AutoBuy(ushort itemType, ushort itemColor, ushort quantity);
 
-        Task AutoBuyExAsync(ushort itemType, ushort itemColor, ushort quantity, uint price, string name);
+        void AutoBuyEx(ushort itemType, ushort itemColor, ushort quantity, uint price, string name);
 
-        Task AutoSellAsync(ushort itemType, ushort itemColor, ushort quantity);
+        void AutoSell(ushort itemType, ushort itemColor, ushort quantity);
 
-        Task ClearShopListAsync();
+        void ClearShopList();
     }
 }

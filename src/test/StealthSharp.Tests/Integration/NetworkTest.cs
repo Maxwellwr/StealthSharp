@@ -50,10 +50,10 @@ namespace StealthSharp.Tests.Integration
         {
             var port = FindPort();
             _client.Connect(IPAddress.Parse("10.211.55.3"), port);
-            await _client.SendAsync(new TestPacket<ushort, uint, ushort, (byte, byte, byte, byte, byte)>
+            _client.Send(new TestPacket<ushort, uint, ushort, (byte, byte, byte, byte, byte)>
                 {CorrelationId = 0, TypeId = 5, Body = (3, 2, 2, 0, 1)});
 
-            await _client.SendAsync<AboutData>(new TestPacket<ushort, uint, ushort>
+            _client.Send<AboutData>(new TestPacket<ushort, uint, ushort>
                 {CorrelationId = 1, TypeId = 12});
             var res = await _client.ReceiveAsync<AboutData>(1);
             Assert.Equal(new ushort[] {8, 11, 4}, res.Body.StealthVersion);

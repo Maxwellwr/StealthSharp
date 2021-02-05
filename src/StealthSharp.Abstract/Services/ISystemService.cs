@@ -15,21 +15,21 @@ namespace StealthSharp.Services
 {
     public interface ISystemService
     {
-        Task SetSilentModeAsync(bool value);
+        void SetSilentMode(bool value);
         
         Task<bool> GetSilentModeAsync();
 
-        Task AlarmAsync();
+        void Alarm();
 
-        Task ConsoleEntryReplyAsync(string text);
+        void ConsoleEntryReply(string text);
 
-        Task ConsoleEntryUnicodeReplyAsync(string text);
+        void ConsoleEntryUnicodeReply(string text);
 
-        Task HelpRequestAsync();
+        void HelpRequest();
 
-        Task QuestRequestAsync();
+        void QuestRequest();
 
-        Task RequestStatsAsync(uint objID);
+        void RequestStats(uint objID);
 
         Task<bool> ClientHide(uint id);
     }

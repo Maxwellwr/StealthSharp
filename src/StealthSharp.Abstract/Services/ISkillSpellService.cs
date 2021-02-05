@@ -18,13 +18,13 @@ namespace StealthSharp.Services
     {
         Task<uint> GetLastStatusAsync();
 
-        Task<bool> CastAsync(string spellName);
+        bool Cast(string spellName);
 
-        Task<bool> CastAsync(Spell spell);
+        bool Cast(Spell spell);
 
-        Task<bool> CastSpellToObjAsync(string spellName, uint objId);
+        bool CastSpellToObj(string spellName, uint objId);
 
-        Task<bool> CastSpellToObjAsync(Spell spell, uint objId);
+        bool CastSpellToObj(Spell spell, uint objId);
 
         Task<double> GetSkillCapAsync(string skillName);
 
@@ -34,36 +34,34 @@ namespace StealthSharp.Services
 
         Task<double> GetSkillCurrentValueAsync(string skillName);
 
-        Task<bool> IsActiveSpellAbilityAsync(string spellName);
+        void ReqVirtuesGump();
 
-        Task ReqVirtuesGumpAsync();
+        void SetStatState(byte statNum, byte statState);
 
-        Task SetStatStateAsync(byte statNum, byte statState);
+        Task SetSkillLockStateAsync(string skillName, byte skillState);
 
-        Task SkillLockStateAsync(string skillName, byte skillState);
+        void ToggleFly();
 
-        Task ToggleFlyAsync();
+        void UseOtherPaperdollScroll(uint iD);
 
-        Task UseOtherPaperdollScrollAsync(uint iD);
+        void UsePrimaryAbility();
 
-        Task UsePrimaryAbilityAsync();
+        void UseSecondaryAbility();
 
-        Task UseSecondaryAbilityAsync();
-
-        Task UseSelfPaperdollScrollAsync();
+        void UseSelfPaperdollScroll();
 
         Task<bool> UseSkillAsync(string skillName);
 
-        Task UseVirtueAsync(string virtueName);
+        void UseVirtue(string virtueName);
 
-        Task UseVirtueAsync(Virtue virtue);
+        void UseVirtue(Virtue virtue);
 
         Task BandageSelfAsync();
 
         Task<byte> GetSkillLockStateAsync(string skillName);
 
-        Task<bool> IsActiveSpellAbility(string spellName);
+        Task<bool> IsActiveSpellAbilityAsync(string spellName);
         
-        Task<bool> IsActiveSpellAbility(Spell spell);
+        Task<bool> IsActiveSpellAbilityAsync(Spell spell);
     }
 }

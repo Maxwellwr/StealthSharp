@@ -41,19 +41,19 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<bool>(PacketType.SCMenuPresent);
         }
 
-        public Task AutoMenuAsync(string menuCaption, string elementCaption)
+        public void AutoMenu(string menuCaption, string elementCaption)
         {
-             return Client.SendPacketAsync(PacketType.SCAutoMenu, (menuCaption, elementCaption));
+             Client.SendPacket(PacketType.SCAutoMenu, (menuCaption, elementCaption));
         }
 
-        public Task CancelMenuAsync()
+        public void CancelMenu()
         {
-             return Client.SendPacketAsync(PacketType.SCCancelMenu);
+             Client.SendPacket(PacketType.SCCancelMenu);
         }
 
-        public Task CloseMenuAsync()
+        public void CloseMenu()
         {
-             return Client.SendPacketAsync(PacketType.SCCloseMenu);
+             Client.SendPacket(PacketType.SCCloseMenu);
         }
 
         public Task<List<string>> GetMenuItemsAsync(string menuCaption)
@@ -67,9 +67,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<string, List<MenuItem>>(PacketType.SCGetMenuItemsEx, menuCaption);
         }
 
-        public Task WaitMenuAsync(string menuCaption, string elementCaption)
+        public void WaitMenu(string menuCaption, string elementCaption)
         {
-             return Client.SendPacketAsync(PacketType.SCWaitMenu, (menuCaption, elementCaption));
+             Client.SendPacket(PacketType.SCWaitMenu, (menuCaption, elementCaption));
         }
 
         public async Task<bool> WaitForMenuPresentAsync(int timeout)

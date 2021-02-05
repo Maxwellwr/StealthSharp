@@ -22,14 +22,14 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task BowAsync()
+        public void Bow()
         {
-            return Client.SendPacketAsync(PacketType.SCBow);
+            Client.SendPacket(PacketType.SCBow);
         }
 
-        public Task SaluteAsync()
+        public void Salute()
         {
-            return Client.SendPacketAsync(PacketType.SCSalute);
+            Client.SendPacket(PacketType.SCSalute);
         }
     }
 }

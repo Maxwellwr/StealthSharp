@@ -25,9 +25,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task SetMoveBetweenTwoCornersAsync(bool value)
+        public void SetMoveBetweenTwoCorners(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveBetweenTwoCorners, value);
+            Client.SendPacket(PacketType.SCSetMoveBetweenTwoCorners, value);
         }
 
         public Task<bool> GetMoveBetweenTwoCornersAsync()
@@ -35,9 +35,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<bool>(PacketType.SCGetMoveBetweenTwoCorners);
         }
 
-        public Task SetRunMountTimerAsync(ushort value)
+        public void SetRunMountTimer(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetRunMountTimer, value);
+            Client.SendPacket(PacketType.SCSetRunMountTimer, value);
         }
 
         public Task<ushort> GetRunMountTimerAsync()
@@ -45,9 +45,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetRunMountTimer);
         }
 
-        public Task SetRunUnMountTimerAsync(ushort value)
+        public void SetRunUnMountTimer(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetRunUnmountTimer, value);
+            Client.SendPacket(PacketType.SCSetRunUnmountTimer, value);
         }
 
         public Task<ushort> GetRunUnMountTimerAsync()
@@ -55,9 +55,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetRunUnmountTimer);
         }
 
-        public Task SetWalkMountTimerAsync(ushort value)
+        public void SetWalkMountTimer(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetWalkMountTimer, value);
+            Client.SendPacket(PacketType.SCSetWalkMountTimer, value);
         }
 
         public Task<ushort> GetWalkMountTimerAsync()
@@ -65,9 +65,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetWalkMountTimer);
         }
 
-        public Task SetWalkUnmountTimerAsync(ushort value)
+        public void SetWalkUnmountTimer(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetWalkUnmountTimer, value);
+            Client.SendPacket(PacketType.SCSetWalkUnmountTimer, value);
         }
 
         public Task<ushort> GetWalkUnmountTimerAsync()
@@ -75,9 +75,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetWalkUnmountTimer);
         }
 
-        public Task SetMoveCheckStaminaAsync(ushort value)
+        public void SetMoveCheckStamina(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveCheckStamina, value);
+            Client.SendPacket(PacketType.SCSetMoveCheckStamina, value);
         }
 
         public Task<ushort> GetMoveCheckStaminaAsync()
@@ -85,9 +85,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetMoveCheckStamina);
         }
 
-        public Task SetMoveHeuristicMultAsync(int value)
+        public void SetMoveHeuristicMult(int value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveHeuristicMult, value);
+            Client.SendPacket(PacketType.SCSetMoveHeuristicMult, value);
         }
 
         public Task<int> GetMoveHeuristicMultAsync()
@@ -95,9 +95,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<int>(PacketType.SCGetMoveHeuristicMult);
         }
 
-        public Task SetMoveOpenDoorAsync(bool value)
+        public void SetMoveOpenDoor(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveOpenDoor, value);
+            Client.SendPacket(PacketType.SCSetMoveOpenDoor, value);
         }
 
         public Task<bool> GetMoveOpenDoorAsync()
@@ -105,9 +105,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<bool>(PacketType.SCGetMoveOpenDoor);
         }
 
-        public Task SetMoveThroughCornerAsync(bool value)
+        public void SetMoveThroughCorner(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveThroughCorner, value);
+            Client.SendPacket(PacketType.SCSetMoveThroughCorner, value);
         }
 
         public Task<bool> GetMoveThroughCornerAsync()
@@ -115,9 +115,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<bool>(PacketType.SCGetMoveThroughCorner);
         }
 
-        public Task SetMoveThroughNPCAsync(ushort value)
+        public void SetMoveThroughNPC(ushort value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveThroughNPC, value);
+            Client.SendPacket(PacketType.SCSetMoveThroughNPC, value);
         }
 
         public Task<ushort> GetMoveThroughNPCAsync()
@@ -125,9 +125,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort>(PacketType.SCGetMoveThroughNPC);
         }
 
-        public Task SetMoveTurnCostAsync(int value)
+        public void SetMoveTurnCost(int value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetMoveTurnCost, value);
+            Client.SendPacket(PacketType.SCSetMoveTurnCost, value);
         }
 
         public Task<int> GetMoveTurnCostAsync()
@@ -255,14 +255,14 @@ namespace StealthSharp.Services
             return Direction.Unknown;
         }
 
-        public Task ClearBadLocationListAsync()
+        public void ClearBadLocationList()
         {
-            return Client.SendPacketAsync(PacketType.SCClearBadLocationList);
+            Client.SendPacket(PacketType.SCClearBadLocationList);
         }
 
-        public Task ClearBadObjectListAsync()
+        public void ClearBadObjectList()
         {
-            return Client.SendPacketAsync(PacketType.SCClearBadObjectList);
+            Client.SendPacket(PacketType.SCClearBadObjectList);
         }
 
         public ushort Dist(ushort x1, ushort y1, ushort x2, ushort y2)
@@ -309,14 +309,14 @@ namespace StealthSharp.Services
             return MoveXYZAsync(xDst, yDst, 0, accuracy, 255, running);
         }
 
-        public Task StopMoverAsync()
+        public void StopMover()
         {
-            return Client.SendPacketAsync(PacketType.SCMoverStop);
+            Client.SendPacket(PacketType.SCMoverStop);
         }
 
-        public Task OpenDoorAsync()
+        public void OpenDoor()
         {
-            return Client.SendPacketAsync(PacketType.SCOpenDoor);
+            Client.SendPacket(PacketType.SCOpenDoor);
         }
 
         public Task<bool> RawMoveAsync(byte direction, bool running)
@@ -324,19 +324,19 @@ namespace StealthSharp.Services
             throw new NotImplementedException();
         }
 
-        public Task SetBadLocationAsync(ushort x, ushort y)
+        public void SetBadLocation(ushort x, ushort y)
         {
-            return Client.SendPacketAsync(PacketType.SCSetBadLocation, (x, y));
+            Client.SendPacket(PacketType.SCSetBadLocation, (x, y));
         }
 
-        public Task SetBadObjectAsync(ushort objType, ushort color, byte radius)
+        public void SetBadObject(ushort objType, ushort color, byte radius)
         {
-            return Client.SendPacketAsync(PacketType.SCSetBadObject, (objType, color, radius));
+            Client.SendPacket(PacketType.SCSetBadObject, (objType, color, radius));
         }
 
-        public Task SetGoodLocationAsync(ushort x, ushort y)
+        public void SetGoodLocation(ushort x, ushort y)
         {
-            return Client.SendPacketAsync(PacketType.SCSetGoodLocation, (x, y));
+            Client.SendPacket(PacketType.SCSetGoodLocation, (x, y));
         }
 
         public Task<byte> StepAsync(byte direction, bool running)

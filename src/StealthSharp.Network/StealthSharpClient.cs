@@ -111,8 +111,7 @@ namespace StealthSharp.Network
         ///     <see cref="bool" />
         /// </returns>
         /// <exception cref="StealthSharpClientException"></exception>
-        public async Task<(bool status, TId correlationId)> SendAsync(IPacket<TId, TSize, TMapping> request,
-            CancellationToken token = default)
+        public TId Send(IPacket<TId, TSize, TMapping> request)
         {
             try
             {
@@ -123,34 +122,29 @@ namespace StealthSharp.Network
                     request.CorrelationId = _correlationGenerator.GetNextCorrelationId();
                 var serializedRequest = _serializer.Serialize(request);
 
-                var writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(serializedRequest.Memory, _baseCancellationToken).ConfigureAwait(false);
+                _ = _networkStreamPipeWriter.WriteAsync(serializedRequest.Memory, _baseCancellationToken).ConfigureAwait(false);
 
-                if (writeResult.IsCanceled || writeResult.IsCompleted)
-                    return (false, request.CorrelationId);
-
-                return (true, request.CorrelationId);
+                return request.CorrelationId;
             }
             catch (Exception e)
             {
-                _logger?.LogError("{FunctionName} Got {ExceptionType}: {ExceptionMessage}", nameof(SendAsync),
+                _logger?.LogError("{FunctionName} Got {ExceptionType}: {ExceptionMessage}", nameof(Send),
                     e.GetType(), e.Message);
                 throw;
             }
         }
 
-        public async Task<(bool status, TId correlationId)> SendAsync<TResponse>(IPacket<TId, TSize, TMapping> request,
-            CancellationToken token = default)
+        public TId Send<TResponse>(IPacket<TId, TSize, TMapping> request)
         {
             try
             {
-                var result = await SendAsync(request, token).ConfigureAwait(false);
-                _ = _typeMapper.SetMappedTypeAsync(result.correlationId, typeof(TResponse));
-                return result;
+                var correlationId = Send(request);
+                _ = _typeMapper.SetMappedTypeAsync(correlationId, typeof(TResponse));
+                return correlationId;
             }
             catch (Exception e)
             {
-                _logger?.LogError("{FunctionName} Got {ExceptionType}: {ExceptionMessage}", nameof(SendAsync),
+                _logger?.LogError("{FunctionName} Got {ExceptionType}: {ExceptionMessage}", nameof(Send),
                     e.GetType(), e.Message);
                 throw;
             }

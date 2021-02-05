@@ -28,29 +28,29 @@ namespace StealthSharp.Services
             throw new NotImplementedException();
         }
 
-        public Task ClientPrintAsync(string text)
+        public void ClientPrint(string text)
         {
-            return Client.SendPacketAsync(PacketType.SCClientPrint, text);
+            Client.SendPacket(PacketType.SCClientPrint, text);
         }
 
-        public Task ClientPrintExAsync(uint senderId, ushort color, ushort font, string text)
+        public void ClientPrintEx(uint senderId, ushort color, ushort font, string text)
         {
-            return Client.SendPacketAsync(PacketType.SCClientPrintEx, (senderId, color, font, text));
+            Client.SendPacket(PacketType.SCClientPrintEx, (senderId, color, font, text));
         }
 
-        public Task CloseClientUIWindowAsync(UIWindowType uiWindowType, uint id)
+        public void CloseClientUIWindow(UIWindowType uiWindowType, uint id)
         {
-            return Client.SendPacketAsync(PacketType.SCCloseClientUIWindow, (uiWindowType, id));
+            Client.SendPacket(PacketType.SCCloseClientUIWindow, (uiWindowType, id));
         }
 
-        public Task UOSayAsync(string text)
+        public void UOSay(string text)
         {
-            return Client.SendPacketAsync(PacketType.SCSendTextToUO, text);
+            Client.SendPacket(PacketType.SCSendTextToUO, text);
         }
 
-        public Task UOSayColorAsync(string text, ushort color)
+        public void UOSayColor(string text, ushort color)
         {
-            return Client.SendPacketAsync(PacketType.SCSendTextToUOColor, (text, color));
+            Client.SendPacket(PacketType.SCSendTextToUOColor, (text, color));
         }
     }
 }

@@ -52,10 +52,10 @@ namespace StealthSharp
             _serviceProvider = serviceProvider;
         }
 
-        public async Task ConnectToStealthAsync()
+        public void ConnectToStealth()
         {
             var internalService = _serviceProvider.GetRequiredService<InternalService>();
-            await internalService.ConnectToStealthAsync();
+            internalService.ConnectToStealth();
         }
     }
 }

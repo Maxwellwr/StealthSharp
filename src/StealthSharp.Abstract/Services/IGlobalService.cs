@@ -18,6 +18,6 @@ namespace StealthSharp.Services
     {
         Task<string> GetGlobalAsync(VarRegion globalRegion, string varName);
 
-        Task SetGlobalAsync(VarRegion globalRegion, string varName, string varValue);
+        void SetGlobal(VarRegion globalRegion, string varName, string varValue);
     }
 }

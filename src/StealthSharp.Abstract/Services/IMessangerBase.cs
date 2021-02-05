@@ -29,8 +29,8 @@ namespace StealthSharp.Services
 
         Task<string> GetNameAsync();
 
-        Task SendMessageAsync(string message, string recieverId);
+        void SendMessage(string message, string recieverId);
 
-        Task ConnectAsync(string token);
+        void Connect(string token);
     }
 }

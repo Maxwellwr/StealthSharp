@@ -21,19 +21,19 @@ namespace StealthSharp.Services
         {
         }
         
-        public Task GlobalChatJoinChannelAsync(string chatName  )
+        public void GlobalChatJoinChannel(string chatName  )
         {
-            return Client.SendPacketAsync(PacketType.SCGlobalChatJoinChannel, chatName);
+            Client.SendPacket(PacketType.SCGlobalChatJoinChannel, chatName);
         }
 
-        public Task GlobalChatLeaveChannelAsync(   ){
-            return Client.SendPacketAsync(PacketType.SCGlobalChatLeaveChannel);
+        public void GlobalChatLeaveChannel(   ){
+            Client.SendPacket(PacketType.SCGlobalChatLeaveChannel);
             
         }
 
-        public Task GlobalChatSendMsgAsync(string msgText  ){
+        public void GlobalChatSendMsg(string msgText  ){
         
-            return Client.SendPacketAsync(PacketType.SCGlobalChatSendMsg, msgText);
+            Client.SendPacket(PacketType.SCGlobalChatSendMsg, msgText);
         }
 
         public Task<string> GlobalChatActiveChannel()

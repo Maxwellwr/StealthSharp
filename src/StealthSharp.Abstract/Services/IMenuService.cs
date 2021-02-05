@@ -35,14 +35,14 @@ namespace StealthSharp.Services
         /// </summary>
         /// <param name="menuCaption">Menu caption.</param>
         /// <param name="elementCaption">Element caption.</param>
-        Task AutoMenuAsync(string menuCaption, string elementCaption);
+        void AutoMenu(string menuCaption, string elementCaption);
 
         /// <summary>
         ///     Remove all traps set on the menu.
         /// </summary>
-        Task CancelMenuAsync();
+        void CancelMenu();
 
-        Task CloseMenuAsync();
+        void CloseMenu();
 
         Task<List<string>> GetMenuItemsAsync(string menuCaption);
 
@@ -61,7 +61,7 @@ namespace StealthSharp.Services
         /// </summary>
         /// <param name="menuCaption">Menu caption.</param>
         /// <param name="elementCaption">Element caption.</param>
-        Task WaitMenuAsync(string menuCaption, string elementCaption);
+        void WaitMenu(string menuCaption, string elementCaption);
 
         Task<bool> WaitForMenuPresentAsync(int timeout);
     }

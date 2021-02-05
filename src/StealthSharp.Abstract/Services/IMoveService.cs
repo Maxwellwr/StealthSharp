@@ -18,27 +18,27 @@ namespace StealthSharp.Services
 {
     public interface IMoveService
     {
-        Task SetMoveBetweenTwoCornersAsync(bool value);
+        void SetMoveBetweenTwoCorners(bool value);
         Task<bool> GetMoveBetweenTwoCornersAsync();
-        Task SetRunMountTimerAsync(ushort value);
+        void SetRunMountTimer(ushort value);
         Task<ushort> GetRunMountTimerAsync();
-        Task SetRunUnMountTimerAsync(ushort value);
+        void SetRunUnMountTimer(ushort value);
         Task<ushort> GetRunUnMountTimerAsync();
-        Task SetWalkMountTimerAsync(ushort value);
+        void SetWalkMountTimer(ushort value);
         Task<ushort> GetWalkMountTimerAsync();
-        Task SetWalkUnmountTimerAsync(ushort value);
+        void SetWalkUnmountTimer(ushort value);
         Task<ushort> GetWalkUnmountTimerAsync();
-        Task SetMoveCheckStaminaAsync(ushort value);
+        void SetMoveCheckStamina(ushort value);
         Task<ushort> GetMoveCheckStaminaAsync();
-        Task SetMoveHeuristicMultAsync(int value);
+        void SetMoveHeuristicMult(int value);
         Task<int> GetMoveHeuristicMultAsync();
-        Task SetMoveOpenDoorAsync(bool value);
+        void SetMoveOpenDoor(bool value);
         Task<bool> GetMoveOpenDoorAsync();
-        Task SetMoveThroughCornerAsync(bool value);
+        void SetMoveThroughCorner(bool value);
         Task<bool> GetMoveThroughCornerAsync();
-        Task SetMoveThroughNPCAsync(ushort value);
+        void SetMoveThroughNPC(ushort value);
         Task<ushort> GetMoveThroughNPCAsync();
-        Task SetMoveTurnCostAsync(int value);
+        void SetMoveTurnCost(int value);
         Task<int> GetMoveTurnCostAsync();
         Task<byte> GetPredictedDirectionAsync();
         Task<ushort> GetPredictedXAsync();
@@ -46,8 +46,8 @@ namespace StealthSharp.Services
         Task<sbyte> GetPredictedZAsync();
         ( ushort x2, ushort y2) CalcCoord(ushort x, ushort y, Direction dir);
         Direction CalcDir(ushort xFrom, ushort yFrom, ushort xTo, ushort yTo);
-        Task ClearBadLocationListAsync();
-        Task ClearBadObjectListAsync();
+        void ClearBadLocationList();
+        void ClearBadObjectList();
         ushort Dist(ushort x1, ushort y1, ushort x2, ushort y2);
         Task<List<MyPoint>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy);
 
@@ -57,12 +57,12 @@ namespace StealthSharp.Services
         Task<bool> MoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running);
         Task<bool> MoveXYZAsync(ushort xDst, ushort yDst, sbyte zDst, int accuracyXY, int accuracyZ, bool running);
         Task<bool> NewMoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running);
-        Task StopMoverAsync();
-        Task OpenDoorAsync();
+        void StopMover();
+        void OpenDoor();
         Task<bool> RawMoveAsync(byte direction, bool running);
-        Task SetBadLocationAsync(ushort x, ushort y);
-        Task SetBadObjectAsync(ushort objType, ushort color, byte radius);
-        Task SetGoodLocationAsync(ushort x, ushort y);
+        void SetBadLocation(ushort x, ushort y);
+        void SetBadObject(ushort objType, ushort color, byte radius);
+        void SetGoodLocation(ushort x, ushort y);
         Task<byte> StepAsync(byte direction, bool running);
         Task<int> StepQAsync(byte direction, bool running);
     }

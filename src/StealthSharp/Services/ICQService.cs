@@ -27,29 +27,29 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<bool>(PacketType.SCICQ_GetConnectedStatus);
         }
 
-        public Task ICQConnectAsync(string uin, string password)
+        public void ICQConnect(string uin, string password)
         {
-             return Client.SendPacketAsync(PacketType.SCICQ_Connect, (uin, password));
+             Client.SendPacket(PacketType.SCICQ_Connect, (uin, password));
         }
 
-        public Task ICQDisconnectAsync()
+        public void ICQDisconnect()
         {
-             return Client.SendPacketAsync(PacketType.SCICQ_Disconnect);
+             Client.SendPacket(PacketType.SCICQ_Disconnect);
         }
 
-        public Task ICQSendTextAsync(string toUin, string text)
+        public void ICQSendText(string toUin, string text)
         {
-             return Client.SendPacketAsync(PacketType.SCICQ_SendText, (toUin, text));
+             Client.SendPacket(PacketType.SCICQ_SendText, (toUin, text));
         }
 
-        public Task ICQSetStatusAsync(byte num)
+        public void ICQSetStatus(byte num)
         {
-             return Client.SendPacketAsync(PacketType.SCICQ_SetStatus, num);
+             Client.SendPacket(PacketType.SCICQ_SetStatus, num);
         }
 
-        public Task ICQSetXStatusAsync(byte num)
+        public void ICQSetXStatus(byte num)
         {
-             return Client.SendPacketAsync(PacketType.SCICQ_SetXStatus, num);
+             Client.SendPacket(PacketType.SCICQ_SetXStatus, num);
         }
     }
 }

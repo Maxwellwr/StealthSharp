@@ -24,9 +24,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task SetARStatusAsync(bool value)
+        public void SetARStatus(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetARStatus, value);
+             Client.SendPacket(PacketType.SCSetARStatus, value);
         }
 
         public Task<bool> GetARStatusAsync()
@@ -49,9 +49,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<DateTime>(PacketType.SCGetDisconnectedTime);
         }
 
-        public Task SetPauseScriptOnDisconnectStatusAsync(bool value)
+        public void SetPauseScriptOnDisconnectStatus(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetPauseScriptOnDisconnectStatus, value);
+            Client.SendPacket(PacketType.SCSetPauseScriptOnDisconnectStatus, value);
         }
 
         public Task<bool> GetPauseScriptOnDisconnectStatusAsync()
@@ -92,7 +92,7 @@ namespace StealthSharp.Services
         public async Task<bool> CheckLagAsync(int timeoutMs)
         {
             var result = false;
-            await CheckLagBeginAsync();
+            CheckLagBegin();
             var stopTime = DateTime.Now + new TimeSpan(0, 0, 0, 0, timeoutMs);
             var checkLagEndRes = false;
             do
@@ -106,34 +106,34 @@ namespace StealthSharp.Services
                 result = true;
             }
 
-            await CheckLagEndAsync();
+            CheckLagEnd();
 
             return result;
         }
 
-        public Task CheckLagBeginAsync()
+        public void CheckLagBegin()
         {
-            return Client.SendPacketAsync(PacketType.SCCheckLagBegin);
+            Client.SendPacket(PacketType.SCCheckLagBegin);
         }
 
-        public Task CheckLagEndAsync()
+        public void CheckLagEnd()
         {
-            return Client.SendPacketAsync(PacketType.SCCheckLagEnd);
+            Client.SendPacket(PacketType.SCCheckLagEnd);
         }
 
-        public Task ConnectAsync()
+        public void Connect()
         {
-            return Client.SendPacketAsync(PacketType.SCConnect);
+            Client.SendPacket(PacketType.SCConnect);
         }
 
-        public Task DisconnectAsync()
+        public void Disconnect()
         {
-            return Client.SendPacketAsync(PacketType.SCDisconnect);
+            Client.SendPacket(PacketType.SCDisconnect);
         }
 
-        public Task SetARExtParamsAsync(string shardName, string charName, bool useAtEveryConnect)
+        public void SetARExtParams(string shardName, string charName, bool useAtEveryConnect)
         {
-            return Client.SendPacketAsync(PacketType.SCSetARExtParams, (shardName, charName, useAtEveryConnect));
+            Client.SendPacket(PacketType.SCSetARExtParams, (shardName, charName, useAtEveryConnect));
         }
     }
 }

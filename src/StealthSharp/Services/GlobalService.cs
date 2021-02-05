@@ -22,9 +22,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task SetGlobalAsync(VarRegion globalRegion, string varName, string varValue)
+        public void SetGlobal(VarRegion globalRegion, string varName, string varValue)
         {
-             return Client.SendPacketAsync(PacketType.SCSetGlobal, (globalRegion, varName, varValue));
+             Client.SendPacket(PacketType.SCSetGlobal, (globalRegion, varName, varValue));
         }
 
         public Task<string> GetGlobalAsync(VarRegion globalRegion, string varName)

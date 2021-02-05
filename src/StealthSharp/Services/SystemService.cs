@@ -23,9 +23,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task SetSilentModeAsync(bool value)
+        public void SetSilentMode(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCSetSilentMode, value);
+            Client.SendPacket(PacketType.SCSetSilentMode, value);
         }
 
         public Task<bool> GetSilentModeAsync()
@@ -33,34 +33,34 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<bool>(PacketType.SCGetSilentMode);
         }
 
-        public Task AlarmAsync()
+        public void Alarm()
         {
-            return Client.SendPacketAsync(PacketType.SCSetAlarm);
+            Client.SendPacket(PacketType.SCSetAlarm);
         }
 
-        public Task ConsoleEntryReplyAsync(string text)
+        public void ConsoleEntryReply(string text)
         {
-            return Client.SendPacketAsync(PacketType.SCConsoleEntryReply, text);
+            Client.SendPacket(PacketType.SCConsoleEntryReply, text);
         }
 
-        public Task ConsoleEntryUnicodeReplyAsync(string text)
+        public void ConsoleEntryUnicodeReply(string text)
         {
-            return Client.SendPacketAsync(PacketType.SCConsoleEntryUnicodeReply, text);
+            Client.SendPacket(PacketType.SCConsoleEntryUnicodeReply, text);
         }
 
-        public Task HelpRequestAsync()
+        public void HelpRequest()
         {
-            return Client.SendPacketAsync(PacketType.SCHelpRequest);
+            Client.SendPacket(PacketType.SCHelpRequest);
         }
 
-        public Task QuestRequestAsync()
+        public void QuestRequest()
         {
-            return Client.SendPacketAsync(PacketType.SCQuestRequest);
+            Client.SendPacket(PacketType.SCQuestRequest);
         }
 
-        public Task RequestStatsAsync(uint objId)
+        public void RequestStats(uint objId)
         {
-            return Client.SendPacketAsync(PacketType.SCRequestStats, objId);
+            Client.SendPacket(PacketType.SCRequestStats, objId);
         }
 
         public Task<bool> ClientHide(uint id)

@@ -36,29 +36,29 @@ namespace StealthSharp.Services
             return (await GetGumpsCountAsync()) > 0;
         }
 
-        public Task AddGumpIgnoreByIDAsync(uint id)
+        public void AddGumpIgnoreByID(uint id)
         {
-            return Client.SendPacketAsync(PacketType.SCAddGumpIgnoreByID, id);
+            Client.SendPacket(PacketType.SCAddGumpIgnoreByID, id);
         }
 
-        public Task AddGumpIgnoreBySerialAsync(uint serial)
+        public void AddGumpIgnoreBySerial(uint serial)
         {
-            return Client.SendPacketAsync(PacketType.SCAddGumpIgnoreBySerial, serial);
+            Client.SendPacket(PacketType.SCAddGumpIgnoreBySerial, serial);
         }
 
-        public Task ClearGumpsIgnoreAsync()
+        public void ClearGumpsIgnore()
         {
-            return Client.SendPacketAsync(PacketType.SCClearGumpsIgnore);
+            Client.SendPacket(PacketType.SCClearGumpsIgnore);
         }
 
-        public Task CloseClientGumpAsync(uint id)
+        public void CloseClientGump(uint id)
         {
-            return Client.SendPacketAsync(PacketType.SCCloseClientGump, id);
+            Client.SendPacket(PacketType.SCCloseClientGump, id);
         }
 
-        public Task CloseSimpleGumpAsync(ushort gumpIndex)
+        public void CloseSimpleGump(ushort gumpIndex)
         {
-            return Client.SendPacketAsync(PacketType.SCCloseSimpleGump, gumpIndex);
+            Client.SendPacket(PacketType.SCCloseSimpleGump, gumpIndex);
         }
 
         public Task<List<string>> GetGumpButtonsDescriptionAsync(ushort gumpIndex)
@@ -96,19 +96,19 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort, List<string>>(PacketType.SCGetGumpTextLines, gumpIndex);
         }
 
-        public Task GumpAutoCheckBoxAsync(int checkboxId, int value)
+        public void GumpAutoCheckBox(int checkboxId, int value)
         {
-            return Client.SendPacketAsync(PacketType.SCGumpAutoCheckBox, (checkboxId, value));
+            Client.SendPacket(PacketType.SCGumpAutoCheckBox, (checkboxId, value));
         }
 
-        public Task GumpAutoRadiobuttonAsync(int radiobuttonId, int value)
+        public void GumpAutoRadiobutton(int radiobuttonId, int value)
         {
-            return Client.SendPacketAsync(PacketType.SCGumpAutoRadiobutton, (radiobuttonId, value));
+            Client.SendPacket(PacketType.SCGumpAutoRadiobutton, (radiobuttonId, value));
         }
 
-        public Task GumpAutoTextEntryAsync(int textEntryId, string value)
+        public void GumpAutoTextEntry(int textEntryId, string value)
         {
-            return Client.SendPacketAsync(PacketType.SCGumpAutoTextEntry, (textEntryId, value));
+            Client.SendPacket(PacketType.SCGumpAutoTextEntry, (textEntryId, value));
         }
 
         public async Task<bool> IsGumpCanBeClosedAsync(ushort gumpIndex)
@@ -139,22 +139,22 @@ namespace StealthSharp.Services
                 (gumpIndex, textentryId, value));
         }
 
-        public async Task WaitGumpAsync(string value)
+        public void WaitGump(string value)
         {
             if (!string.IsNullOrEmpty(value))
             {
-                await WaitGumpAsync(BitConverter.ToInt32(Encoding.Unicode.GetBytes(value.Trim()), 0));
+                WaitGump(BitConverter.ToInt32(Encoding.Unicode.GetBytes(value.Trim()), 0));
             }
         }
 
-        public Task WaitGumpAsync(int value)
+        public void WaitGump(int value)
         {
-            return Client.SendPacketAsync(PacketType.SCWaitGumpInt, value);
+            Client.SendPacket(PacketType.SCWaitGumpInt, value);
         }
 
-        public Task WaitTextEntryAsync(string value)
+        public void WaitTextEntry(string value)
         {
-            return Client.SendPacketAsync(PacketType.SCWaitGumpTextEntry, value);
+            Client.SendPacket(PacketType.SCWaitGumpTextEntry, value);
         }
     }
 }

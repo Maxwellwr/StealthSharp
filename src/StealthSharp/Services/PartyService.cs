@@ -32,44 +32,44 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint[]>(PacketType.SCPartyMembersList);
         }
 
-        public Task InviteToPartyAsync(uint id)
+        public void InviteToParty(uint id)
         {
-            return Client.SendPacketAsync(PacketType.SCInviteToParty, id);
+            Client.SendPacket(PacketType.SCInviteToParty, id);
         }
 
-        public Task PartyAcceptInviteAsync()
+        public void PartyAcceptInvite()
         {
-            return Client.SendPacketAsync(PacketType.SCPartyAcceptInvite);
+            Client.SendPacket(PacketType.SCPartyAcceptInvite);
         }
 
-        public Task PartyCanLootMeAsync(bool value)
+        public void PartyCanLootMe(bool value)
         {
-            return Client.SendPacketAsync(PacketType.SCPartyCanLootMe, value);
+            Client.SendPacket(PacketType.SCPartyCanLootMe, value);
         }
 
-        public Task PartyDeclineInviteAsync()
+        public void PartyDeclineInvite()
         {
-            return Client.SendPacketAsync(PacketType.SCPartyDeclineInvite);
+            Client.SendPacket(PacketType.SCPartyDeclineInvite);
         }
 
-        public Task PartyLeaveAsync()
+        public void PartyLeave()
         {
-            return Client.SendPacketAsync(PacketType.SCPartyLeave);
+            Client.SendPacket(PacketType.SCPartyLeave);
         }
 
-        public Task PartyPrivateMessageToAsync(uint id, string msg)
+        public void PartyPrivateMessageTo(uint id, string msg)
         {
-            return Client.SendPacketAsync(PacketType.SCPartyMessageTo, (id, msg));
+            Client.SendPacket(PacketType.SCPartyMessageTo, (id, msg));
         }
 
-        public Task PartySayAsync(string msg)
+        public void PartySay(string msg)
         {
-            return Client.SendPacketAsync(PacketType.SCPartySay, msg);
+            Client.SendPacket(PacketType.SCPartySay, msg);
         }
 
-        public Task RemoveFromPartyAsync(uint id)
+        public void RemoveFromParty(uint id)
         {
-            return Client.SendPacketAsync(PacketType.SCRemoveFromParty, id);
+            Client.SendPacket(PacketType.SCRemoveFromParty, id);
         }
     }
 }
