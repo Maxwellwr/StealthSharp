@@ -17,14 +17,14 @@ namespace StealthSharp.Services
     {
         Task<bool> GetICQConnectedAsync();
 
-        void ICQConnect(string uIN, string password);
+        Task ICQConnectAsync(string uIN, string password);
 
-        void ICQDisconnect();
+        Task ICQDisconnectAsync();
 
-        void ICQSendText(string destinationUIN, string text);
+        Task ICQSendTextAsync(string destinationUIN, string text);
 
-        void ICQSetStatus(byte num);
+        Task ICQSetStatusAsync(byte num);
 
-        void ICQSetXStatus(byte num);
+        Task ICQSetXStatusAsync(byte num);
     }
 }

@@ -28,9 +28,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<MapFigure, uint>(PacketType.SCAddFigure, figure);
         }
 
-        public void ClearFigures()
+        public Task ClearFiguresAsync()
         {
-            Client.SendPacket(PacketType.SCClearFigures);
+            return Client.SendPacketAsync(PacketType.SCClearFigures);
         }
 
         public Task<bool> RemoveFigureAsync(uint id)

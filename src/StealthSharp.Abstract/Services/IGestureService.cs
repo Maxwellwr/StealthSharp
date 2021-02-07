@@ -15,8 +15,8 @@ namespace StealthSharp.Services
 {
     public interface IGestureService
     {
-        void Bow();
+        Task BowAsync();
 
-        void Salute();
+        Task SaluteAsync();
     }
 }

@@ -13,11 +13,11 @@ namespace StealthSharp.Services
 {
     public interface IGlobalChatService
     {
-        void GlobalChatJoinChannel(string chatName);
+        Task GlobalChatJoinChannelAsync(string chatName);
 
-        void GlobalChatLeaveChannel();
+        Task GlobalChatLeaveChannelAsync();
 
-        void GlobalChatSendMsg(string msgText);
+        Task GlobalChatSendMsgAsync(string msgText);
 
         Task<string> GlobalChatActiveChannel();
 

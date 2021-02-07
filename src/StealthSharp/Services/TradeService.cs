@@ -37,9 +37,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<byte, bool>(PacketType.SCCancelTrade, tradeNum);
         }
 
-        public void ConfirmTrade(byte tradeNum)
+        public Task ConfirmTradeAsync(byte tradeNum)
         {
-            Client.SendPacket(PacketType.SCConfirmTrade, tradeNum);
+            return Client.SendPacketAsync(PacketType.SCConfirmTrade, tradeNum);
         }
 
         public Task<uint> GetTradeContainerAsync(byte tradeNum, byte num)

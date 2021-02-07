@@ -15,8 +15,8 @@ namespace StealthSharp.Services
 {
     public interface IInfoWindowService
     {
-        void ClearInfoWindow();
+        Task ClearInfoWindowAsync();
 
-        void FillInfoWindow(string s);
+        Task FillInfoWindowAsync(string s);
     }
 }

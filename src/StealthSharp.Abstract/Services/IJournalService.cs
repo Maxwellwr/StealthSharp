@@ -42,23 +42,23 @@ namespace StealthSharp.Services
 
         Task<int> GetLowJournalAsync();
 
-        void AddChatUserIgnore(string user);
+        Task AddChatUserIgnoreAsync(string user);
 
-        void AddJournalIgnore(string str);
+        Task AddJournalIgnoreAsync(string str);
 
-        void AddToJournal(string text);
+        Task AddToJournalAsync(string text);
 
-        void AddToSystemJournal(string text);
+        Task AddToSystemJournalAsync(string text);
 
-        void AddToSystemJournal(string format, params object[] args);
+        Task AddToSystemJournalAsync(string format, params object[] args);
 
-        void ClearChatUserIgnore();
+        Task ClearChatUserIgnoreAsync();
 
-        void ClearJournal();
+        Task ClearJournalAsync();
 
-        void ClearJournalIgnore();
+        Task ClearJournalIgnoreAsync();
 
-        void ClearSystemJournal();
+        Task ClearSystemJournalAsync();
 
         Task<int> InJournalAsync(string str);
 
@@ -66,7 +66,7 @@ namespace StealthSharp.Services
 
         Task<string> JournalAsync(int stringIndex);
 
-        void SetJournalLine(int stringIndex, string text);
+        Task SetJournalLineAsync(int stringIndex, string text);
 
         Task<bool> WaitJournalLineAsync(DateTime startTime, string str, int maxWaitTimeMS = 0);
 

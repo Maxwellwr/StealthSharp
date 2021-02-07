@@ -24,47 +24,56 @@ namespace StealthSharp.Network
     {
         void Connect(IPAddress address, int port);
 
+        ITypeMapper<TMapping, TId> TypeMapper { get; }
         /// <summary>
         ///     Serialize and sends data asynchronously to a connected <see cref="TcpClientIo{TRequest,TResponse}" /> object.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="token"></param>
         /// <returns>
         ///     <see cref="bool" />
         /// </returns>
         /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
-        TId Send<TBody>(IPacket<TId, TSize, TMapping, TBody> request) =>
-            Send((IPacket<TId, TSize, TMapping>) request);
-
+        Task<(bool status, TId correlationId)> SendAsync<TBody>(IPacket<TId, TSize, TMapping, TBody> request,
+            CancellationToken token = default) =>
+            SendAsync((IPacket<TId, TSize, TMapping>) request, token);
+        
         /// <summary>
         ///     Serialize and sends data asynchronously to a connected <see cref="TcpClientIo{TRequest,TResponse}" /> object.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="token"></param>
         /// <returns>
         ///     <see cref="bool" />
         /// </returns>
         /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
-        TId Send<TBody, TResult>(IPacket<TId, TSize, TMapping, TBody> request) =>
-            Send<TResult>((IPacket<TId, TSize, TMapping>) request);
+        Task<(bool status, TId correlationId)> SendAsync<TBody, TResult>(IPacket<TId, TSize, TMapping, TBody> request,
+            CancellationToken token = default) =>
+            SendAsync<TResult>((IPacket<TId, TSize, TMapping>) request, token);
 
         /// <summary>
         ///     Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient" /> object.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="token"></param>
         /// <returns>
         ///     <see cref="bool" />
         /// </returns>
         /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
-        TId Send(IPacket<TId, TSize, TMapping> request);
-
+        Task<(bool status, TId correlationId)> SendAsync(IPacket<TId, TSize, TMapping> request,
+            CancellationToken token = default);
+        
         /// <summary>
         ///     Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient" /> object.
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="token"></param>
         /// <returns>
         ///     <see cref="bool" />
         /// </returns>
         /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
-        TId Send<TResult>(IPacket<TId, TSize, TMapping> request);
+        Task<(bool status, TId correlationId)> SendAsync<TResult>(IPacket<TId, TSize, TMapping> request,
+            CancellationToken token = default);
 
         /// <summary>
         ///     Begins an asynchronous request to receive response associated with the specified ID from a

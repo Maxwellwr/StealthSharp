@@ -49,14 +49,14 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetLastTarget);
         }
 
-        public void CancelTarget()
+        public Task CancelTargetAsync()
         {
-            Client.SendPacket(PacketType.SCCancelTarget);
+            return Client.SendPacketAsync(PacketType.SCCancelTarget);
         }
 
-        public void CancelWaitTarget()
+        public Task CancelWaitTargetAsync()
         {
-            Client.SendPacket(PacketType.SCCancelWaitTarget);
+            return Client.SendPacketAsync(PacketType.SCCancelWaitTarget);
         }
 
         public Task<bool> CheckLOSAsync(ushort xf, ushort yf, sbyte zf, ushort xt, ushort yt, sbyte zt, byte worldNum)
@@ -65,29 +65,29 @@ namespace StealthSharp.Services
                 (xf, yf, zf, xt, yt, zt, worldNum));
         }
 
-        public void ClientRequestObjectTarget()
+        public Task ClientRequestObjectTargetAsync()
         {
-            Client.SendPacket(PacketType.SCClientRequestObjectTarget);
+            return Client.SendPacketAsync(PacketType.SCClientRequestObjectTarget);
         }
 
-        public void ClientRequestTileTarget()
+        public Task ClientRequestTileTargetAsync()
         {
-            Client.SendPacket(PacketType.SCClientRequestTileTarget);
+            return Client.SendPacketAsync(PacketType.SCClientRequestTileTarget);
         }
 
-        public void TargetToObject(uint objectId)
+        public Task TargetToObjectAsync(uint objectId)
         {
-            Client.SendPacket(PacketType.SCTargetToObject, objectId);
+            return Client.SendPacketAsync(PacketType.SCTargetToObject, objectId);
         }
 
-        public void TargetToTile(ushort tileModel, ushort x, ushort y, sbyte z)
+        public Task TargetToTileAsync(ushort tileModel, ushort x, ushort y, sbyte z)
         {
-            Client.SendPacket(PacketType.SCTargetToTile, (tileModel, x, y, z));
+            return Client.SendPacketAsync(PacketType.SCTargetToTile, (tileModel, x, y, z));
         }
 
-        public void TargetToXYZ(ushort x, ushort y, sbyte z)
+        public Task TargetToXYZAsync(ushort x, ushort y, sbyte z)
         {
-            Client.SendPacket(PacketType.SCTargetToXYZ, (x, y, z));
+            return Client.SendPacketAsync(PacketType.SCTargetToXYZ, (x, y, z));
         }
 
         public async Task<bool> WaitForClientTargetResponseAsync(int maxWaitTimeMs)
@@ -111,39 +111,39 @@ namespace StealthSharp.Services
             return await GetTargetIdAsync() > 0;
         }
 
-        public void WaitTargetGround(ushort objType)
+        public Task WaitTargetGroundAsync(ushort objType)
         {
-            Client.SendPacket(PacketType.SCWaitTargetGround, objType);
+            return Client.SendPacketAsync(PacketType.SCWaitTargetGround, objType);
         }
 
-        public void WaitTargetLast()
+        public Task WaitTargetLastAsync()
         {
-            Client.SendPacket(PacketType.SCWaitTargetLast);
+            return Client.SendPacketAsync(PacketType.SCWaitTargetLast);
         }
 
-        public void WaitTargetObject(uint objId)
+        public Task WaitTargetObjectAsync(uint objId)
         {
-            Client.SendPacket(PacketType.SCWaitTargetObject, objId);
+            return Client.SendPacketAsync(PacketType.SCWaitTargetObject, objId);
         }
 
-        public void WaitTargetSelf()
+        public Task WaitTargetSelfAsync()
         {
-            Client.SendPacket(PacketType.SCWaitTargetSelf);
+            return Client.SendPacketAsync(PacketType.SCWaitTargetSelf);
         }
 
-        public void WaitTargetTile(ushort tile, ushort x, ushort y, sbyte z)
+        public Task WaitTargetTileAsync(ushort tile, ushort x, ushort y, sbyte z)
         {
-            Client.SendPacket(PacketType.SCWaitTargetTile, (tile, x, y, z));
+            return Client.SendPacketAsync(PacketType.SCWaitTargetTile, (tile, x, y, z));
         }
 
-        public void WaitTargetType(ushort objType)
+        public Task WaitTargetTypeAsync(ushort objType)
         {
-            Client.SendPacket(PacketType.SCWaitTargetType, objType);
+            return Client.SendPacketAsync(PacketType.SCWaitTargetType, objType);
         }
 
-        public void WaitTargetXYZ(ushort x, ushort y, sbyte z)
+        public Task WaitTargetXYZAsync(ushort x, ushort y, sbyte z)
         {
-            Client.SendPacket(PacketType.SCWaitTargetXYZ, (x, y, z));
+            return Client.SendPacketAsync(PacketType.SCWaitTargetXYZ, (x, y, z));
         }
     }
 }

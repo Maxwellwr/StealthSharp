@@ -17,14 +17,14 @@ namespace StealthSharp.Services
 {
     public interface IContextMenuService
     {
-        void ClearContextMenu();
+        Task ClearContextMenuAsync();
 
         Task<List<string>> GetContextMenuAsync();
         
         Task<ContextMenu> GetContextMenuRecAsync();
 
-        void RequestContextMenu(uint iD);
+        Task RequestContextMenuAsync(uint iD);
 
-        void SetContextMenuHook(uint menuID, byte entryNumber);
+        Task SetContextMenuHookAsync(uint menuID, byte entryNumber);
     }
 }

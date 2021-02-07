@@ -18,7 +18,7 @@ namespace StealthSharp.Services
     {
         Task<uint> AddFigureAsync(MapFigure figure);
 
-        void ClearFigures();
+        Task ClearFiguresAsync();
 
         Task<bool> RemoveFigureAsync(uint id);
 

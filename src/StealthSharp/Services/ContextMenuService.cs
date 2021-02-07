@@ -24,9 +24,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public void ClearContextMenu()
+        public Task ClearContextMenuAsync()
         {
-            Client.SendPacket(PacketType.SCClearContextMenu);
+            return Client.SendPacketAsync(PacketType.SCClearContextMenu);
         }
 
         public Task<List<string>> GetContextMenuAsync()
@@ -39,14 +39,14 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ContextMenu>(PacketType.SCGetContextMenuRec);
         }
 
-        public void RequestContextMenu(uint id)
+        public Task RequestContextMenuAsync(uint id)
         {
-            Client.SendPacket(PacketType.SCRequestContextMenu, id);
+            return Client.SendPacketAsync(PacketType.SCRequestContextMenu, id);
         }
 
-        public void SetContextMenuHook(uint menuId, byte entryNumber)
+        public Task SetContextMenuHookAsync(uint menuId, byte entryNumber)
         {
-            Client.SendPacket(PacketType.SCSetContextMenuHook, (menuId, entryNumber));
+            return Client.SendPacketAsync(PacketType.SCSetContextMenuHook, (menuId, entryNumber));
         }
     }
 }

@@ -33,7 +33,7 @@ namespace StealthSharp.Tests.Integration.Services
 
             Stealth stealth = provider.GetRequiredService<Stealth>();
             _stealthService = stealth.GetStealthService<IStealthService>();
-            stealth.ConnectToStealth();
+            stealth.ConnectToStealthAsync().GetAwaiter().GetResult();
         }
 
         [Fact]

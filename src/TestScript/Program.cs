@@ -17,7 +17,7 @@ namespace TestScript
 
             var stealth = provider.GetRequiredService<Stealth>();
 
-            stealth.ConnectToStealth();
+            await stealth.ConnectToStealthAsync();
 
             while (true)
             {

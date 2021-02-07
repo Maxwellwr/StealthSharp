@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using StealthSharp.Enum;
 using StealthSharp.Network;
@@ -19,49 +18,54 @@ namespace StealthSharp
 {
     public static class StealthSharpClientExtensions
     {
-        public static async Task<TResult> SendPacketAsync<TResult>(this IStealthSharpClient<ushort, uint, ushort> client,
-            PacketType packetType, CancellationToken cancellationToken = default)
+        public static async Task<TResult> SendPacketAsync<TResult>(this IStealthSharpClient<ushort, uint, ushort> client, PacketType packetType)
         {
             var packet = new Packet<ushort, uint, ushort>()
             {
-                TypeId = (ushort) packetType
+                TypeId = (ushort)packetType
             };
-            var recv = await client.ReceiveAsync<TResult>(client.Send<TResult>(packet), cancellationToken);
+            var (status, correlationId) = await client.SendAsync<TResult>(packet);
+            if (!status)
+                throw new InvalidOperationException("Fail to send packet");
+            var recv = await client.ReceiveAsync<TResult>(correlationId);
             return recv.Body;
         }
-
-        public static async Task<TResult> SendPacketAsync<TBody, TResult>(
-            this IStealthSharpClient<ushort, uint, ushort> client, PacketType packetType, TBody body,
-            CancellationToken cancellationToken = default)
+        
+        public static async Task<TResult> SendPacketAsync<TBody, TResult>(this IStealthSharpClient<ushort, uint, ushort> client, PacketType packetType, TBody body)
         {
             var packet = new Packet<ushort, uint, ushort, TBody>()
             {
-                TypeId = (ushort) packetType,
+                TypeId = (ushort)packetType,
                 Body = body
             };
-            var recv = await client.ReceiveAsync<TResult>(client.Send<TResult>(packet), cancellationToken);
+            var (status, correlationId) = await client.SendAsync<TResult>(packet);
+            if (!status)
+                throw new InvalidOperationException("Fail to send packet");
+            var recv = await client.ReceiveAsync<TResult>(correlationId);
             return recv.Body;
         }
-
-        public static void SendPacket<TBody>(this IStealthSharpClient<ushort, uint, ushort> client,
-            PacketType packetType, TBody body)
+        
+        public static async Task SendPacketAsync<TBody>(this IStealthSharpClient<ushort, uint, ushort> client, PacketType packetType, TBody body)
         {
             var packet = new Packet<ushort, uint, ushort, TBody>()
             {
-                TypeId = (ushort) packetType,
+                TypeId = (ushort)packetType,
                 Body = body
             };
-            _ = client.Send(packet);
+            var (status, _) = await client.SendAsync(packet);
+            if (!status)
+                throw new InvalidOperationException("Fail to send packet");
         }
-
-        public static void SendPacket(this IStealthSharpClient<ushort, uint, ushort> client,
-            PacketType packetType)
+        
+        public static async Task SendPacketAsync(this IStealthSharpClient<ushort, uint, ushort> client, PacketType packetType)
         {
             var packet = new Packet<ushort, uint, ushort>()
             {
-                TypeId = (ushort) packetType
+                TypeId = (ushort)packetType
             };
-            _ = client.Send(packet);
+            var (status, _) = await client.SendAsync(packet);
+            if (!status)
+                throw new InvalidOperationException("Fail to send packet");
         }
     }
 }

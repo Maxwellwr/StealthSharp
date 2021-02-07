@@ -16,7 +16,7 @@ namespace StealthSharp.Services
 {
     public interface IConnectionService
     {
-        void SetARStatus(bool value);
+        Task SetARStatusAsync(bool value);
         Task<bool> GetARStatusAsync();
 
         Task<bool> GetConnectedAsync();
@@ -35,7 +35,7 @@ namespace StealthSharp.Services
         /// </summary>
         Task<DateTime> GetDisconnectedTimeAsync();
 
-        void SetPauseScriptOnDisconnectStatus(bool value);
+        Task SetPauseScriptOnDisconnectStatusAsync(bool value);
         Task<bool> GetPauseScriptOnDisconnectStatusAsync();
 
         Task<string> GetGameServerIPStringAsync();
@@ -52,14 +52,14 @@ namespace StealthSharp.Services
 
         Task<bool> CheckLagAsync(int timeoutMS);
 
-        void CheckLagBegin();
+        Task CheckLagBeginAsync();
 
-        void CheckLagEnd();
+        Task CheckLagEndAsync();
 
-        void Connect();
+        Task ConnectAsync();
 
-        void Disconnect();
+        Task DisconnectAsync();
 
-        void SetARExtParams(string shardName, string charName, bool useAtEveryConnect);
+        Task SetARExtParamsAsync(string shardName, string charName, bool useAtEveryConnect);
     }
 }

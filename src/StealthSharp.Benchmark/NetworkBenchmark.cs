@@ -36,7 +36,7 @@ namespace StealthSharp.Benchmark
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddStealthSharp();
-            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "10.211.55.3");
+            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "127.0.0.1");
             var provider = serviceCollection.BuildServiceProvider();
 
             _stealth = provider.GetRequiredService<Stealth>();
@@ -44,8 +44,8 @@ namespace StealthSharp.Benchmark
         }
 
         [GlobalSetup]
-        public void GlobalSetup()
-            => _stealth.ConnectToStealth();
+        public Task GlobalSetup()
+            => _stealth.ConnectToStealthAsync();
 
         //[Benchmark]
         public Task<StealthSharp.Model.AboutData> GetAboutPacket()

@@ -35,12 +35,12 @@ namespace StealthSharp.Services
             _stealthService = stealthService;
         }
 
-        internal async void ConnectToStealth()
+        internal async Task ConnectToStealthAsync()
         {
             Client.Connect(IPAddress.Parse(_options.Host), FindPort());
             var v = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1,0,0,0);
             (byte LangType, byte Major, byte Minor, byte Build, byte Rev) b = (3, (byte)v.Major, (byte)v.Minor,(byte)v.Build,(byte)v.Revision);
-            Client.SendPacket(PacketType.SCLangVersion, b);
+            await Client.SendPacketAsync(PacketType.SCLangVersion, b);
 
             var about = await _stealthService.GetStealthInfoAsync();
             var stealthVersion = new Version(about.StealthVersion[0], about.StealthVersion[1], about.StealthVersion[2],

@@ -43,37 +43,37 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetLastStatus);
         }
 
-        public bool Cast(string spellName)
+        public async Task<bool> CastAsync(string spellName)
         {
             if (!System.Enum.TryParse(spellName, out Spell val))
             {
                 return false;
             }
 
-            return Cast(val);
+            return await CastAsync(val);
         }
 
-        public bool Cast(Spell spell)
+        public async Task<bool> CastAsync(Spell spell)
         {
             if (spell == Spell.None)
             {
                 return false;
             }
 
-            Client.SendPacket(PacketType.SCCastSpell, spell);
+            await Client.SendPacketAsync(PacketType.SCCastSpell, spell);
             return true;
         }
 
-        public bool CastSpellToObj(string spellName, uint objId)
+        public async Task<bool> CastSpellToObjAsync(string spellName, uint objId)
         {
-            _targetService.WaitTargetObject(objId);
-            return Cast(spellName);
+            await _targetService.WaitTargetObjectAsync(objId);
+            return await CastAsync(spellName);
         }
 
-        public bool CastSpellToObj(Spell spell, uint objId)
+        public async Task<bool> CastSpellToObjAsync(Spell spell, uint objId)
         {
-            _targetService.WaitTargetObject(objId);
-            return Cast(spell);
+            await _targetService.WaitTargetObjectAsync(objId);
+            return await CastAsync(spell);
         }
 
         public async Task<(bool result, int skillId)> GetSkillIdAsync(string skillName)
@@ -125,23 +125,33 @@ namespace StealthSharp.Services
 
             return await Client.SendPacketAsync<int, double>(PacketType.SCSkillCurrentValue, skillId.skillId);
         }
-        
-        public void ReqVirtuesGump()
+
+        public async Task<bool> IsActiveSpellAbilityAsync(string spellName)
         {
-            Client.SendPacket(PacketType.SCReqVirtuesGump);
+            if (!System.Enum.TryParse(spellName, out Spell val))
+            {
+                return false;
+            }
+
+            return await CastAsync(val);
         }
 
-        public void SetStatState(byte statNum, byte statState)
+        public Task ReqVirtuesGumpAsync()
         {
-            Client.SendPacket(PacketType.SCChangeStatLockState, (statNum, statState));
+            return Client.SendPacketAsync(PacketType.SCReqVirtuesGump);
         }
 
-        public async Task SetSkillLockStateAsync(string skillName, byte skillState)
+        public Task SetStatStateAsync(byte statNum, byte statState)
+        {
+            return Client.SendPacketAsync(PacketType.SCChangeStatLockState, (statNum, statState));
+        }
+
+        public async Task SkillLockStateAsync(string skillName, byte skillState)
         {
             var skillId = await GetSkillIdAsync(skillName);
             if (skillId.result)
             {
-                Client.SendPacket(PacketType.SCChangeSkillLockState, (skillId.skillId, skillState));
+                await Client.SendPacketAsync(PacketType.SCChangeSkillLockState, (skillId.skillId, skillState));
             }
             else
             {
@@ -149,24 +159,24 @@ namespace StealthSharp.Services
             }
         }
 
-        public void ToggleFly()
+        public Task ToggleFlyAsync()
         {
-            Client.SendPacket(PacketType.SCToggleFly);
+            return Client.SendPacketAsync(PacketType.SCToggleFly);
         }
 
-        public void UseOtherPaperdollScroll(uint id)
+        public Task UseOtherPaperdollScrollAsync(uint id)
         {
-            Client.SendPacket(PacketType.SCUseOtherPaperdollScroll, id);
+            return Client.SendPacketAsync(PacketType.SCUseOtherPaperdollScroll, id);
         }
 
-        public void UsePrimaryAbility()
+        public Task UsePrimaryAbilityAsync()
         {
-            Client.SendPacket(PacketType.SCUsePrimaryAbility);
+            return Client.SendPacketAsync(PacketType.SCUsePrimaryAbility);
         }
 
-        public void UseSecondaryAbility()
+        public Task UseSecondaryAbilityAsync()
         {
-            Client.SendPacket(PacketType.SCUseSecondaryAbility);
+            return Client.SendPacketAsync(PacketType.SCUseSecondaryAbility);
         }
 
         public Task<string> GetActiveAbilityAsync()
@@ -174,9 +184,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<string>(PacketType.SCGetActiveAbility);
         }
 
-        public void UseSelfPaperdollScroll()
+        public Task UseSelfPaperdollScrollAsync()
         {
-            Client.SendPacket(PacketType.SCUseSelfPaperdollScroll);
+            return Client.SendPacketAsync(PacketType.SCUseSelfPaperdollScroll);
         }
 
         public async Task<bool> UseSkillAsync(string skillName)
@@ -187,27 +197,28 @@ namespace StealthSharp.Services
                 return false;
             }
 
-            Client.SendPacket(PacketType.SCUseSkill, skillId.skillId);
+            await Client.SendPacketAsync(PacketType.SCUseSkill, skillId.skillId);
             return true;
         }
 
-        public void UseVirtue(string virtueName)
+        public async Task UseVirtueAsync(string virtueName)
         {
             if (virtueName.GetEnum(out Virtue virtue))
-            { UseVirtue(virtue);
+            {
+                await UseVirtueAsync(virtue);
             }
         }
 
-        public void UseVirtue(Virtue virtue)
+        public Task UseVirtueAsync(Virtue virtue)
         {
-            Client.SendPacket(PacketType.SCUseVirtue, (uint) virtue);
+            return Client.SendPacketAsync(PacketType.SCUseVirtue, (uint) virtue);
         }
 
         public async Task BandageSelfAsync()
         {
             var bandages = await _searchService.FindTypeExAsync(0xE21, 0xFFFF, await _searchService.GetBackpackAsync() ,true);
             if (bandages > 0)
-                _gameObjectService.UseItemOnMobile(bandages, await _charStatsService.GetSelfAsync());
+                await _gameObjectService.UseItemOnMobileAsync(bandages, await _charStatsService.GetSelfAsync());
         }
 
         public async Task<byte> GetSkillLockStateAsync(string skillName)
@@ -221,17 +232,17 @@ namespace StealthSharp.Services
             return await Client.SendPacketAsync<int, byte>(PacketType.SCGetSkillLockState, skillId.skillId);
         }
 
-        public Task<bool> IsActiveSpellAbilityAsync(string spellName)
+        public Task<bool> IsActiveSpellAbility(string spellName)
         {
             if (!System.Enum.TryParse(spellName, out Spell val))
             {
                 throw new ArgumentNullException(nameof(spellName), "Can't find spell with name: " + spellName);
             }
 
-            return IsActiveSpellAbilityAsync(val);
+            return IsActiveSpellAbility(val);
         }
         
-        public Task<bool> IsActiveSpellAbilityAsync(Spell spell)
+        public Task<bool> IsActiveSpellAbility(Spell spell)
         {
             return Client.SendPacketAsync<Spell, bool>(PacketType.SCIsActiveSpellAbility, spell);
         }

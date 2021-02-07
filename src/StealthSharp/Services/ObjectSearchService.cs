@@ -34,9 +34,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<int>(PacketType.SCGetFindCount);
         }
 
-        public void SetFindDistance(uint value)
+        public Task SetFindDistanceAsync(uint value)
         {
-            Client.SendPacket(PacketType.SCSetFindDistance, value);
+            return Client.SendPacketAsync(PacketType.SCSetFindDistance, value);
         }
 
         public Task<uint> GetFindDistanceAsync()
@@ -54,9 +54,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<int>(PacketType.SCGetFindFullQuantity);
         }
 
-        public void SetFindInNulPoint(bool value)
+        public Task SetFindInNulPointAsync(bool value)
         {
-            Client.SendPacket(PacketType.SCSetFindInNulPoint, value);
+            return Client.SendPacketAsync(PacketType.SCSetFindInNulPoint, value);
         }
 
         public Task<bool> GetFindInNulPointAsync()
@@ -74,9 +74,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<int>(PacketType.SCGetFindQuantity);
         }
 
-        public void SetFindVertical(int value)
+        public Task SetFindVerticalAsync(int value)
         {
-            Client.SendPacket(PacketType.SCSetFindVertical, value);
+            return Client.SendPacketAsync(PacketType.SCSetFindVertical, value);
         }
 
         public Task<int> GetFindVerticalAsync()
@@ -154,19 +154,19 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<List<MultiItem>>(PacketType.SCGetMultis);
         }
 
-        public void Ignore(uint objId)
+        public Task IgnoreAsync(uint objId)
         {
-            Client.SendPacket(PacketType.SCIgnore, objId);
+            return Client.SendPacketAsync(PacketType.SCIgnore, objId);
         }
 
-        public void IgnoreOff(uint objId)
+        public Task IgnoreOffAsync(uint objId)
         {
-            Client.SendPacket(PacketType.SCIgnoreOff, objId);
+            return Client.SendPacketAsync(PacketType.SCIgnoreOff, objId);
         }
 
-        public void IgnoreReset()
+        public Task IgnoreResetAsync()
         {
-            Client.SendPacket(PacketType.SCIgnoreReset);
+            return Client.SendPacketAsync(PacketType.SCIgnoreReset);
         }
     }
 }

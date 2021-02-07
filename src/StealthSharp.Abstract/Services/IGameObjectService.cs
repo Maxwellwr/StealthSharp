@@ -18,7 +18,7 @@ namespace StealthSharp.Services
 {
     public interface IGameObjectService
     {
-        void ClickOnObject(uint objId);
+        Task ClickOnObjectAsync(uint objId);
 
         Task<ushort> GetColorAsync(uint objId);
 
@@ -120,14 +120,14 @@ namespace StealthSharp.Services
 
         Task<bool> MobileCanBeRenamedAsync(uint mobId);
 
-        void RenameMobile(uint mobId, string newName);
+        Task RenameMobileAsync(uint mobId, string newName);
 
         Task<uint> UseFromGroundAsync(ushort objType, ushort color);
 
-        void UseObject(uint objectID);
+        Task UseObjectAsync(uint objectID);
 
         Task<uint> UseTypeAsync(ushort objType, ushort color);
 
-        void UseItemOnMobile(uint itemId, uint mobileId);
+        Task UseItemOnMobileAsync(uint itemId, uint mobileId);
     }
 }

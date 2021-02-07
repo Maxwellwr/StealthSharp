@@ -21,7 +21,7 @@ namespace StealthSharp.Services
 
         Task<bool> CancelTradeAsync(byte tradeNum);
 
-        void ConfirmTrade(byte tradeNum);
+        Task ConfirmTradeAsync(byte tradeNum);
 
         Task<uint> GetTradeContainerAsync(byte tradeNum, byte num);
 

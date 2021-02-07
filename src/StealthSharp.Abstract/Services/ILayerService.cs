@@ -16,7 +16,7 @@ namespace StealthSharp.Services
 {
     public interface ILayerService
     {
-        void SetDressSpeed(ushort value);
+        Task SetDressSpeedAsync(ushort value);
         Task<ushort> GetDressSpeedAsync();
 
         Task<bool> DisarmAsync();
@@ -48,7 +48,7 @@ namespace StealthSharp.Services
         /// <returns>Object id.</returns>
         Task<uint> ObjAtLayerExAsync(Layer layerType, uint playerId);
 
-        void SetDress();
+        Task SetDressAsync();
 
         Task<bool> UndressAsync();
 

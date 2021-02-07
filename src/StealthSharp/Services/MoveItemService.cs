@@ -36,9 +36,9 @@ namespace StealthSharp.Services
             _objectSearchService = objectSearchService;
         }
 
-        public void SetDropDelay(uint value)
+        public Task SetDropDelayAsync(uint value)
         {
-            Client.SendPacket(PacketType.SCSetDropDelay,
+            return Client.SendPacketAsync(PacketType.SCSetDropDelay,
                 value);
         }
 
@@ -47,9 +47,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetDropDelay);
         }
 
-        public void SetPickedUpItem(uint value)
+        public Task SetPickedUpItemAsync(uint value)
         {
-            Client.SendPacket(PacketType.SCSetPickupedItem,
+            return Client.SendPacketAsync(PacketType.SCSetPickupedItem,
                 value);
         }
 
@@ -58,9 +58,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetPickupedItem);
         }
 
-        public void SetDropCheckCoord(bool value)
+        public Task SetDropCheckCoordAsync(bool value)
         {
-            Client.SendPacket(PacketType.SCSetDropCheckCoord,
+            return Client.SendPacketAsync(PacketType.SCSetDropCheckCoord,
                 value);
         }
 
@@ -97,7 +97,7 @@ namespace StealthSharp.Services
                 rescount = quantity;
             }
 
-            Client.SendPacket(PacketType.SCDragItem,
+            await Client.SendPacketAsync(PacketType.SCDragItem,
                 (itemId, rescount));
 
             return (await GetPickedUpItemAsync()) == itemId;
@@ -185,15 +185,15 @@ namespace StealthSharp.Services
             return (await _objectSearchService.GetFindedListAsync()).Count == beforeMoveCount - moveItemsCount;
         }
 
-        public void SetCatchBag(uint objectId)
+        public Task SetCatchBagAsync(uint objectId)
         {
-            Client.SendPacket(PacketType.SCSetCatchBag,
+            return Client.SendPacketAsync(PacketType.SCSetCatchBag,
                 objectId);
         }
 
-        public void UnsetCatchBag()
+        public Task UnsetCatchBagAsync()
         {
-            Client.SendPacket(PacketType.SCUnsetCatchBag);
+            return Client.SendPacketAsync(PacketType.SCUnsetCatchBag);
         }
     }
 }

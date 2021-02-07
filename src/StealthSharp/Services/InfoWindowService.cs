@@ -22,14 +22,14 @@ namespace StealthSharp.Services
         {
         }
 
-        public void ClearInfoWindow()
+        public Task ClearInfoWindowAsync()
         {
-             Client.SendPacket(PacketType.SCClearInfoWindow);
+             return Client.SendPacketAsync(PacketType.SCClearInfoWindow);
         }
 
-        public void FillInfoWindow(string str)
+        public Task FillInfoWindowAsync(string str)
         {
-             Client.SendPacket(PacketType.SCFillNewWindow, str);
+             return Client.SendPacketAsync(PacketType.SCFillNewWindow, str);
         }
     }
 }

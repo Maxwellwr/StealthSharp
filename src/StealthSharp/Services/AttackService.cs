@@ -36,9 +36,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetLastAttack);
         }
 
-        public void SetWarMode(bool value)
+        public Task SetWarModeAsync(bool value)
         {
-            Client.SendPacket(PacketType.SCSetWarMode, value);
+            return Client.SendPacketAsync(PacketType.SCSetWarMode, value);
         }
 
         public async Task<bool> GetWarModeAsync()
@@ -51,9 +51,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetWarTarget);
         }
 
-        public void Attack(uint objectId)
+        public Task AttackAsync(uint objectId)
         {
-            Client.SendPacket(PacketType.SCAttack, objectId);
+            return Client.SendPacketAsync(PacketType.SCAttack, objectId);
         }
     }
 }

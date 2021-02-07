@@ -26,9 +26,9 @@ namespace StealthSharp.Services
         {
         }
 
-        public void ClickOnObject(uint objectId)
+        public Task ClickOnObjectAsync(uint objectId)
         {
-            Client.SendPacket(PacketType.SCClickOnObject, objectId);
+            return Client.SendPacketAsync(PacketType.SCClickOnObject, objectId);
         }
 
         public Task<ushort> GetColorAsync(uint objId)
@@ -229,9 +229,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint, bool>(PacketType.SCMobileCanBeRenamed, mobId);
         }
 
-        public void RenameMobile(uint mobId, string newName)
+        public Task RenameMobileAsync(uint mobId, string newName)
         {
-            Client.SendPacket(PacketType.SCRenameMobile, (mobId, newName));
+            return Client.SendPacketAsync(PacketType.SCRenameMobile, (mobId, newName));
         }
 
         public Task<uint> UseFromGroundAsync(ushort objType, ushort color)
@@ -239,9 +239,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<(ushort, ushort), uint>(PacketType.SCUseFromGround, (objType, color));
         }
 
-        public void UseObject(uint objId)
+        public Task UseObjectAsync(uint objId)
         {
-            Client.SendPacket(PacketType.SCUseObject, objId);
+            return Client.SendPacketAsync(PacketType.SCUseObject, objId);
         }
 
         public Task<uint> UseTypeAsync(ushort objType, ushort color = 0xFFFF)
@@ -249,9 +249,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<(ushort, ushort), uint>(PacketType.SCUseType, (objType, color));
         }
 
-        public void UseItemOnMobile(uint itemId, uint mobileId)
+        public Task UseItemOnMobileAsync(uint itemId, uint mobileId)
         {
-            Client.SendPacket(PacketType.SCUseItemOnMobile, (itemId, mobileId));
+            return Client.SendPacketAsync(PacketType.SCUseItemOnMobile, (itemId, mobileId));
         }
     }
 }

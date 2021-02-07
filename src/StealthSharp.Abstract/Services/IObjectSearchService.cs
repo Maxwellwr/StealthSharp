@@ -26,21 +26,21 @@ namespace StealthSharp.Services
 
         Task<int> GetFindCountAsync();
 
-        void SetFindDistance(uint value);
+        Task SetFindDistanceAsync(uint value);
         Task<uint> GetFindDistanceAsync();
 
         Task<List<uint>> GetFindedListAsync();
 
         Task<int> GetFindFullQuantityAsync();
 
-        void SetFindInNulPoint(bool value);
+        Task SetFindInNulPointAsync(bool value);
         Task<bool> GetFindInNulPointAsync();
 
         Task<uint> GetFindItemAsync();
 
         Task<int> GetFindQuantityAsync();
 
-        void SetFindVertical(int value);
+        Task SetFindVerticalAsync(int value);
         Task<int> GetFindVerticalAsync();
 
         /// <summary>
@@ -73,10 +73,10 @@ namespace StealthSharp.Services
 
         Task<List<MultiItem>> GetMultisAsync();
 
-        void Ignore(uint objId);
+        Task IgnoreAsync(uint objId);
 
-        void IgnoreOff(uint objId);
+        Task IgnoreOffAsync(uint objId);
 
-        void IgnoreReset();
+        Task IgnoreResetAsync();
     }
 }

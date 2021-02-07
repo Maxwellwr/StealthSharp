@@ -22,8 +22,8 @@ namespace StealthSharp.Services
 
         /// <summary>
         ///     Set the state of combat mode (War).
-        /// </summary>Ó
-        void SetWarMode(bool value);
+        /// </summary>
+        Task SetWarModeAsync(bool value);
 
         /// <summary>
         ///     Returns the state of combat mode (War).
@@ -53,6 +53,6 @@ namespace StealthSharp.Services
         ///     _attack.Attack(_enemy);
         /// </example>
         /// <param name="attackedId">Object for attack</param>
-        void Attack(uint attackedId);
+        Task AttackAsync(uint attackedId);
     }
 }

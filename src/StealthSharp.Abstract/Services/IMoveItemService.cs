@@ -15,12 +15,12 @@ namespace StealthSharp.Services
 {
     public interface IMoveItemService
     {
-        void SetDropDelay(uint value);
+        Task SetDropDelayAsync(uint value);
         Task<uint> GetDropDelayAsync();
 
-        void SetPickedUpItem(uint value);
+        Task SetPickedUpItemAsync(uint value);
         Task<uint> GetPickedUpItemAsync();
-        void SetDropCheckCoord(bool value);
+        Task SetDropCheckCoordAsync(bool value);
         Task<bool> GetDropCheckCoordAsync();
         Task<bool> DragItemAsync(uint itemID, int count);
 
@@ -42,8 +42,8 @@ namespace StealthSharp.Services
         Task<bool> MoveItemsExAsync(uint container, ushort itemsType, ushort itemsColor, uint moveIntoID, int x, int y, int z,
             int delayMS, int maxItems);
 
-        void SetCatchBag(uint objectId);
+        Task SetCatchBagAsync(uint objectId);
 
-        void UnsetCatchBag();
+        Task UnsetCatchBagAsync();
     }
 }
