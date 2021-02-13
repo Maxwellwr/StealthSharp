@@ -17,7 +17,7 @@ namespace StealthSharp.Services
 {
     public class PartyService : BaseService, IPartyService
     {
-        public PartyService(IStealthSharpClient<ushort, uint, ushort> client)
+        public PartyService(IStealthSharpClient client)
             : base(client)
         {
         }

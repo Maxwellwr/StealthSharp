@@ -19,7 +19,7 @@ namespace StealthSharp.Services
 {
     public class ContextMenuService : BaseService, IContextMenuService
     {
-        public ContextMenuService(IStealthSharpClient<ushort, uint, ushort> client)
+        public ContextMenuService(IStealthSharpClient client)
             : base(client)
         {
         }

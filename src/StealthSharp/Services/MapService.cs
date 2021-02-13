@@ -18,7 +18,7 @@ namespace StealthSharp.Services
 {
     public class MapService : BaseService, IMapService
     {
-        public MapService(IStealthSharpClient<ushort, uint, ushort> client)
+        public MapService(IStealthSharpClient client)
             : base(client)
         {
         }

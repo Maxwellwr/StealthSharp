@@ -24,7 +24,7 @@ namespace StealthSharp.Services
         private uint _self;
 
         public CharStatsService(
-            IStealthSharpClient<ushort, uint, ushort> client,
+            IStealthSharpClient client,
             IGameObjectService gameObjectService)
             : base(client)
         {

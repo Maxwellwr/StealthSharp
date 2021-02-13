@@ -9,20 +9,18 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class TextEntry
     {
-        [PacketData(0, 4)] public int X { get; set; }
-        [PacketData(4, 4)] public int Y { get; set; }
-        [PacketData(8, 4)] public int Width { get; set; }
-        [PacketData(12, 4)] public int Height { get; set; }
-        [PacketData(16, 4)] public int Color { get; set; }
-        [PacketData(20, 4)] public int ReturnValue { get; set; }
-        [PacketData(24, 4)] public int DefaultTextId { get; set; }
-        [PacketData(28, 4)] public int Page { get; set; }
-        [PacketData(32, 4)] public int ElemNum { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Color { get; set; }
+        public int ReturnValue { get; set; }
+        public int DefaultTextId { get; set; }
+        public int Page { get; set; }
+        public int ElemNum { get; set; }
     }
 }

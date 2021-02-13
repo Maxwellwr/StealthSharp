@@ -10,7 +10,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using StealthSharp.Network;
 using StealthSharp.Services;
 
 namespace StealthSharp

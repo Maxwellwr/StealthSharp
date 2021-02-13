@@ -10,7 +10,8 @@
 #endregion
 
 using System.Collections.Generic;
-using StealthSharp.Serialization;
+
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace StealthSharp.Model
 {
@@ -19,10 +20,10 @@ namespace StealthSharp.Model
     /// </summary>
     public class FoundTile
     {
-        [PacketData(0, 2)] public ushort Tile { get; set; }
-        [PacketData(2, 2)] public ushort X { get; set; }
-        [PacketData(4, 2)] public ushort Y { get; set; }
-        [PacketData(6, 1)] public sbyte Z { get; set; }
+        public ushort Tile { get; set; }
+        public ushort X { get; set; }
+        public ushort Y { get; set; }
+        public sbyte Z { get; set; }
 
         public override bool Equals(object? obj)
         {
@@ -31,19 +32,25 @@ namespace StealthSharp.Model
                 return ft.X == X && ft.Y == Y && ft.Z == Z;
             }
 
+            // ReSharper disable once BaseObjectEqualsIsObjectEquals
             return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
+            // ReSharper disable NonReadonlyMemberInGetHashCode
             return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
         }
     }
 
     public class FoundTileComparer : IEqualityComparer<FoundTile>
     {
-        public bool Equals(FoundTile x, FoundTile y)
+        public bool Equals(FoundTile? x, FoundTile? y)
         {
+            if (x is null && y is null)
+                return true;
+            if (x is null || y is null)
+                return false;
             return x.Equals(y);
         }
 

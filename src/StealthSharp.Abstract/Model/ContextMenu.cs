@@ -10,19 +10,18 @@
 #endregion
 
 using System.Collections.Generic;
-using StealthSharp.Serialization;
 
 namespace StealthSharp.Model
 {
     public struct ContextMenu
     {
-        [PacketData(0, 4)] public uint ID { get; set; }
+        public uint ID { get; set; }
 
-        [PacketData(4, 1)] public byte EntriesNumber { get; set; }
+        public byte EntriesNumber { get; set; }
 
-        [PacketData(5, 1)] public bool NewCliloc { get; set; }
+        public bool NewCliloc { get; set; }
 
-        [PacketData(6, PacketDataType = PacketDataType.Body)]
+        
         public List<ContextMenuEntry> Entries { get; set; }
     }
 }

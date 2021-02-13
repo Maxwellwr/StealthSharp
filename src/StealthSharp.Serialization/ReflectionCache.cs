@@ -11,31 +11,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 
 namespace StealthSharp.Serialization
 {
-    public class ReflectionCache : IReflectionCache, IReflectionLevelCache
+    public class ReflectionCache : IReflectionCache
     {
         private readonly Dictionary<Type, IReflectionMetadata?> _dictionary = new();
-
-        public IReflectionMetadata? GetMetadata(Type type) =>
-            ((IReflectionLevelCache) this).GetMetadata(type, true);
-
-        IReflectionMetadata? IReflectionLevelCache.GetMetadata(Type type, bool firstLevel)
+        public IReflectionMetadata? GetMetadata(Type type)
         {
             if (!_dictionary.ContainsKey(type))
             {
-                if (type
-                    .GetProperties()
-                    .SelectMany(p => p.GetCustomAttributes(false).OfType<PacketDataAttribute>())
-                    .Any())
-
-                    _dictionary[type] = new ReflectionMetadata(type, this, firstLevel);
+                if (type.GetCustomAttribute<SerializableAttribute>() is not null)
+                    _dictionary[type] = new ReflectionMetadata(type);
                 else
                     _dictionary[type] = null;
             }
-
             return _dictionary[type];
         }
     }

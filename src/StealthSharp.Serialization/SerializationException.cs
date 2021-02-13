@@ -19,35 +19,19 @@ namespace StealthSharp.Serialization
         {
         }
 
-        internal static SerializationException PropertyArgumentIsNull(string propertyName) =>
-            new($"NULL value cannot be converted ({propertyName})");
+        public static SerializationException CollectionItemTypeNotFoundException(string missingTypeName) =>
+            new ($"Element type of collection {missingTypeName} not found");
 
-        internal static SerializationException PropertyCanReadWrite(string type, string attributeType,
-            string attributeIndex = null) =>
-            new(
-                $"Set and Get keywords required for Serialization. Type: {type}, {nameof(PacketDataType)}: {attributeType}, {(attributeType == nameof(PacketDataType.MetaData) ? $"Index: {attributeIndex}" : null)}");
+        public static SerializationException ConverterNotFoundType(string typeName) =>
+            new ($"Converter not found for type {typeName}");
 
-        internal static SerializationException ConverterNotFoundType(string propertyName) =>
-            new($"Converter not found for {propertyName}");
+        public static SerializationException SpanSizeException(string typeName) =>
+            new($"Array length lower, then size of type {typeName}");
 
-        internal static SerializationException AttributesRequired(string type) =>
-            new($"{type} does not have any {nameof(PacketDataAttribute)}");
-
-        internal static SerializationException AttributeLengthRequired(string type, string attribute) =>
-            new(
-                $"In {type} {nameof(PacketDataType)}.{attribute} could not work without {nameof(PacketDataType)}.{nameof(PacketDataType.Length)}");
-
-        internal static SerializationException AttributeRequiredWithLength(string type) =>
-            new(
-                $"In {type} {nameof(PacketDataType)}.{nameof(PacketDataType.Length)} could not work without {nameof(PacketDataType)}.{nameof(PacketDataType.Body)} or {nameof(PacketDataType)}.{nameof(PacketDataType.Body)}");
-
-        internal static SerializationException AttributeDuplicate(string type, string attributeType) =>
-            new($"{type} could not work with multiple {attributeType}");
-
-        internal static SerializationException AttributeInBody(string type, string attributeType) =>
-            new($"{type} could not work with {attributeType} inside body");
-
-        internal static SerializationException SerializerBodyPropertyIsNull() =>
-            new($"Value of {nameof(PacketDataType)}.{nameof(PacketDataType.Body)} is Null");
+        public static SerializationException CreateInstanceException(string typeName) =>
+            new($"Can not create instance of type {typeName}");
+        
+        public static SerializationException NullNotSupportedException(string message) =>
+            new("Null  not supported. " + message);
     }
 }

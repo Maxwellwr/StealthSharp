@@ -17,13 +17,10 @@ namespace StealthSharp.Serialization
     public class PacketProperty
     {
         private readonly PropertyInfo _propertyInfo;
+        public Type PropertyType { get; }
 
-        public readonly PacketDataAttribute Attribute;
-        public readonly Type PropertyType;
-
-        public PacketProperty(PropertyInfo propertyInfo, PacketDataAttribute attribute)
+        public PacketProperty(PropertyInfo propertyInfo)
         {
-            Attribute = attribute;
             PropertyType = propertyInfo.PropertyType;
             _propertyInfo = propertyInfo;
         }

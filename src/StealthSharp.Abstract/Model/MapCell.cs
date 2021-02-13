@@ -9,8 +9,6 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     /// <summary>
@@ -18,7 +16,7 @@ namespace StealthSharp.Model
     /// </summary>
     public struct MapCell
     {
-        [PacketData(0, 2)] public ushort Tile { get; set; }
-        [PacketData(2, 1)] public sbyte Z { get; set; }
+        public ushort Tile { get; set; }
+        public sbyte Z { get; set; }
     }
 }

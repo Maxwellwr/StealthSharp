@@ -18,7 +18,7 @@ namespace StealthSharp.Services
 {
     public class ClientService : BaseService, IClientService
     {
-        public ClientService(IStealthSharpClient<ushort, uint, ushort> client)
+        public ClientService(IStealthSharpClient client)
             : base(client)
         {
         }

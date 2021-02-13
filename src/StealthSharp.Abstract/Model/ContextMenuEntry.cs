@@ -9,18 +9,16 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public struct ContextMenuEntry
     {
-        [PacketData(0, 2)] public ushort Tag { get; set; }
+        public ushort Tag { get; set; }
 
-        [PacketData(2, 4)] public uint IntLocID { get; set; }
+        public uint IntLocID { get; set; }
 
-        [PacketData(6, 2)] public ushort Flags { get; set; }
+        public ushort Flags { get; set; }
 
-        [PacketData(8, 2)] public ushort Color { get; set; }
+        public ushort Color { get; set; }
     }
 }

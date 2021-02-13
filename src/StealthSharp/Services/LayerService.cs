@@ -25,7 +25,7 @@ namespace StealthSharp.Services
         private readonly IMoveItemService _moveItemService;
 
         public LayerService(
-            IStealthSharpClient<ushort, uint, ushort> client,
+            IStealthSharpClient client,
             ICharStatsService charStatsService,
             IMoveItemService moveItemService,
             IObjectSearchService objectSearchService)

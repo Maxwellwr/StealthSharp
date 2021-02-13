@@ -9,17 +9,15 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class CheckerTransparency
     {
-        [PacketData(0, 4)] public int X;
-        [PacketData(4, 4)] public int Y;
-        [PacketData(8, 4)] public int Width;
-        [PacketData(12, 4)] public int Height;
-        [PacketData(16, 4)] public int Page;
-        [PacketData(20, 4)] public int ElemNum;
+        public int X;
+        public int Y;
+        public int Width;
+        public int Height;
+        public int Page;
+        public int ElemNum;
     }
 }

@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Moq;
+using StealthSharp.Enum;
+using StealthSharp.Network;
 using StealthSharp.Serialization;
 using StealthSharp.Tests.DataGenerators;
 using Xunit;
@@ -28,14 +30,13 @@ namespace StealthSharp.Tests.Unit
         {
             var refCache = new ReflectionCache();
             var spMock = new Mock<IServiceProvider>();
-            var bitConverter =new BitConvert(refCache);
-            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,refCache, new CustomConverterFactory(spMock.Object), bitConverter);
-            
+            var converter = new CustomConverterFactory(spMock.Object);
+            var marshaler = new Marshaler(refCache, null, converter);
+            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,
+                refCache, marshaler, converter);
+
             spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<DateTime>))))
-                .Returns(new DateTimeConverter(_serializer));
-
-            
-
+                .Returns(new DateTimeConverter(_serializer, marshaler));
         }
 
         [Theory]
@@ -48,13 +49,12 @@ namespace StealthSharp.Tests.Unit
         [InlineData(true, "01")]
         [InlineData((byte) 1, "01")]
         [InlineData((sbyte) 1, "01")]
-        [InlineData((PacketDataType) 1, "01")]
         public void Serialize_simple_type_should_work<T>(T testValue, string expected)
         {
             //arrange
 
             //act
-            var result = _serializer.Serialize(testValue);
+            using var result = _serializer.Serialize(testValue);
 
             //assert
             var actual = ToHexString(result.Memory.ToArray());
@@ -63,15 +63,15 @@ namespace StealthSharp.Tests.Unit
 
         [Theory]
         [ClassData(typeof(SerializeDataGenerator))]
-        public void Serialize_complex_type_should_work<T>(TestPacket<ushort, uint, ushort, T> testValue, string expected)
+        public void Serialize_complex_type_should_work<T>(PacketHeader testValue, T? body, string expected)
         {
             //arrange
-
             //act
-            var result = _serializer.Serialize(testValue);
+            using var result1 = _serializer.Serialize(testValue);
+            using var result2 = _serializer.Serialize(body);
 
             //assert
-            var actual = ToHexString(result.Memory.ToArray());
+            var actual = ToHexString(result1.Memory.ToArray()) + ToHexString(result2.Memory.ToArray());
             Assert.Equal(expected, actual);
         }
 
@@ -79,15 +79,15 @@ namespace StealthSharp.Tests.Unit
         public void Serialize_empty_body_should_work()
         {
             //arrange
-            var testValue = new TestPacket<ushort, uint, ushort>()
+            var testValue = new PacketHeader()
             {
-                Length = 8,
-                TypeId = 12,
+                Length = 4,
+                PacketType = PacketType.SCGetStealthInfo,
                 CorrelationId = 1
             };
             var expected = "040000000C000100";
             //act
-            var result = _serializer.Serialize(testValue);
+            using var result = _serializer.Serialize(testValue);
 
             //assert
             var actual = ToHexString(result.Memory.ToArray());
@@ -98,39 +98,21 @@ namespace StealthSharp.Tests.Unit
         public void Serialize_Tuple_type_should_work()
         {
             //arrange
-            var testValue = new TestPacket<ushort, uint, ushort, (int, short, byte, byte[], TestEnum)>()
+            var body = (1, (short) 2, (byte) 3, new byte[] {4, 5, 6, 7}, TestEnum.Value1);
+            var testValue = new PacketHeader()
             {
-                TypeId = 123,
+                Length = 0x17,
+                PacketType = PacketType.SCJournal,
                 CorrelationId = 255,
-                Body = (1, 2, 3, new byte[] {4, 5, 6, 7},
-                    TestEnum.Value1)
             };
-            string expected = "170000007B00FF0001000000020003040000000405060700000000";
+            string expected = "17000000 7B00 FF00 01000000 0200 03 04000000 04 05 06 07 00000000"
+                .Replace(" ", "");
             //act
-            var result = _serializer.Serialize(testValue);
+            using var result1 = _serializer.Serialize(testValue);
+            using var result2 = _serializer.Serialize(body);
 
             //assert
-            var actual = ToHexString(result.Memory.ToArray());
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public void Serialize_with_TypeMapper_should_work()
-        {
-            //arrange
-            var testValue = new PacketWithTypeMapper()
-            {
-                Length = 12,
-                Method = 123,
-                ReturnId = 255,
-                Body = 123456789
-            };
-            string expected = "080000007B00FF0015CD5B07";
-            //act
-            var result = _serializer.Serialize(testValue);
-
-            //assert
-            var actual = ToHexString(result.Memory.ToArray());
+            var actual = ToHexString(result1.Memory.ToArray()) + ToHexString(result2.Memory.ToArray());
             Assert.Equal(expected, actual);
         }
 
@@ -138,23 +120,24 @@ namespace StealthSharp.Tests.Unit
         public void Serialize_list_of_string_should_work()
         {
             //arrange
-            var testValue = new TestPacket<ushort, uint, ushort, TypeWithListString>()
+            var body = new TypeWithListString()
             {
-                TypeId = 5,
+                ClilocID = 34578,
+                Params = new List<string>() {"aa", "bb", "cc"}
+            };
+            var testValue = new PacketHeader()
+            {
+                PacketType = PacketType.SCLangVersion,
                 CorrelationId = 4,
-                Length = 36,
-                Body = new TypeWithListString()
-                {
-                    ClilocID = 34578,
-                    Params = new List<string>() {"aa", "bb", "cc"}
-                }
+                Length = 36
             };
             string expected = "24000000050004001287000003000000040000006100610004000000620062000400000063006300";
             //act
-            var result = _serializer.Serialize(testValue);
+            using var result1 = _serializer.Serialize(testValue);
+            using var result2 = _serializer.Serialize(body);
 
             //assert
-            var actual = ToHexString(result.Memory.ToArray());
+            var actual = ToHexString(result1.Memory.ToArray()) + ToHexString(result2.Memory.ToArray());
             Assert.Equal(expected, actual);
         }
 
@@ -162,35 +145,37 @@ namespace StealthSharp.Tests.Unit
         public void Serialize_dynamic_arrays_should_work()
         {
             //arrange
-            var testValue = new TestPacket<ushort, uint, ushort, TypeWithDynamicBody>()
+            var body = new TypeWithDynamicBody()
             {
-                TypeId = 5,
-                CorrelationId = 4,
-                Length = 56,
-                Body = new TypeWithDynamicBody()
+                ClilocID = 34578,
+                ExtData = new DynamicBody()
                 {
-                    ClilocID = 34578,
-                    ExtData = new DynamicBody()
+                    Arr1 = new[] {1, 2},
+                    Arr2 = new short[] {1, 2, 3, 4, 5},
+                    Arr3 = new[]
                     {
-                        Arr1 = new[] {1, 2},
-                        Arr2 = new short[] {1, 2, 3, 4, 5},
-                        Arr3 = new []
+                        new TypeWithListString()
                         {
-                            new TypeWithListString()
-                            {
-                                ClilocID = 6, 
-                                Params = new List<string>(){"123"}
-                            }
+                            ClilocID = 6,
+                            Params = new List<string>() {"123"}
                         }
                     }
                 }
             };
-            string expected = "38000000 0500 0400 12870000 02000000 01000000 02000000 05000000 0100 0200 0300 0400 0500 01000000 06000000 01000000 06000000 3100 3200 3300";
+            var testValue = new PacketHeader()
+            {
+                PacketType = PacketType.SCLangVersion,
+                CorrelationId = 4,
+                Length = 56
+            };
+            string expected =
+                "38000000 0500 0400 12870000 02000000 01000000 02000000 05000000 0100 0200 0300 0400 0500 01000000 06000000 01000000 06000000 3100 3200 3300";
             //act
-            var result = _serializer.Serialize(testValue);
+            using var result1 = _serializer.Serialize(testValue);
+            using var result2 = _serializer.Serialize(body);
 
             //assert
-            var actual = ToHexString(result.Memory.ToArray());
+            var actual = ToHexString(result1.Memory.ToArray()) + ToHexString(result2.Memory.ToArray());
             Assert.Equal(expected.Replace(" ", ""), actual);
         }
 

@@ -21,7 +21,7 @@ namespace StealthSharp.Services
 {
     public class MenuService : BaseService, IMenuService
     {
-        public MenuService(IStealthSharpClient<ushort, uint, ushort> client)
+        public MenuService(IStealthSharpClient client)
             : base(client)
         {
         }

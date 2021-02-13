@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace StealthSharp.Services
 {
     public class TileService : BaseService, ITileService
     {
-        public TileService(IStealthSharpClient<ushort, uint, ushort> client)
+        public TileService(IStealthSharpClient client)
             : base(client)
         {
         }

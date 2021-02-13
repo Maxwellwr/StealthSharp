@@ -19,26 +19,17 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceProviderExtensions
     {
-        public static IServiceCollection AddStealthSharpClient<TId, TSize, TMapping, TMapper>(
+        public static IServiceCollection AddStealthSharpClient(
             this IServiceCollection serviceCollection)
-            where TMapper : class, ITypeMapper<TMapping, TId>
-            where TId : unmanaged
-            where TSize : unmanaged
-            where TMapping : unmanaged
-            => AddStealthSharpClient<TId, TSize, TMapping, TMapper>(serviceCollection, opt => { });
+            => AddStealthSharpClient(serviceCollection, opt => { });
 
-        public static IServiceCollection AddStealthSharpClient<TId, TSize, TMapping, TMapper>(
+        public static IServiceCollection AddStealthSharpClient(
             this IServiceCollection serviceCollection, Action<SerializationOptions> configAction)
-            where TMapper : class, ITypeMapper<TMapping, TId>
-            where TId : unmanaged
-            where TSize : unmanaged
-            where TMapping : unmanaged
         {
             serviceCollection.AddLogging();
             serviceCollection.AddStealthSharpSerialization(configAction);
             serviceCollection
-                .AddSingleton<IStealthSharpClient<TId, TSize, TMapping>, StealthSharpClient<TId, TSize, TMapping>>();
-            serviceCollection.AddSingleton<ITypeMapper<TMapping, TId>, TMapper>();
+                .AddSingleton<IStealthSharpClient, StealthSharpClient>();
             return serviceCollection;
         }
     }

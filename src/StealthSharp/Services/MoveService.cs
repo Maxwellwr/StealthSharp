@@ -20,7 +20,7 @@ namespace StealthSharp.Services
 {
     public class MoveService : BaseService, IMoveService
     {
-        public MoveService(IStealthSharpClient<ushort, uint, ushort> client)
+        public MoveService(IStealthSharpClient client)
             : base(client)
         {
         }

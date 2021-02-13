@@ -14,6 +14,8 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Microsoft.Extensions.Options;
 using Moq;
+using StealthSharp.Enum;
+using StealthSharp.Network;
 using StealthSharp.Serialization;
 
 namespace StealthSharp.Benchmark
@@ -24,27 +26,25 @@ namespace StealthSharp.Benchmark
     public class SerializerBenchmark
     {
         private readonly IPacketSerializer _serializer;
-        private readonly Packet<AboutData> _testData;
+        private readonly PacketHeader _testData;
 
         public SerializerBenchmark()
         {
             var refCache = new ReflectionCache();
             var spMock = new Mock<IServiceProvider>();
-            var bitConverter =new BitConvert(refCache);
-            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,refCache, new CustomConverterFactory(spMock.Object), bitConverter);
-            spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<DateTime>))))
-                .Returns(new DateTimeConverter(_serializer));
+            var converter = new CustomConverterFactory(spMock.Object);
+            var marshaler = new Marshaler(refCache, null, converter);
+            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,
+                refCache, marshaler, converter);
 
-            _testData = new Packet<AboutData>()
+            spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<DateTime>))))
+                .Returns(new DateTimeConverter(_serializer, marshaler));
+
+            _testData = new PacketHeader()
             {
-                Method = 25,
-                ReturnId = 1,
-                Body = new AboutData()
-                {
-                    Property1 = 1,
-                    Property2 = 2,
-                    Property3 = 3
-                }
+                PacketType = PacketType.SCGetStealthInfo,
+                CorrelationId = 1,
+                Length = 10
             };
         }
 
@@ -57,10 +57,11 @@ namespace StealthSharp.Benchmark
 
 
         [Benchmark]
-        public Packet<AboutData> Deserialize()
+        public AboutData Deserialize()
         {
-            using var res = _serializer.Serialize(_testData);
-            var deres = _serializer.Deserialize<Packet<AboutData>>(res);
+            using var res = new SerializationResult(6);
+            new byte[]{1,0,2,0,3,0}.AsSpan().CopyTo(res.Memory.Span);
+            var deres = _serializer.Deserialize<AboutData>(res);
             return deres;
         }
     }

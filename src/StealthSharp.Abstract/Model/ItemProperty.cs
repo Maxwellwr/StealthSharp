@@ -9,13 +9,11 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class ItemProperty
     {
-        [PacketData(0, 4)] public uint Prop { get; set; }
-        [PacketData(4, 4)] public int ElemNum { get; set; }
+        public uint Prop { get; set; }
+        public int ElemNum { get; set; }
     }
 }

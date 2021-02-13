@@ -20,7 +20,7 @@ namespace StealthSharp.Network
 {
     public static class PipeReaderExtensions
     {
-        public static async Task<ReadResult> ReadLengthAsync(this PipeReader reader, long length,
+        public static async Task<ReadResult> ReadDataAsync(this PipeReader reader, long length,
             CancellationToken cancellationToken = default)
         {
             if (length < 1)

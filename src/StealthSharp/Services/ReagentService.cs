@@ -19,7 +19,7 @@ namespace StealthSharp.Services
     {
         private readonly IObjectSearchService _objectSearchService;
 
-        public ReagentService(IStealthSharpClient<ushort, uint, ushort> client,
+        public ReagentService(IStealthSharpClient client,
             IObjectSearchService objectSearchService)
             : base(client)
         {

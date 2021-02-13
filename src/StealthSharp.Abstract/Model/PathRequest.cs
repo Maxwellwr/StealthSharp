@@ -9,21 +9,19 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class PathReqeust
     {
-        [PacketData(0, 2)] public ushort StartX { get; set; }
-        [PacketData(2, 2)] public ushort StartY { get; set; }
-        [PacketData(4, 1)] public sbyte StartZ { get; set; }
-        [PacketData(5, 2)] public ushort FinishX { get; set; }
-        [PacketData(7, 2)] public ushort FinishY { get; set; }
-        [PacketData(9, 1)] public sbyte FinishZ { get; set; }
-        [PacketData(10, 1)] public byte WorldNum { get; set; }
-        [PacketData(11, 4)] public int AccuracyXy { get; set; }
-        [PacketData(15, 4)] public int AccuracyZ { get; set; }
-        [PacketData(19, 1)] public bool Run { get; set; }
+        public ushort StartX { get; set; }
+        public ushort StartY { get; set; }
+        public sbyte StartZ { get; set; }
+        public ushort FinishX { get; set; }
+        public ushort FinishY { get; set; }
+        public sbyte FinishZ { get; set; }
+        public byte WorldNum { get; set; }
+        public int AccuracyXy { get; set; }
+        public int AccuracyZ { get; set; }
+        public bool Run { get; set; }
     }
 }

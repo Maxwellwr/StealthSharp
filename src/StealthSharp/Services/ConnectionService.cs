@@ -19,7 +19,7 @@ namespace StealthSharp.Services
 {
     public class ConnectionService : BaseService, IConnectionService
     {
-        public ConnectionService(IStealthSharpClient<ushort, uint, ushort> client)
+        public ConnectionService(IStealthSharpClient client)
             : base(client)
         {
         }

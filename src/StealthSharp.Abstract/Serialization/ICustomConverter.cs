@@ -16,8 +16,7 @@ namespace StealthSharp.Serialization
         bool TryConvertToBytes(T? propertyValue, in Span<byte> span, Endianness endianness = Endianness.LittleEndian)
             => TryConvertToBytes((object?)propertyValue, span, endianness);
 
-        bool TryConvertFromBytes(out T? propertyValue, in Span<byte> span,
-            Endianness endianness = Endianness.LittleEndian)
+        bool TryConvertFromBytes(out T? propertyValue, in Span<byte> span, Endianness endianness = Endianness.LittleEndian)
         {
             var result = TryConvertFromBytes(out object? pv, span, endianness);
             if (result)
@@ -34,5 +33,6 @@ namespace StealthSharp.Serialization
     {
         bool TryConvertToBytes(object? propertyValue, in Span<byte> span, Endianness endianness = Endianness.LittleEndian);
         bool TryConvertFromBytes(out object? propertyValue, in Span<byte> span, Endianness endianness = Endianness.LittleEndian);
+        int SizeOf(object? propertyValue);
     }
 }

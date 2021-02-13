@@ -10,15 +10,14 @@
 #endregion
 
 using System.Collections.Generic;
-using StealthSharp.Serialization;
 
 namespace StealthSharp.Model
 {
     public class ClilocItemRec
     {
-        [PacketData(0, 4)] public uint ClilocID { get; set; }
+        public uint ClilocID { get; set; }
 
-        [PacketData(4, PacketDataType = PacketDataType.Body)]
+        
         public List<string> Params { get; set; }
     }
 }

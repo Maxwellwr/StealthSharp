@@ -16,7 +16,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using StealthSharp.Enum;
-using StealthSharp.Model;
 using StealthSharp.Network;
 
 namespace StealthSharp.Services
@@ -27,7 +26,7 @@ namespace StealthSharp.Services
         private readonly IStealthService _stealthService;
         private readonly Version SUPPORTED_VERSION = new (8, 11, 4, 0);
         
-        public InternalService(IStealthSharpClient<ushort, uint, ushort> client,
+        public InternalService(IStealthSharpClient client,
             IOptions<StealthOptions> options,
             IStealthService stealthService) : base(client)
         {

@@ -9,14 +9,12 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public struct Group
     {
-        [PacketData(0, 4)] public int GroupNumber { get; set; }
-        [PacketData(4, 4)] public int Page { get; set; }
-        [PacketData(8, 4)] public int ElemNum { get; set; }
+        public int GroupNumber { get; set; }
+        public int Page { get; set; }
+        public int ElemNum { get; set; }
     }
 }

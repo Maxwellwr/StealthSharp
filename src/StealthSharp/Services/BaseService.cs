@@ -15,11 +15,11 @@ namespace StealthSharp.Services
 {
     public abstract class BaseService
     {
-        protected BaseService(IStealthSharpClient<ushort, uint, ushort> client)
+        protected BaseService(IStealthSharpClient client)
         {
             Client = client;
         }
 
-        protected IStealthSharpClient<ushort, uint, ushort> Client { get; }
+        protected IStealthSharpClient Client { get; }
     }
 }

@@ -1,7 +1,7 @@
 #region Copyright
 
 // -----------------------------------------------------------------------
-// <copyright file="ISizable.cs" company="StealthSharp">
+// <copyright file="Packet.cs" company="StealthSharp">
 // Copyright (c) StealthSharp. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,10 +9,18 @@
 
 #endregion
 
+using StealthSharp.Enum;
+using StealthSharp.Serialization;
+
 namespace StealthSharp.Network
 {
-    public interface ISizable<out T> where T : unmanaged
+    [Serializable()]
+    public class PacketHeader
     {
-        T Length { get; }
+        public uint Length { get; set; }
+
+        public PacketType PacketType { get; set; }
+
+        public ushort CorrelationId { get; set; }
     }
 }

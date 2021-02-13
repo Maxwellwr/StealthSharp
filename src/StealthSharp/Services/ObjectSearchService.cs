@@ -19,7 +19,7 @@ namespace StealthSharp.Services
 {
     public class ObjectSearchService : BaseService, IObjectSearchService
     {
-        public ObjectSearchService(IStealthSharpClient<ushort, uint, ushort> client)
+        public ObjectSearchService(IStealthSharpClient client)
             : base(client)
         {
         }

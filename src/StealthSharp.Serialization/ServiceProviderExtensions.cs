@@ -21,12 +21,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection,
             Action<SerializationOptions> configAction)
         {
-            serviceCollection.Configure<SerializationOptions>(configAction);
+            serviceCollection.Configure(configAction);
 
-            serviceCollection.AddSingleton<IBitConvert, BitConvert>();
             serviceCollection.AddSingleton<IReflectionCache, ReflectionCache>();
             serviceCollection.AddSingleton<ICustomConverterFactory, CustomConverterFactory>();
-            serviceCollection.AddTransient<IPacketSerializer, PacketSerializer>();
+            serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>();
+            serviceCollection.AddSingleton<IMarshaler, Marshaler>();
 
             return serviceCollection;
         }

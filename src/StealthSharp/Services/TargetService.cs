@@ -19,7 +19,7 @@ namespace StealthSharp.Services
 {
     public class TargetService : BaseService, ITargetService
     {
-        public TargetService(IStealthSharpClient<ushort, uint, ushort> client)
+        public TargetService(IStealthSharpClient client)
             : base(client)
         {
         }

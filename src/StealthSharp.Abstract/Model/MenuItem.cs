@@ -9,16 +9,14 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class MenuItem
     {
-        [PacketData(0, 2)] public ushort Model { get; set; }
-        [PacketData(2, 2)] public ushort Color { get; set; }
+        public ushort Model { get; set; }
+        public ushort Color { get; set; }
 
-        [PacketData(4, PacketDataType = PacketDataType.Body)]
+        
         public string Text { get; set; }
     }
 }

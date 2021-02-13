@@ -21,7 +21,7 @@ namespace StealthSharp.Services
 {
     public class GumpService : BaseService, IGumpService
     {
-        public GumpService(IStealthSharpClient<ushort, uint, ushort> client)
+        public GumpService(IStealthSharpClient client)
             : base(client)
         {
         }

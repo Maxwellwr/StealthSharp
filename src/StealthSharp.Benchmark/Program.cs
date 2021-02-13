@@ -19,6 +19,7 @@ namespace StealthSharp.Benchmark
         {
             //var serializer = BenchmarkRunner.Run<SerializerBenchmark>();
             var network = BenchmarkRunner.Run<NetworkBenchmark>();
+            //var waitingDictionary = BenchmarkRunner.Run<WaitingDictionaryBenchmark>();
         }
     }
 }

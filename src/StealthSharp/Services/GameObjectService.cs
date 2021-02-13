@@ -21,7 +21,7 @@ namespace StealthSharp.Services
 {
     public class GameObjectService : BaseService, IGameObjectService
     {
-        public GameObjectService(IStealthSharpClient<ushort, uint, ushort> client)
+        public GameObjectService(IStealthSharpClient client)
             : base(client)
         {
         }

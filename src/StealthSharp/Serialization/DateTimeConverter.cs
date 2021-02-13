@@ -14,9 +14,11 @@ namespace StealthSharp.Serialization
     public class DateTimeConverter:ICustomConverter<DateTime>
     {
         private readonly IPacketSerializer _bitConvert;
-        public DateTimeConverter(IPacketSerializer bitConvert)
+        private readonly IMarshaler _marshaler;
+        public DateTimeConverter(IPacketSerializer bitConvert, IMarshaler marshaler)
         {
             _bitConvert = bitConvert;
+            _marshaler = marshaler;
         }
         
         public bool TryConvertToBytes(object? propertyValue, in Span<byte> span, Endianness endianness = Endianness.LittleEndian)
@@ -53,6 +55,11 @@ namespace StealthSharp.Serialization
                 return false;
             }
             return true;
+        }
+
+        public int SizeOf(object? propertyValue)
+        {
+            return _marshaler.SizeOf(typeof(double));
         }
 
         /// <summary>

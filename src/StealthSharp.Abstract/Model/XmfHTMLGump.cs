@@ -9,20 +9,18 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class XmfHTMLGump
     {
-        [PacketData(0, 4)] public int X { get; set; }
-        [PacketData(4, 4)] public int Y { get; set; }
-        [PacketData(8, 4)] public int Width { get; set; }
-        [PacketData(12, 4)] public int Height { get; set; }
-        [PacketData(16, 4)] public uint ClilocId { get; set; }
-        [PacketData(20, 4)] public int Background { get; set; }
-        [PacketData(24, 4)] public int Scrollbar { get; set; }
-        [PacketData(28, 4)] public int Page { get; set; }
-        [PacketData(32, 4)] public int ElemNum { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public uint ClilocId { get; set; }
+        public int Background { get; set; }
+        public int Scrollbar { get; set; }
+        public int Page { get; set; }
+        public int ElemNum { get; set; }
     }
 }

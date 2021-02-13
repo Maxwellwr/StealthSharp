@@ -9,8 +9,6 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     /// <summary>
@@ -18,11 +16,11 @@ namespace StealthSharp.Model
     /// </summary>
     public class LandTileData
     {
-        [PacketData(0, 4)] public uint Flags { get; set; }
-        [PacketData(4, 4)] public uint Flags2 { get; set; }
-        [PacketData(8, 2)] public ushort TextureId { get; set; }
+        public uint Flags { get; set; }
+        public uint Flags2 { get; set; }
+        public ushort TextureId { get; set; }
 
-        [PacketData(10, PacketDataType = PacketDataType.Body)]
+        
         public string Name { get; set; }
     }
 }

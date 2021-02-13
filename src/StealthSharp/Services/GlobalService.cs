@@ -17,7 +17,7 @@ namespace StealthSharp.Services
 {
     public class GlobalService : BaseService, IGlobalService
     {
-        public GlobalService(IStealthSharpClient<ushort, uint, ushort> client)
+        public GlobalService(IStealthSharpClient client)
             : base(client)
         {
         }

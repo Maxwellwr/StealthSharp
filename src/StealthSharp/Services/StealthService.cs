@@ -9,7 +9,6 @@
 
 #endregion
 
-using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace StealthSharp.Services
 {
     public class StealthService : BaseService, IStealthService
     {
-        public StealthService(IStealthSharpClient<ushort, uint, ushort> client)
+        public StealthService(IStealthSharpClient client)
             : base(client)
         {
         }

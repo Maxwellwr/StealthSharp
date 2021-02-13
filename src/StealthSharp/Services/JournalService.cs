@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using StealthSharp.Enum;
 using StealthSharp.Network;
@@ -19,7 +18,7 @@ namespace StealthSharp.Services
 {
     public class JournalService : BaseService, IJournalService
     {
-        public JournalService(IStealthSharpClient<ushort, uint, ushort> client)
+        public JournalService(IStealthSharpClient client)
             : base(client)
         {
         }

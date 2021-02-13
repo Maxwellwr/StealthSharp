@@ -17,7 +17,7 @@ namespace StealthSharp.Services
 {
     public class InfoWindowService : BaseService, IInfoWindowService
     {
-        public InfoWindowService(IStealthSharpClient<ushort, uint, ushort> client)
+        public InfoWindowService(IStealthSharpClient client)
             : base(client)
         {
         }

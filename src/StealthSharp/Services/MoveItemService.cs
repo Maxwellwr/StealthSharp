@@ -24,7 +24,7 @@ namespace StealthSharp.Services
         private readonly IObjectSearchService _objectSearchService;
 
         public MoveItemService(
-            IStealthSharpClient<ushort, uint, ushort> client,
+            IStealthSharpClient client,
             
             ICharStatsService charStatsService,
             IGameObjectService gameObjectService,

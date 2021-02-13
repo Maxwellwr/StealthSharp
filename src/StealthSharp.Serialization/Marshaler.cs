@@ -11,47 +11,51 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 using Microsoft.Extensions.Options;
 
 namespace StealthSharp.Serialization
 {
-    public class BitConvert : IBitConvert
+    public class Marshaler: IMarshaler
     {
         private readonly IReflectionCache _reflectionCache;
-
-        public BitConvert(IReflectionCache reflectionCache)
+        private readonly SerializationOptions _serializationOptions;
+        private readonly ICustomConverterFactory? _customConverterFactory;
+        
+        public Marshaler(IReflectionCache? reflectionCache, 
+            IOptions<SerializationOptions>? serializationOptions,
+            ICustomConverterFactory? customConverterFactory)
         {
-            _reflectionCache = reflectionCache;
+            _reflectionCache = reflectionCache ?? throw new ArgumentNullException(nameof(reflectionCache));
+            _customConverterFactory =
+                customConverterFactory ?? throw new ArgumentNullException(nameof(customConverterFactory));
+            _serializationOptions = serializationOptions?.Value ?? new SerializationOptions();
         }
         
         public int SizeOf(object? element)
         {
             if (element is null)
             {
-                throw new ArgumentNullException(nameof(element));
+                return 0;
             }
             else if (element is string s)
             {
-                return SizeOf(typeof(int)) + s.Length * 2;
+                return SizeOf(_serializationOptions.StringSizeType) + s.Length * 2;
             }
             else if (element is IList array)
             {
-                var underlineType = element.GetType()
+                var itemsType = element.GetType()
                     .GetInterfaces()
                     .FirstOrDefault(i => i.IsGenericType && i.Name.StartsWith("IList"))?
                     .GenericTypeArguments
                     .FirstOrDefault();
-                if (underlineType == null)
-                    throw SerializationException.ConverterNotFoundType(
-                        $"Underline type of collection {element.GetType()} not found");
+                if (itemsType == null)
+                    throw SerializationException.CollectionItemTypeNotFoundException(element.GetType().Name);
 
                 return Enumerable.Range(0, array.Count)
-                    .Sum(idx => SizeOf(array[idx])) + SizeOf(typeof(int));
+                    .Sum(idx => SizeOf(array[idx])) + SizeOf(_serializationOptions.ArrayCountType);
             }
             else if (element is ITuple tuple)
             {
@@ -60,33 +64,21 @@ namespace StealthSharp.Serialization
                 {
                     size += SizeOf(tuple[i]);
                 }
-
                 return size;
             }
             else
             {
                 var reflectionMetadata = _reflectionCache.GetMetadata(element.GetType());
-                if (reflectionMetadata == null)
-                    return SizeOf(element.GetType());
-                
-                var bodySize = reflectionMetadata.Contains(PacketDataType.Body)
-                    ? SizeOf( reflectionMetadata[PacketDataType.Body].Get(element))
-                    : 0;
+                if (reflectionMetadata != null)
+                    return  reflectionMetadata.Properties.Sum(p => SizeOf(p.Get(element)));
 
-                var length = bodySize
-                             + reflectionMetadata.MetaLength
-                             + reflectionMetadata.IdLength
-                             + reflectionMetadata.TypeMapperLength;
-
-                if (reflectionMetadata.Contains(PacketDataType.Dynamic))
+                if (_customConverterFactory != null &&
+                    _customConverterFactory.TryGetConverter(element.GetType(), out var converter))
                 {
-                    foreach (var property in reflectionMetadata[PacketDataType.Dynamic].PropertyType.GetProperties())
-                    {
-                        length += SizeOf(property.GetValue(reflectionMetadata[PacketDataType.Dynamic].Get(element)));
-                    }
+                    return converter!.SizeOf(element);
                 }
-
-                return length;
+                
+                return SizeOf(element.GetType());
             }
         }
 
@@ -110,5 +102,17 @@ namespace StealthSharp.Serialization
                 return Marshal.SizeOf(type);
             }
         }
+    }
+
+    public interface IMarshaler
+    {
+        int SizeOf(object? element);
+
+        /// <summary>
+        /// Size of simple types like byte, int, short or Enum underlying type
+        /// </summary>
+        /// <param name="type">Simple type</param>
+        /// <returns>Size in bytes</returns>
+        int SizeOf(Type type);
     }
 }

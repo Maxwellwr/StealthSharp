@@ -20,12 +20,18 @@ namespace StealthSharp.Serialization
         private readonly byte[] _rentedArray;
         private readonly int _size;
         public Memory<byte> Memory => _rentedArray.AsMemory().Slice(0, _size);
-
+        public int Length => _size;
         public SerializationResult(int size)
         {
             _arrayPool = ArrayPool<byte>.Shared;
             _rentedArray = _arrayPool.Rent(size);
             _size = size;
+        }
+
+        public SerializationResult(ReadOnlySequence<byte> sequence)
+        : this((int)sequence.Length)
+        {
+            sequence.CopyTo(_rentedArray);
         }
 
         public void Dispose()

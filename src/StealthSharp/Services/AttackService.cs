@@ -21,7 +21,7 @@ namespace StealthSharp.Services
         private readonly IGameObjectService _gameObjectService;
         
 
-        public AttackService(IStealthSharpClient<ushort, uint, ushort> client, 
+        public AttackService(IStealthSharpClient client, 
             
             ICharStatsService charStatsService,
             IGameObjectService gameObjectService)

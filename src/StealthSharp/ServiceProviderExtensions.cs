@@ -10,7 +10,6 @@
 #endregion
 
 using System;
-using Microsoft.Extensions.Options;
 using StealthSharp;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
@@ -24,15 +23,14 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddStealthSharp(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddStealthSharpClient<ushort, uint, ushort, StealthTypeMapper>(c =>
+            serviceCollection.AddStealthSharpClient(c =>
             {
                 c.ArrayCountType = typeof(uint);
                 c.StringSizeType = typeof(uint);
             });
             serviceCollection.AddSingleton<IPacketCorrelationGenerator<ushort>, PacketCorrelationGenerator>();
             serviceCollection.AddSingleton<ICustomConverter<DateTime>, DateTimeConverter>();
-            serviceCollection.AddTransient(typeof(IPacket<,,,>), typeof(Packet<,,,>));
-            serviceCollection.AddTransient(typeof(IPacket<,,>), typeof(Packet<,,>));
+            //serviceCollection.AddTransient<IPacket, Packet>();
             serviceCollection.AddServices();
             serviceCollection.AddSingleton<Stealth, Stealth>();
             serviceCollection.AddTransient<InternalService, InternalService>();

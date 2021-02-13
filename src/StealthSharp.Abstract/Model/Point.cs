@@ -9,8 +9,6 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     /// <summary>
@@ -18,7 +16,7 @@ namespace StealthSharp.Model
     /// </summary>
     public class Point
     {
-        [PacketData(0, 4)] public int X { get; set; }
-        [PacketData(4, 4)] public int Y { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

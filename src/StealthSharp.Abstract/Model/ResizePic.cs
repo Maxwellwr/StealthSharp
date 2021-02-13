@@ -9,18 +9,16 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class ResizePic
     {
-        [PacketData(0, 4)] public int X { get; set; }
-        [PacketData(4, 4)] public int Y { get; set; }
-        [PacketData(8, 4)] public int GumpId { get; set; }
-        [PacketData(12, 4)] public int Width { get; set; }
-        [PacketData(16, 4)] public int Height { get; set; }
-        [PacketData(20, 4)] public int Page { get; set; }
-        [PacketData(24, 4)] public int ElemNum { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int GumpId { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Page { get; set; }
+        public int ElemNum { get; set; }
     }
 }

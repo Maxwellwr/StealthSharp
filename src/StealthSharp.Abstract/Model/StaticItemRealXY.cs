@@ -9,8 +9,6 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     /// <summary>
@@ -18,10 +16,10 @@ namespace StealthSharp.Model
     /// </summary>
     public class StaticItemRealXY
     {
-        [PacketData(0, 2)] public ushort Tile { get; set; }
-        [PacketData(2, 2)] public ushort X { get; set; }
-        [PacketData(4, 2)] public ushort Y { get; set; }
-        [PacketData(6, 1)] public sbyte Z { get; set; }
-        [PacketData(7, 2)] public ushort Color { get; set; }
+        public ushort Tile { get; set; }
+        public ushort X { get; set; }
+        public ushort Y { get; set; }
+        public sbyte Z { get; set; }
+        public ushort Color { get; set; }
     }
 }

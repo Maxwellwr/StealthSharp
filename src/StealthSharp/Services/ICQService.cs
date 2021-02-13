@@ -17,7 +17,7 @@ namespace StealthSharp.Services
 {
     public class ICQService : BaseService, IICQService
     {
-        public ICQService(IStealthSharpClient<ushort, uint, ushort> client)
+        public ICQService(IStealthSharpClient client)
             : base(client)
         {
         }

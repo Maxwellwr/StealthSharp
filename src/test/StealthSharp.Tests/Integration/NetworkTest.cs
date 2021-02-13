@@ -15,6 +15,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using StealthSharp.Enum;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
 using StealthSharp.Tests.DataGenerators;
@@ -24,25 +25,23 @@ namespace StealthSharp.Tests.Integration
 {
     public class NetworkTest : IDisposable
     {
-        private IStealthSharpClient<ushort, uint, ushort> _client;
+        private IStealthSharpClient _client;
 
         public NetworkTest()
         {
             IServiceCollection services = new ServiceCollection();
             services.AddLogging();
             services.Configure<SerializationOptions>(c => c.ArrayCountType = typeof(uint));
-            services.AddStealthSharpClient<ushort, uint, ushort, StealthTypeMapper>(c =>
+            services.AddStealthSharpClient(c =>
             {
                 c.ArrayCountType = typeof(uint);
                 c.StringSizeType = typeof(uint);
             });
             services.AddSingleton<IPacketCorrelationGenerator<ushort>, PacketCorrelationGenerator>();
             services.AddSingleton<ICustomConverter<DateTime>, DateTimeConverter>();
-            services.AddTransient(typeof(IPacket<,,,>), typeof(TestPacket<,,,>));
-            services.AddTransient(typeof(IPacket<,,>), typeof(TestPacket<,,>));
             var sp = services.BuildServiceProvider();
 
-            _client = sp.GetRequiredService<IStealthSharpClient<ushort, uint, ushort>>();
+            _client = sp.GetRequiredService<IStealthSharpClient>();
         }
 
         [Fact]
@@ -50,13 +49,13 @@ namespace StealthSharp.Tests.Integration
         {
             var port = FindPort();
             _client.Connect(IPAddress.Parse("10.211.55.3"), port);
-            await _client.SendAsync(new TestPacket<ushort, uint, ushort, (byte, byte, byte, byte, byte)>
-                {CorrelationId = 0, TypeId = 5, Body = (3, 2, 2, 0, 1)});
+            await _client.SendAsync(PacketType.SCLangVersion, ((byte)3, (byte)2, (byte)2, (byte)0, (byte)1));
 
-            await _client.SendAsync<AboutData>(new TestPacket<ushort, uint, ushort>
-                {CorrelationId = 1, TypeId = 12});
-            var res = await _client.ReceiveAsync<AboutData>(1);
-            Assert.Equal(new ushort[] {8, 11, 4}, res.Body.StealthVersion);
+            var(result, correlationId) = await _client.SendAsync(
+                PacketType.SCGetStealthInfo);
+            Assert.True(result);
+            var res = await _client.ReceiveAsync<AboutData>(correlationId);
+            Assert.Equal(new ushort[] {8, 11, 4}, res.StealthVersion);
         }
 
         private int FindPort()

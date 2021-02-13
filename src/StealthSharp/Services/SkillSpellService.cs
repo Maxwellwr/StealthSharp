@@ -25,7 +25,7 @@ namespace StealthSharp.Services
         private readonly ICharStatsService _charStatsService;
         private readonly Dictionary<string, int> _skills = new();
 
-        public SkillSpellService(IStealthSharpClient<ushort, uint, ushort> client, 
+        public SkillSpellService(IStealthSharpClient client, 
             ITargetService targetService,
             IObjectSearchService searchService,
             IGameObjectService gameObjectService,

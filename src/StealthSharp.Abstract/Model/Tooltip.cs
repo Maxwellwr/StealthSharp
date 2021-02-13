@@ -9,14 +9,12 @@
 
 #endregion
 
-using StealthSharp.Serialization;
-
 namespace StealthSharp.Model
 {
     public class Tooltip
     {
-        [PacketData(0, 4)] public uint ClilocID { get; set; }
-        [PacketData(4, 4)] public int Page { get; set; }
-        [PacketData(8, 4)] public int ElemNum { get; set; }
+        public uint ClilocID { get; set; }
+        public int Page { get; set; }
+        public int ElemNum { get; set; }
     }
 }

@@ -16,5 +16,6 @@ namespace StealthSharp.Serialization
     public interface ISerializationResult : IDisposable
     {
         Memory<byte> Memory { get; }
+        int Length { get; }
     }
 }

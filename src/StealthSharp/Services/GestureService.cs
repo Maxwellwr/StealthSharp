@@ -17,7 +17,7 @@ namespace StealthSharp.Services
 {
     public class GestureService : BaseService, IGestureService
     {
-        public GestureService(IStealthSharpClient<ushort, uint, ushort> client)
+        public GestureService(IStealthSharpClient client)
             : base(client)
         {
         }

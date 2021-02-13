@@ -16,7 +16,7 @@ namespace StealthSharp.Services
     public class GlobalChatService:BaseService, IGlobalChatService
     {
         public GlobalChatService(
-            IStealthSharpClient<ushort, uint, ushort> client)
+            IStealthSharpClient client)
             : base(client)
         {
         }

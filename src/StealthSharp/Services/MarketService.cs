@@ -18,7 +18,7 @@ namespace StealthSharp.Services
 {
     public class MarketService : BaseService, IMarketService
     {
-        public MarketService(IStealthSharpClient<ushort, uint, ushort> client)
+        public MarketService(IStealthSharpClient client)
             : base(client)
         {
         }
