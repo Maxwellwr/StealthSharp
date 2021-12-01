@@ -12,6 +12,7 @@ jobs:
       NUPKG_FOLDER: nupkg
       PROJECT_FOLDER: src
       NUGET_APIKEY: ${{ secrets.NUGET_TOKEN }}
+      VERSION: ${{ env.GITHUB_REF##*/ }}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
@@ -21,11 +22,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore $PROJECT_FOLDER
     - name: Build
-      run: dotnet build -p:Version=$GITHUB_REF -c Release --no-restore $PROJECT_FOLDER
+      run: dotnet build -p:Version=$VERSION -c Release --no-restore $PROJECT_FOLDER
     - name: Test
       run: dotnet test --no-build --verbosity normal -c Release --filter Category=Unit $PROJECT_FOLDER
     - name: Pack
-      run: dotnet pack -p:Version=$GITHUB_REF -p:PackageOutputPath=../$NUPKG_FOLDER -c Release --no-build --nologo $PROJECT_FOLDER
+      run: dotnet pack -p:Version=$VERSION -p:PackageOutputPath=../$NUPKG_FOLDER -c Release --no-build --nologo $PROJECT_FOLDER
     - name: Deploy
-      run: dotnet nuget push "${PROJECT_FOLDER}/${NUPKG_FOLDER}/*.${GITHUB_REF}.nupkg" -k ${NUGET_APIKEY} 
+      run: dotnet nuget push "${PROJECT_FOLDER}/${NUPKG_FOLDER}/*.${VERSION}.nupkg" -k ${NUGET_APIKEY} 
 
