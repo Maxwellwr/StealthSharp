@@ -12,7 +12,7 @@ jobs:
       NUPKG_FOLDER: nupkg
       PROJECT_FOLDER: src
       NUGET_APIKEY: ${{ secrets.NUGET_TOKEN }}
-      VERSION: ${{ env.GITHUB_REF##*/ }}
+      VERSION: ${{ github.event.release.tag_name }}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
