@@ -28,5 +28,5 @@ jobs:
     - name: Pack
       run: dotnet pack -p:Version=$VERSION -p:PackageOutputPath=../$NUPKG_FOLDER -c Release --no-build --nologo $PROJECT_FOLDER
     - name: Deploy
-      run: dotnet nuget push "${PROJECT_FOLDER}/${NUPKG_FOLDER}/*.${VERSION}.nupkg" -k ${NUGET_APIKEY} 
+      run: dotnet nuget push "${PROJECT_FOLDER}/${NUPKG_FOLDER}/*.${VERSION}.nupkg" -s https://nuget.org -k ${NUGET_APIKEY} 
 
