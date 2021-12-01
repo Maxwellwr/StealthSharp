@@ -4,6 +4,9 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\StealthSharp\StealthSharp.csproj" />

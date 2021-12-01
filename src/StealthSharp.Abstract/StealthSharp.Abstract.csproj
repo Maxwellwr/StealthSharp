@@ -4,14 +4,11 @@
         <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>StealthSharp</RootNamespace>
         <Nullable>enable</Nullable>
-        <PackageVersion>1.0.0.0</PackageVersion>
         <PackageProjectUrl>https://github.com/Maxwellwr/StealthSharp</PackageProjectUrl>
         <PackageLicenseUrl>https://raw.githubusercontent.com/Maxwellwr/StealthSharp/main/LICENSE</PackageLicenseUrl>
         <PackageIconUrl>data:image/x-icon;base64,AAABAAEAICAIAAAAAADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3d3cAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAAAAAABwAAAAAAAAAAAAAAAAB3cAcAAAAAAAAAAAAHcHAAd3AHAABwAAAAAAAAdwAHAHhwAAAABwAAAAAAB3CAAAd4dwAAcABwAAAAAAcIiAd3d3d3B3cABwAAAAAAj4iHf///B3iHcAcAAAAAAAiIiPiIiP8IhwBwAAAAAAAAiAiIh3d48HAAcAAAAAd3CIiIiAAHd493AHd3cABwAAjwiAB3dwd/BwAAAHAHAACPCIgIAAd3ePdwAABwBwiIjwiA8I+AcHj3d3cAcAcI+I8HgPBw8HB494h3AHAHCIiPB4Dwd4BwiPd3dwBwBwAAjweI/wAICIj3cAAAcAAAAAjweA//8AiPdwBwAAAAAAAI8HeIAAiIiHcAcAAAAAAAAI8HeIiIiAhwAHAAAAAAAAiP8Ad3iAiIhwAHAAAAAACPiI/wAAD4eIdwBwAAAAAHCPgIj///iAeHAHAAAAAAB3CAAAiIiAAAcAcAAAAAAAB3AHAAiIAHAABwAAAAAAAAB3cAAI+ABwAHAAAAAAAAAAAAAACIgAcAAAAAAAAAAAAAAAAAAAAHAAAAAAAAAAAAAAAAB3d3dwAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////wP///8D///+A////gP//4YDn/8AAQ/+AAAH/gAAA/4AAAP/AAAH/4AAB/gAAABwAAAAYAAAAGAAAABgAAAAYAAAAGAAAAB/AAAH/wAAB/+AAAf/AAAD/gAAA/4AAAf+AAAP/wYDH/+OA7///gP///4D///+A///////w==</PackageIconUrl>
         <RepositoryUrl>https://github.com/Maxwellwr/StealthSharp</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
-        <FileVersion>1.0.0.0</FileVersion>
         <Title>Stealth Sharp Abstract</Title>
         <Description>This library contains a wrapper for Stealth</Description>
     </PropertyGroup>
