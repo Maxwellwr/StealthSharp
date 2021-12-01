@@ -19,11 +19,37 @@ namespace StealthSharp.Model
     [Serialization.Serializable()]
     public class AboutData
     {
-         public ushort[] StealthVersion { get; set; } = new ushort[0];
-         public ushort Build { get; set; }
-         public DateTime BuildDate { get; set; }
-         public ushort GitRevNumber { get; set; }
+        public ushort[] StealthVersion { get; set; } = new ushort[0];
+        public ushort Build { get; init; }
+        public DateTime BuildDate { get; init; }
+        public ushort GitRevNumber { get; init; }
+        public string? GitRevision { get; set; }
         
-        public string GitRevision { get; set; } = "";
+        protected bool Equals(AboutData other)
+        {
+            return Build == other.Build && BuildDate.Equals(other.BuildDate) && GitRevNumber == other.GitRevNumber;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((AboutData) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Build, BuildDate, GitRevNumber);
+        }
+
+        public static bool operator ==(AboutData left, AboutData right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(AboutData left, AboutData right)
+        {
+            return !Equals(left, right);
+        }
     }
 }

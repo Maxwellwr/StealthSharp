@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 

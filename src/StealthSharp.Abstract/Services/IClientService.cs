@@ -10,7 +10,7 @@
 #endregion
 
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 
 namespace StealthSharp.Services
 {
@@ -20,7 +20,7 @@ namespace StealthSharp.Services
 
         Task ClientPrintAsync(string text);
 
-        Task ClientPrintExAsync(uint senderID, ushort color, ushort font, string text);
+        Task ClientPrintExAsync(uint senderId, ushort color, ushort font, string text);
 
         Task CloseClientUIWindowAsync(UIWindowType uIWindowType, uint iD);
 

@@ -11,7 +11,7 @@
 
 using System;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 
 namespace StealthSharp
@@ -24,16 +24,16 @@ namespace StealthSharp
         
         public static async Task<TResult> SendPacketAsync<TBody, TResult>(this IStealthSharpClient client, PacketType packetType, TBody? body)
         {
-            var (status, correlationId) = await client.SendAsync(packetType, body);
+            var (status, correlationId) = await client.SendAsync(packetType, body).ConfigureAwait(false);
             if (!status)
                 throw new InvalidOperationException("Fail to send packet");
-            var recv = await client.ReceiveAsync<TResult>(correlationId);
+            var recv = await client.ReceiveAsync<TResult>(correlationId).ConfigureAwait(false);
             return recv;
         }
         
         public static async Task SendPacketAsync<TBody>(this IStealthSharpClient client, PacketType packetType, TBody? body)
         {
-            var (status, _) = await client.SendAsync(packetType, body);
+            var (status, _) = await client.SendAsync(packetType, body).ConfigureAwait(false);
             if (!status)
                 throw new InvalidOperationException("Fail to send packet");
         }

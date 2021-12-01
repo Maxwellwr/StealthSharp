@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -28,15 +28,15 @@ namespace StealthSharp.Services
 
         public async Task<ushort> GetGumpsCountAsync()
         {
-            return unchecked((ushort)await Client.SendPacketAsync<uint>(PacketType.SCGetGumpsCount));
+            return await Client.SendPacketAsync<ushort>(PacketType.SCGetGumpsCount).ConfigureAwait(false);
         }
 
         public async Task<bool> GetIsGumpAsync()
         {
-            return (await GetGumpsCountAsync()) > 0;
+            return (await GetGumpsCountAsync().ConfigureAwait(false)) > 0;
         }
 
-        public Task AddGumpIgnoreByIDAsync(uint id)
+        public Task AddGumpIgnoreByIdAsync(uint id)
         {
             return Client.SendPacketAsync(PacketType.SCAddGumpIgnoreByID, id);
         }
@@ -71,7 +71,7 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort, List<string>>(PacketType.SCGetGumpFullLines, gumpIndex);
         }
 
-        public Task<uint> GetGumpIDAsync(ushort gumpIndex)
+        public Task<uint> GetGumpIdAsync(ushort gumpIndex)
         {
             return Client.SendPacketAsync<ushort, uint>(PacketType.SCGetGumpID, gumpIndex);
         }
@@ -113,7 +113,7 @@ namespace StealthSharp.Services
 
         public async Task<bool> IsGumpCanBeClosedAsync(ushort gumpIndex)
         {
-            return !await Client.SendPacketAsync<ushort, bool>(PacketType.SCGetGumpNoClose, gumpIndex);
+            return !await Client.SendPacketAsync<ushort, bool>(PacketType.SCGetGumpNoClose, gumpIndex).ConfigureAwait(false);
         }
 
         public Task<bool> NumGumpButtonAsync(ushort gumpIndex, int value)
@@ -143,7 +143,7 @@ namespace StealthSharp.Services
         {
             if (!string.IsNullOrEmpty(value))
             {
-                await WaitGumpAsync(BitConverter.ToInt32(Encoding.Unicode.GetBytes(value.Trim()), 0));
+                await WaitGumpAsync(BitConverter.ToInt32(Encoding.Unicode.GetBytes(value.Trim()), 0)).ConfigureAwait(false);
             }
         }
 

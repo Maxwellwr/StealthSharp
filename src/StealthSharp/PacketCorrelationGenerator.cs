@@ -13,7 +13,7 @@ namespace StealthSharp
 {
     public class PacketCorrelationGenerator: IPacketCorrelationGenerator<ushort>
     {
-        private ushort _nextId = 0;
+        private ushort _nextId;
 
         public ushort GetNextCorrelationId()
         {

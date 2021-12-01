@@ -9,20 +9,10 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Drenalol.WaitingDictionary;
-using Microsoft.Diagnostics.Runtime.ICorDebug;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Moq;
-using StealthSharp.Model;
-using StealthSharp.Serialization;
-using StealthSharp.Services;
 
 namespace StealthSharp.Benchmark
 {

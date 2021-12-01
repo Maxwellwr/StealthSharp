@@ -50,7 +50,7 @@ namespace StealthSharp.Services
 
         Task<int> ChangeProfileAsync(string name, string shardName, string charName);
 
-        Task<bool> CheckLagAsync(int timeoutMS);
+        Task<bool> CheckLagAsync(int timeoutMs);
 
         Task CheckLagBeginAsync();
 

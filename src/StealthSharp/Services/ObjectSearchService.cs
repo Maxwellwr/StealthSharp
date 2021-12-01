@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -106,20 +106,20 @@ namespace StealthSharp.Services
 
         public async Task<int> CountAsync(ushort objType)
         {
-            await FindTypeAsync(objType, await GetBackpackAsync());
-            return await GetFindFullQuantityAsync();
+            await FindTypeAsync(objType, await GetBackpackAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            return await GetFindFullQuantityAsync().ConfigureAwait(false);
         }
 
         public async Task<int> CountExAsync(ushort objType, ushort color, uint container)
         {
-            await FindTypeExAsync(objType, color, container, false);
-            return await GetFindFullQuantityAsync();
+            await FindTypeExAsync(objType, color, container, false).ConfigureAwait(false);
+            return await GetFindFullQuantityAsync().ConfigureAwait(false);
         }
 
         public async Task<int> CountGroundAsync(ushort objType)
         {
-            await FindTypeAsync(objType, await GetGroundAsync());
-            return await GetFindFullQuantityAsync();
+            await FindTypeAsync(objType, await GetGroundAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            return await GetFindFullQuantityAsync().ConfigureAwait(false);
         }
 
         public Task<uint> FindAtCoordAsync(ushort x, ushort y)

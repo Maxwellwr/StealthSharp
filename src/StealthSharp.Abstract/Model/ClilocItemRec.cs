@@ -13,11 +13,12 @@ using System.Collections.Generic;
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class ClilocItemRec
     {
-        public uint ClilocID { get; set; }
+        public uint ClilocId { get; set; }
 
-        
-        public List<string> Params { get; set; }
+
+        public List<string> Params { get; set; } = new();
     }
 }

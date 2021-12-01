@@ -36,11 +36,11 @@ namespace StealthSharp.Services
         ///     <example>
         ///         IAttackService _attack;
         ///         uint _enemy;
-        ///         if (_attack.WarTargetID <> _enemy) then
+        ///         if (_attack.WarTargetID != _enemy) then
         ///         _attack.Attack(_enemy);
         ///     </example>
         /// </summary>
-        Task<uint> GetWarTargetIDAsync();
+        Task<uint> GetWarTargetIdAsync();
 
         /// <summary>
         ///     Throw an attack on the object ObjdID.
@@ -49,7 +49,7 @@ namespace StealthSharp.Services
         /// <example>
         ///     IAttackService _attack;
         ///     uint _enemy;
-        ///     if (_attack.WarTargetID. <> _enemy) then
+        ///     if (_attack.WarTargetID. != _enemy) then
         ///     _attack.Attack(_enemy);
         /// </example>
         /// <param name="attackedId">Object for attack</param>

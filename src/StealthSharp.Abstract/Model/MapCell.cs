@@ -14,6 +14,7 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Map Cell.
     /// </summary>
+    [Serialization.Serializable()]
     public struct MapCell
     {
         public ushort Tile { get; set; }

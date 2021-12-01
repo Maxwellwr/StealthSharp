@@ -11,6 +11,7 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class XmfHTMLTok
     {
         public int X { get; set; }
@@ -25,6 +26,6 @@ namespace StealthSharp.Model
         public int ElemNum { get; set; }
 
         
-        public string Arguments { get; set; }
+        public string Arguments { get; set; } = string.Empty;
     }
 }

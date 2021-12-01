@@ -9,10 +9,11 @@
 
 #endregion
 
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class IdMapFigure
     {
         public uint Id { get; set; }
@@ -25,6 +26,6 @@ namespace StealthSharp.Model
         public uint BrushColor { get; set; }
         public BrushStyle BrushStyle { get; set; }
         public uint Color { get; set; }
-         public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
     }
 }

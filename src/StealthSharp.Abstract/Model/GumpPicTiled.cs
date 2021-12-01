@@ -11,6 +11,7 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class GumpPicTiled
     {
         public int X { get; set; }

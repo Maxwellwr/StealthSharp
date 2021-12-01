@@ -10,7 +10,9 @@
 #endregion
 
 using System;
+using StealthSharp.Event;
 using StealthSharp.Serialization;
+using StealthSharp.Serialization.Converters;
 
 // ReSharper disable CheckNamespace Microsoft DI Extension methods recommend to place in Microsoft namespace https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage#register-services-for-di  
 namespace Microsoft.Extensions.DependencyInjection
@@ -25,13 +27,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
             serviceCollection.AddSingleton<IReflectionCache, ReflectionCache>();
             serviceCollection.AddSingleton<ICustomConverterFactory, CustomConverterFactory>();
-            serviceCollection.AddSingleton<IPacketSerializer, PacketSerializer>();
             serviceCollection.AddSingleton<IMarshaler, Marshaler>();
 
+            return serviceCollection.AddDefaultConverters();
+        }
+
+        private static IServiceCollection AddDefaultConverters(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddSingleton<ICustomConverter<DateTime>, DateTimeConverter>();
+            serviceCollection.AddSingleton(typeof(ICustomConverter<ServerEventData>), typeof(ServerEventDataConverter));
             return serviceCollection;
         }
 
         public static IServiceCollection AddStealthSharpSerialization(this IServiceCollection serviceCollection)
-            => AddStealthSharpSerialization(serviceCollection, opt => { });
+            => AddStealthSharpSerialization(serviceCollection, _ => { });
     }
 }

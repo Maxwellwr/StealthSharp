@@ -14,6 +14,7 @@ namespace StealthSharp.Model
     /// <summary>
     ///     StaticItemRealXY.
     /// </summary>
+    [Serialization.Serializable()]
     public class StaticItemRealXY
     {
         public ushort Tile { get; set; }

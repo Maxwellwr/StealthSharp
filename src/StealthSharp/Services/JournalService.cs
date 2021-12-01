@@ -11,7 +11,7 @@
 
 using System;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 
 namespace StealthSharp.Services
@@ -23,7 +23,7 @@ namespace StealthSharp.Services
         {
         }
 
-        public Task<int> GetFoundedParamIDAsync()
+        public Task<int> GetFoundedParamIdAsync()
         {
             return Client.SendPacketAsync<int>(PacketType.SCGetFoundedParamID);
         }
@@ -43,7 +43,7 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<int>(PacketType.SCGetLineCount);
         }
 
-        public Task<uint> GetLineIDAsync()
+        public Task<uint> GetLineIdAsync()
         {
             return Client.SendPacketAsync<uint>(PacketType.SCGetLineID);
         }
@@ -153,14 +153,14 @@ namespace StealthSharp.Services
              return Client.SendPacketAsync(PacketType.SCSetJournalLine, (stringIndex, text));
         }
 
-        public async Task<bool> WaitJournalLineAsync(DateTime startTime, string str, int maxWaitTimeMS = 0)
+        public async Task<bool> WaitJournalLineAsync(DateTime startTime, string str, int maxWaitTimeMs = 0)
         {
-            var infinite = maxWaitTimeMS <= 0;
-            var stopTime = startTime.AddMilliseconds(maxWaitTimeMS);
+            var infinite = maxWaitTimeMs <= 0;
+            var stopTime = startTime.AddMilliseconds(maxWaitTimeMs);
 
             do
             {
-                if (await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime) >= 0)
+                if (await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime).ConfigureAwait(false) >= 0)
                 {
                     return true;
                 }
@@ -169,15 +169,15 @@ namespace StealthSharp.Services
             return false;
         }
 
-        public async Task<bool> WaitJournalLineSystemAsync(DateTime startTime, string str, int maxWaitTimeMS = 0)
+        public async Task<bool> WaitJournalLineSystemAsync(DateTime startTime, string str, int maxWaitTimeMs = 0)
         {
-            var infinite = maxWaitTimeMS <= 0;
-            var stopTime = startTime.AddMilliseconds(maxWaitTimeMS);
+            var infinite = maxWaitTimeMs <= 0;
+            var stopTime = startTime.AddMilliseconds(maxWaitTimeMs);
 
             do
             {
-                if ((await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime) >= 0)
-                    && (await GetLineNameAsync()).Equals("System"))
+                if ((await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime).ConfigureAwait(false) >= 0)
+                    && (await GetLineNameAsync().ConfigureAwait(false)).Equals("System"))
                 {
                     return true;
                 }

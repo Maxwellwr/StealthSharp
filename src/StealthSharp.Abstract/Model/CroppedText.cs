@@ -11,6 +11,7 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class CroppedText
     {
         public int X { get; set; }

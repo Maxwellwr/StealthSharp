@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -51,18 +51,18 @@ namespace StealthSharp.Services
             var lh = true;
             var rh = true;
 
-            var objId = await ObjAtLayerExAsync(Layer.LHand, await _charStatsService.GetSelfAsync());
+            var objId = await ObjAtLayerExAsync(Layer.LHand, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (objId != 0)
             {
-                lh = await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync(), 0xff,
-                    0xff, 0);
+                lh = await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false), 0xff,
+                    0xff, 0).ConfigureAwait(false);
             }
 
-            objId = await ObjAtLayerExAsync(Layer.RHand, await _charStatsService.GetSelfAsync());
+            objId = await ObjAtLayerExAsync(Layer.RHand, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (objId != 0)
             {
-                rh = await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync(), 0xff,
-                    0xff, 0);
+                rh = await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false), 0xff,
+                    0xff, 0).ConfigureAwait(false);
             }
 
             return lh && rh;
@@ -80,33 +80,33 @@ namespace StealthSharp.Services
                 return false;
             }
 
-            if (!await _moveItemService.DragItemAsync(objId, 1))
+            if (!await _moveItemService.DragItemAsync(objId, 1).ConfigureAwait(false))
             {
                 return false;
             }
 
             Thread.Sleep(20);
 
-            return await WearItemAsync(layer, objId);
+            return await WearItemAsync(layer, objId).ConfigureAwait(false);
         }
 
         public async Task<bool> EquipDressSetAsync()
         {
             var result = true;
-            var clientVersion = await Client.SendPacketAsync<int>(PacketType.SCGetClientVersionInt);
+            var clientVersion = await Client.SendPacketAsync<int>(PacketType.SCGetClientVersionInt).ConfigureAwait(false);
             if (clientVersion < 7007400)
             {
-                var delay = await GetDressSpeedAsync();
-                var data = await Client.SendPacketAsync<List<LayerObject>>(PacketType.SCGetDressSet);
+                var delay = await GetDressSpeedAsync().ConfigureAwait(false);
+                var data = await Client.SendPacketAsync<List<LayerObject>>(PacketType.SCGetDressSet).ConfigureAwait(false);
                 foreach (var item in data)
                 {
-                    result &= await EquipAsync(item.Layer, item.ItemId);
+                    result &= await EquipAsync(item.Layer, item.ItemId).ConfigureAwait(false);
                     Thread.Sleep(delay * 1000);
                 }
             }
             else
             {
-                await Client.SendPacketAsync(PacketType.SCEquipItemsSetMacro);
+                await Client.SendPacketAsync(PacketType.SCEquipItemsSetMacro).ConfigureAwait(false);
             }
 
             return result;
@@ -114,18 +114,18 @@ namespace StealthSharp.Services
 
         public async Task<bool> EquiptAsync(Layer layer, ushort objType)
         {
-            var obj = await _objectSearchService.FindTypeAsync(objType, await _objectSearchService.GetBackpackAsync());
+            var obj = await _objectSearchService.FindTypeAsync(objType, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (obj == 0 || !System.Enum.IsDefined(typeof(Layer), layer))
             {
                 return false;
             }
 
-            if (!await _moveItemService.DragItemAsync(obj, 1))
+            if (!await _moveItemService.DragItemAsync(obj, 1).ConfigureAwait(false))
             {
                 return false;
             }
 
-            return await WearItemAsync(layer, obj);
+            return await WearItemAsync(layer, obj).ConfigureAwait(false);
         }
 
         public Task<Layer> GetLayerAsync(uint objId)
@@ -135,7 +135,7 @@ namespace StealthSharp.Services
 
         public async Task<uint> ObjAtLayerAsync(Layer layer)
         {
-            return await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync());
+            return await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         public Task<uint> ObjAtLayerExAsync(Layer layer, uint playerId)
@@ -156,21 +156,21 @@ namespace StealthSharp.Services
         public async Task<bool> UndressAsync()
         {
             var result = true;
-            var clientVersion = await Client.SendPacketAsync<int>(PacketType.SCGetClientVersionInt);
+            var clientVersion = await Client.SendPacketAsync<int>(PacketType.SCGetClientVersionInt).ConfigureAwait(false);
             if (clientVersion < 7007400)
             {
                 foreach (Layer layer in System.Enum.GetValues(typeof(Layer)))
                 {
-                    if (await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync()) > 0)
+                    if (await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false) > 0)
                     {
-                        result &= await UnequipAsync(layer);
-                        Thread.Sleep(await GetDressSpeedAsync() * 1000);
+                        result &= await UnequipAsync(layer).ConfigureAwait(false);
+                        Thread.Sleep(await GetDressSpeedAsync().ConfigureAwait(false) * 1000);
                     }
                 }
             }
             else
             {
-                await Client.SendPacketAsync(PacketType.SCUnequipItemsSetMacro);
+                await Client.SendPacketAsync(PacketType.SCUnequipItemsSetMacro).ConfigureAwait(false);
             }
 
             return result;
@@ -183,21 +183,19 @@ namespace StealthSharp.Services
                 return false;
             }
 
-            var objId = await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync());
+            var objId = await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (objId != 0)
             {
-                return await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync(), 0,
-                    0, 0);
+                return await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false), 0,
+                    0, 0).ConfigureAwait(false);
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public async Task<bool> WearItemAsync(Layer layer, uint objId)
         {
-            if (await _moveItemService.GetPickedUpItemAsync() == 0)
+            if (await _moveItemService.GetPickedUpItemAsync().ConfigureAwait(false) == 0)
             {
                 return false;
             }
@@ -207,15 +205,15 @@ namespace StealthSharp.Services
                 return false;
             }
 
-            if (await _charStatsService.GetSelfAsync() == 0x00)
+            if (await _charStatsService.GetSelfAsync().ConfigureAwait(false) == 0x00)
             {
                 return false;
             }
 
-            await Client.SendPacketAsync(PacketType.SCWearItem, (layer, objId));
-            await _moveItemService.SetPickedUpItemAsync(0);
+            await Client.SendPacketAsync(PacketType.SCWearItem, (layer, objId)).ConfigureAwait(false);
+            await _moveItemService.SetPickedUpItemAsync(0).ConfigureAwait(false);
             Thread.Sleep(1000);
-            var objAtLayer = await ObjAtLayerAsync(layer);
+            var objAtLayer = await ObjAtLayerAsync(layer).ConfigureAwait(false);
             return objAtLayer == objId;
         }
     }

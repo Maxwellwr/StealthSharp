@@ -17,7 +17,8 @@ namespace StealthSharp
     public class Stealth
     {
         private readonly IServiceProvider _serviceProvider;
-        
+
+        public IEventSystemService EventSystem => _serviceProvider.GetRequiredService<IEventSystemService>();
         public IConnectionService Connection => _serviceProvider.GetRequiredService<IConnectionService>();
 
         public IClientService Client => _serviceProvider.GetRequiredService<IClientService>();
@@ -54,7 +55,7 @@ namespace StealthSharp
         public async Task ConnectToStealthAsync()
         {
             var internalService = _serviceProvider.GetRequiredService<InternalService>();
-            await internalService.ConnectToStealthAsync();
+            await internalService.ConnectToStealthAsync().ConfigureAwait(false);
         }
     }
 }

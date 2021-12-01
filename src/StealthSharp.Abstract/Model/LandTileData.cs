@@ -14,13 +14,14 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Land Tile Data.
     /// </summary>
+    [Serialization.Serializable()]
     public class LandTileData
     {
         public uint Flags { get; set; }
         public uint Flags2 { get; set; }
         public ushort TextureId { get; set; }
 
-        
-        public string Name { get; set; }
+
+        public string Name { get; set; } = string.Empty;
     }
 }

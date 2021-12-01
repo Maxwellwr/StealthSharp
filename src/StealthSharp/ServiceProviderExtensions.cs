@@ -9,10 +9,8 @@
 
 #endregion
 
-using System;
 using StealthSharp;
 using StealthSharp.Network;
-using StealthSharp.Serialization;
 using StealthSharp.Services;
 
 // ReSharper disable CheckNamespace Microsoft DI Extension methods recommend to place in Microsoft namespace https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage#register-serviceCollection-for-di  
@@ -29,8 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 c.StringSizeType = typeof(uint);
             });
             serviceCollection.AddSingleton<IPacketCorrelationGenerator<ushort>, PacketCorrelationGenerator>();
-            serviceCollection.AddSingleton<ICustomConverter<DateTime>, DateTimeConverter>();
-            //serviceCollection.AddTransient<IPacket, Packet>();
+            
             serviceCollection.AddServices();
             serviceCollection.AddSingleton<Stealth, Stealth>();
             serviceCollection.AddTransient<InternalService, InternalService>();
@@ -44,12 +41,11 @@ namespace Microsoft.Extensions.DependencyInjection
             serviceCollection.AddTransient<IClientService, ClientService>();
             serviceCollection.AddTransient<IConnectionService, ConnectionService>();
             serviceCollection.AddTransient<IContextMenuService, ContextMenuService>();
-            //serviceCollection.AddSingleton<IEventSystemService, EventSystemService>();
+            serviceCollection.AddSingleton<IEventSystemService, EventSystemService>();
             serviceCollection.AddTransient<IGameObjectService, GameObjectService>();
             serviceCollection.AddTransient<IGestureService, GestureService>();
             serviceCollection.AddTransient<IGlobalService, GlobalService>();
             serviceCollection.AddTransient<IGumpService, GumpService>();
-            serviceCollection.AddTransient<IICQService, ICQService>();
             serviceCollection.AddTransient<IInfoWindowService, InfoWindowService>();
             serviceCollection.AddTransient<IJournalService, JournalService>();
             serviceCollection.AddTransient<ILayerService, LayerService>();

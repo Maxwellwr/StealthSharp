@@ -10,7 +10,7 @@
 #endregion
 
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 
 namespace StealthSharp.Services
 {

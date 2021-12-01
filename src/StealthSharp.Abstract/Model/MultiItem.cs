@@ -11,9 +11,10 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class MultiItem
     {
-        public uint ID { get; set; }
+        public uint Id { get; set; }
         public ushort X { get; set; }
         public ushort Y { get; set; }
         public sbyte Z { get; set; }

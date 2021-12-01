@@ -11,7 +11,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 
 namespace StealthSharp.Services
@@ -49,9 +49,9 @@ namespace StealthSharp.Services
         Task ClearBadLocationListAsync();
         Task ClearBadObjectListAsync();
         ushort Dist(ushort x1, ushort y1, ushort x2, ushort y2);
-        Task<List<MyPoint>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy);
+        Task<List<WorldPoint3D>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy);
 
-        Task<List<MyPoint>> GetPathArray3DAsync(PathReqeust pathReqeust);
+        Task<List<WorldPoint3D>> GetPathArray3DAsync(PathReqeust pathReqeust);
 
         Task<uint> GetLastStepQUsedDoorAsync();
         Task<bool> MoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running);

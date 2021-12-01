@@ -11,6 +11,7 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class TilePicture
     {
         public int X { get; set; }

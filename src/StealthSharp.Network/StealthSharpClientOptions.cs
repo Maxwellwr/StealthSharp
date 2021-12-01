@@ -20,43 +20,29 @@ namespace StealthSharp.Network
         ///     Represents a set of options for controlling the creation of the <see cref="PipeReader" /> for the
         ///     <see cref="NetworkStream" />.
         /// </summary>
-        public StreamPipeReaderOptions StreamPipeReaderOptions { get; set; }
+        public StreamPipeReaderOptions StreamPipeReaderOptions { get; init; } = new();
 
         /// <summary>
         ///     Represents a set of options for controlling the creation of the <see cref="PipeWriter" /> for the
         ///     <see cref="NetworkStream" />.
         /// </summary>
-        public StreamPipeWriterOptions StreamPipeWriterOptions { get; set; }
+        public StreamPipeWriterOptions StreamPipeWriterOptions { get; init; } = new();
 
         /// <summary>
         ///     Gets or sets the amount of time a <see cref="TcpClient" /> will wait for a send operation to complete successfully.
         /// </summary>
-        public int TcpClientSendTimeout { get; set; }
+        public int TcpClientSendTimeout { get; init; }
 
         /// <summary>
         ///     Gets or sets the amount of time a <see cref="TcpClient" /> will wait to receive data once a read operation is
         ///     initiated.
         /// </summary>
-        public int TcpClientReceiveTimeout { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a value about sorting in reverse order for all byte arrays of primitive values.
-        /// </summary>
-        public bool PrimitiveValueReverse { get; set; }
-
-        /// <summary>
-        ///     Gets or sets a <see cref="TcpConverter" /> collection that will be used during serialization.
-        /// </summary>
-        // public IList<TcpConverter> Converters { get; set; }
-        public StealthSharpClientOptions()
-        {
-            // Converters = new List<TcpConverter>();
-        }
+        public int TcpClientReceiveTimeout { get; init; }
 
         /// <summary>
         ///     Gets default options
         ///     <returns>
-        ///         <see cref="TcpClientIoOptions" />
+        ///         <see cref="StealthSharpClientOptions" />
         ///     </returns>
         /// </summary>
         public static StealthSharpClientOptions Default => new()
@@ -66,15 +52,5 @@ namespace StealthSharp.Network
             TcpClientSendTimeout = 60000,
             TcpClientReceiveTimeout = 60000
         };
-
-        /// <summary>
-        /// Register converter
-        /// </summary>
-        /// <param name="tcpConverter"></param>
-        // public StealthSharpClientOptions RegisterConverter(TcpConverter tcpConverter)
-        // {
-        //     Converters.Add(tcpConverter);
-        //     return this;
-        // }
     }
 }

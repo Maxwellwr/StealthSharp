@@ -11,7 +11,8 @@
 
 namespace StealthSharp.Model
 {
-    public struct GumpButton
+    [Serialization.Serializable()]
+    public class GumpButton
     {
         public int X { get; set; }
         public int Y { get; set; }

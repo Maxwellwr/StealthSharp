@@ -14,6 +14,7 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Extended Info.
     /// </summary>
+    [Serialization.Serializable()]
     public class ExtendedInfo
     {
         public ushort MaxWeight { get; set; }

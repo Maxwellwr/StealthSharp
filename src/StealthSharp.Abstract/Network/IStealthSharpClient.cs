@@ -14,16 +14,17 @@ using System.IO.Pipelines;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
+using StealthSharp.Event;
 
 namespace StealthSharp.Network
 {
-    public interface IStealthSharpClient : IDisposable, IDuplexPipe
+    public interface IStealthSharpClient : IDisposable, IDuplexPipe, IObservable<ServerEventData>
     {
         void Connect(IPAddress address, int port);
 
         /// <summary>
-        ///     Serialize and sends data asynchronously to a connected <see cref="StealthSharpClient" /> object.
+        ///     Serialize and sends data asynchronously to a connected <see cref="IStealthSharpClient" /> object.
         /// </summary>
         /// <param name="packetType"></param>
         /// <param name="body"></param>
@@ -31,21 +32,21 @@ namespace StealthSharp.Network
         /// <returns>
         ///     <see cref="bool" />
         /// </returns>
-        /// <exception cref="StealthSharp.Network.StealthSharpClientException"></exception>
+        /// <exception cref="StealthSharpException"></exception>
         Task<(bool status, ushort correlationId)> SendAsync(PacketType packetType,
             object? body = null,
             CancellationToken token = default);
 
         /// <summary>
         ///     Begins an asynchronous request to receive response associated with the specified ID from a
-        ///     connected <see cref="StealthSharpClient{TId, TSize, TMapping}" /> object.
+        ///     connected <see cref="IStealthSharpClient" /> object.
         /// </summary>
         /// <param name="responseId"></param>
         /// <param name="token"></param>
         /// <returns>
-        ///     <see cref="IPacket{TId, TSize, TMapping, TBody}" />
+        ///     <see cref="Task{TResult}" />
         /// </returns>
-        /// <exception cref="StealthSharpClientException"></exception>
+        /// <exception cref="StealthSharpException"></exception>
         Task<TBody> ReceiveAsync<TBody>(ushort responseId,
             CancellationToken token = default);
     }

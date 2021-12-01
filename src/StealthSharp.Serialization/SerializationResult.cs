@@ -14,18 +14,18 @@ using System.Buffers;
 
 namespace StealthSharp.Serialization
 {
-    public class SerializationResult : ISerializationResult
+    public sealed class SerializationResult : ISerializationResult
     {
         private readonly ArrayPool<byte> _arrayPool;
         private readonly byte[] _rentedArray;
-        private readonly int _size;
-        public Memory<byte> Memory => _rentedArray.AsMemory().Slice(0, _size);
-        public int Length => _size;
+        public Memory<byte> Memory => _rentedArray.AsMemory()[..Length];
+        public int Length { get; }
+
         public SerializationResult(int size)
         {
             _arrayPool = ArrayPool<byte>.Shared;
             _rentedArray = _arrayPool.Rent(size);
-            _size = size;
+            Length = size;
         }
 
         public SerializationResult(ReadOnlySequence<byte> sequence)
@@ -36,7 +36,7 @@ namespace StealthSharp.Serialization
 
         public void Dispose()
         {
-            _arrayPool.Return(_rentedArray, false);
+            _arrayPool.Return(_rentedArray);
         }
     }
 }

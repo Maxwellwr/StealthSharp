@@ -22,10 +22,7 @@ namespace StealthSharp.Serialization
         {
             var genericServiceType = typeof(ICustomConverter<>).MakeGenericType(propertyType);
             customConverter = _serviceProvider.GetService(genericServiceType) as ICustomConverter;
-            if (customConverter is null)
-                return false;
-            else
-                return true;
+            return customConverter is not null || (propertyType.BaseType is not null && TryGetConverter(propertyType.BaseType, out customConverter));
         }
     }
 }

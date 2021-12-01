@@ -18,6 +18,7 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Found Tile.
     /// </summary>
+    [Serialization.Serializable()]
     public class FoundTile
     {
         public ushort Tile { get; set; }

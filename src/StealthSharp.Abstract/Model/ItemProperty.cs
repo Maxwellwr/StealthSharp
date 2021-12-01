@@ -11,6 +11,7 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class ItemProperty
     {
         public uint Prop { get; set; }

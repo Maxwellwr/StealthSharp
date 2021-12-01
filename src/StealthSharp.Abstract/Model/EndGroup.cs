@@ -11,6 +11,7 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class EndGroup
     {
         public int GroupNumber { get; set; }

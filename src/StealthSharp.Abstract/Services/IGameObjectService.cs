@@ -24,7 +24,7 @@ namespace StealthSharp.Services
 
         Task<string> GetClilocAsync(uint objId);
 
-        Task<string> GetClilocByIDAsync(uint clilocId);
+        Task<string> GetClilocByIdAsync(uint clilocId);
 
         Task<int> GetDexAsync(uint objId);
 
@@ -124,7 +124,7 @@ namespace StealthSharp.Services
 
         Task<uint> UseFromGroundAsync(ushort objType, ushort color);
 
-        Task UseObjectAsync(uint objectID);
+        Task UseObjectAsync(uint objectId);
 
         Task<uint> UseTypeAsync(ushort objType, ushort color);
 

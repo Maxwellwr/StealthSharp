@@ -15,16 +15,19 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
+using StealthSharp.Model;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
-using StealthSharp.Tests.DataGenerators;
+using StealthSharp.Serialization.Converters;
 using Xunit;
 
 namespace StealthSharp.Tests.Integration
 {
+    [Trait( "Category", "Integration")]
     public class NetworkTest : IDisposable
     {
+        private const string STEALTH_API_HOST = "127.0.0.1";
         private IStealthSharpClient _client;
 
         public NetworkTest()
@@ -48,35 +51,35 @@ namespace StealthSharp.Tests.Integration
         public async Task Simple_packet_should_work()
         {
             var port = FindPort();
-            _client.Connect(IPAddress.Parse("10.211.55.3"), port);
+            _client.Connect(IPAddress.Parse(STEALTH_API_HOST), port);
             await _client.SendAsync(PacketType.SCLangVersion, ((byte)3, (byte)2, (byte)2, (byte)0, (byte)1));
 
             var(result, correlationId) = await _client.SendAsync(
                 PacketType.SCGetStealthInfo);
             Assert.True(result);
             var res = await _client.ReceiveAsync<AboutData>(correlationId);
-            Assert.Equal(new ushort[] {8, 11, 4}, res.StealthVersion);
+            Assert.Equal(new ushort[] {9, 2, 0}, res.StealthVersion);
         }
 
         private int FindPort()
         {
-            var tcpClient = new TcpClient("10.211.55.3", 47602);
+            var tcpClient = new TcpClient(STEALTH_API_HOST, 47602);
             var stream = tcpClient.GetStream();
             var buffer = new byte[] {0x04, 0x00, 0xEF, 0xBE, 0xAD, 0xDE};
             stream.Write(buffer, 0, 6);
             stream.Flush();
             buffer = new byte[4];
-            var readed = stream.Read(buffer, 0, 2);
+            var read = 0;
+            while(read != 2)
+                read += stream.Read(buffer, read, 2);
             var len = BinaryPrimitives.ReadUInt16LittleEndian(buffer.AsSpan());
             stream.Read(buffer, 0, len);
             if (len == 2)
             {
                 return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
             }
-            else
-            {
-                return (int) BinaryPrimitives.ReadUInt32LittleEndian(buffer);
-            }
+
+            return (int) BinaryPrimitives.ReadUInt32LittleEndian(buffer);
         }
 
         public void Dispose()

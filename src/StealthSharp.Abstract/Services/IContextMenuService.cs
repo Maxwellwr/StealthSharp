@@ -25,6 +25,6 @@ namespace StealthSharp.Services
 
         Task RequestContextMenuAsync(uint iD);
 
-        Task SetContextMenuHookAsync(uint menuID, byte entryNumber);
+        Task SetContextMenuHookAsync(uint menuId, byte entryNumber);
     }
 }

@@ -11,7 +11,8 @@
 
 namespace StealthSharp.Model
 {
-    public struct Group
+    [Serialization.Serializable()]
+    public class Group
     {
         public int GroupNumber { get; set; }
         public int Page { get; set; }

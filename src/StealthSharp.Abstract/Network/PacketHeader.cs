@@ -9,7 +9,7 @@
 
 #endregion
 
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Serialization;
 
 namespace StealthSharp.Network
@@ -20,7 +20,5 @@ namespace StealthSharp.Network
         public uint Length { get; set; }
 
         public PacketType PacketType { get; set; }
-
-        public ushort CorrelationId { get; set; }
     }
 }

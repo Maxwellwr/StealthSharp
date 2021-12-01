@@ -9,10 +9,11 @@
 
 #endregion
 
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class LayerObject
     {
         public Layer Layer { get; set; }

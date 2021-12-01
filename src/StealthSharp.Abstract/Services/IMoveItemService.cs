@@ -22,25 +22,25 @@ namespace StealthSharp.Services
         Task<uint> GetPickedUpItemAsync();
         Task SetDropCheckCoordAsync(bool value);
         Task<bool> GetDropCheckCoordAsync();
-        Task<bool> DragItemAsync(uint itemID, int count);
+        Task<bool> DragItemAsync(uint itemId, int count);
 
-        Task<bool> DropAsync(uint itemID, int count, int x, int y, int z);
+        Task<bool> DropAsync(uint itemId, int count, int x, int y, int z);
 
-        Task<bool> DropHereAsync(uint itemID);
+        Task<bool> DropHereAsync(uint itemId);
 
-        Task<bool> DropItemAsync(uint moveIntoID, int x, int y, int z);
+        Task<bool> DropItemAsync(uint moveIntoId, int x, int y, int z);
 
-        Task<bool> EmptyContainerAsync(uint container, uint destContainer, ushort delayMS);
+        Task<bool> EmptyContainerAsync(uint container, uint destContainer, ushort delayMs);
 
-        Task<bool> GrabAsync(uint itemID, int count);
+        Task<bool> GrabAsync(uint itemId, int count);
 
-        Task<bool> MoveItemAsync(uint itemID, int count, uint moveIntoID, int x, int y, int z);
+        Task<bool> MoveItemAsync(uint itemId, int count, uint moveIntoId, int x, int y, int z);
 
-        Task<bool> MoveItemsAsync(uint container, ushort itemsType, ushort itemsColor, uint moveIntoID, int x, int y, int z,
-            int delayMS);
+        Task<bool> MoveItemsAsync(uint container, ushort itemsType, ushort itemsColor, uint moveIntoId, int x, int y, int z,
+            int delayMs);
 
-        Task<bool> MoveItemsExAsync(uint container, ushort itemsType, ushort itemsColor, uint moveIntoID, int x, int y, int z,
-            int delayMS, int maxItems);
+        Task<bool> MoveItemsExAsync(uint container, ushort itemsType, ushort itemsColor, uint moveIntoId, int x, int y, int z,
+            int delayMs, int maxItems);
 
         Task SetCatchBagAsync(uint objectId);
 

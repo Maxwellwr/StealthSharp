@@ -11,7 +11,7 @@
 
 using System;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 
 namespace StealthSharp.Services

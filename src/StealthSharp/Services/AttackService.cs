@@ -10,7 +10,7 @@
 #endregion
 
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 
 namespace StealthSharp.Services
@@ -43,10 +43,10 @@ namespace StealthSharp.Services
 
         public async Task<bool> GetWarModeAsync()
         {
-            return await _gameObjectService.IsWarModeAsync(await _charStatsService.GetSelfAsync());
+            return await _gameObjectService.IsWarModeAsync(await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
         }
 
-        public Task<uint> GetWarTargetIDAsync()
+        public Task<uint> GetWarTargetIdAsync()
         {
             return Client.SendPacketAsync<uint>(PacketType.SCGetWarTarget);
         }

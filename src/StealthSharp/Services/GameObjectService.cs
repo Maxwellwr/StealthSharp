@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -41,7 +41,7 @@ namespace StealthSharp.Services
             return GetTooltipAsync(objId);
         }
 
-        public Task<string> GetClilocByIDAsync(uint clilocId)
+        public Task<string> GetClilocByIdAsync(uint clilocId)
         {
             return Client.SendPacketAsync<uint, string>(PacketType.SCGetClilocByID, clilocId);
         }
@@ -118,7 +118,7 @@ namespace StealthSharp.Services
 
         public async Task<Bitmap?> GetStaticArtAsync(uint objType, ushort objColor)
         {
-            var res = await Client.SendPacketAsync<(uint, ushort), byte[]>(PacketType.SCGetStaticArtBitmap, (objType, objColor));
+            var res = await Client.SendPacketAsync<(uint, ushort), byte[]>(PacketType.SCGetStaticArtBitmap, (objType, objColor)).ConfigureAwait(false);
 
             if (res.Length == 0)
             {

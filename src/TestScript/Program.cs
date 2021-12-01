@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using StealthSharp;
+using StealthSharp.Enumeration;
+using StealthSharp.Model;
 using StealthSharp.Services;
 
 namespace TestScript
@@ -12,7 +14,7 @@ namespace TestScript
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddStealthSharp();
-            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "192.168.117.2");
+            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "127.0.0.1");
             var provider = serviceCollection.BuildServiceProvider();
 
             var stealth = provider.GetRequiredService<Stealth>();
@@ -21,8 +23,8 @@ namespace TestScript
 
             while (true)
             {
-                var key = Console.ReadKey();
-                switch (key.Key)
+                var key = await WaitConsoleKey();
+                switch (key)
                 {
                     case ConsoleKey.Backspace:
                         break;
@@ -36,7 +38,6 @@ namespace TestScript
                         break;
                     case ConsoleKey.Escape:
                         return;
-                        break;
                     case ConsoleKey.Spacebar:
                         break;
                     case ConsoleKey.PageUp:
@@ -98,6 +99,7 @@ namespace TestScript
                     case ConsoleKey.D:
                         break;
                     case ConsoleKey.E:
+                        await MonitorEvent(stealth);
                         break;
                     case ConsoleKey.F:
                         break;
@@ -122,7 +124,7 @@ namespace TestScript
                         break;
                     case ConsoleKey.P:
                         var s = stealth.GetStealthService<IStealthService>();
-                            var n = await s.GetProfileNameAsync();
+                        var n = await s.GetProfileNameAsync();
                         Console.WriteLine(n);
                         break;
                     case ConsoleKey.Q:
@@ -321,13 +323,42 @@ namespace TestScript
             }
         }
 
+        private static async Task<ConsoleKey> WaitConsoleKey()
+        {
+            ConsoleKey key = default;
+            await Task.Run(() => key = Console.ReadKey(true).Key);
+            return key;
+        }
+
+        private static async Task MonitorEvent(Stealth stealth)
+        {
+            void Se(Identity se)
+            {
+                Console.WriteLine($"DrawObject Id {se.Id}.");
+            }
+
+            await stealth.EventSystem
+                    //.OnDrawObject((id) => Console.WriteLine($"DrawObject Id {id.Id}"))
+                    .OnItemInfo((id) => Console.WriteLine($"Item info Id {id.Id}"))
+                    .OnSpeech((s) => Console.WriteLine($"Speech Id {s.Sender.Id}"))
+                    .OnCharAnimation((id) => Console.WriteLine($"Animation Id {id.Object.Id}"))
+                    .OnDrawObject(Se)
+                ;
+           
+            await Task.Delay(10000);
+
+            Console.WriteLine("Unsubscribe from sound");
+            
+            await stealth.EventSystem.Unsubscribe(EventType.DrawObject, (Action<Identity>)Se);
+        }
+
         private static async Task GetGumpAsync(Stealth stealth)
         {
             var gumpCount = await stealth.Gump.GetGumpsCountAsync();
             Console.WriteLine($"Found {gumpCount} gumps");
             if (gumpCount > 0)
             {
-                var gump = await stealth.Gump.GetGumpInfoAsync((ushort) (gumpCount - 1));
+                var gump = await stealth.Gump.GetGumpInfoAsync((ushort)(gumpCount - 1));
                 var dump = ObjectDumper.Dump(gump);
                 Console.WriteLine(dump);
             }

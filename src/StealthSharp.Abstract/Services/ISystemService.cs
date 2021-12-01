@@ -29,7 +29,7 @@ namespace StealthSharp.Services
 
         Task QuestRequestAsync();
 
-        Task RequestStatsAsync(uint objID);
+        Task RequestStatsAsync(uint objId);
 
         Task<bool> ClientHide(uint id);
     }

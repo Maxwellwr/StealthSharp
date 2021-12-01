@@ -11,12 +11,11 @@
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class MenuItem
     {
         public ushort Model { get; set; }
         public ushort Color { get; set; }
-
-        
-        public string Text { get; set; }
+        public string Text { get; set; } = string.Empty;
     }
 }

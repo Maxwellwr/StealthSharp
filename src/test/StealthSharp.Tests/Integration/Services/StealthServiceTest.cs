@@ -20,15 +20,17 @@ using Xunit;
 
 namespace StealthSharp.Tests.Integration.Services
 {
+    [Trait( "Category", "Integration")]
     public class StealthServiceTest
     {
+        private const string STEALTH_API_HOST = "127.0.0.1";
         private readonly IStealthService _stealthService;
 
         public StealthServiceTest()
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddStealthSharp();
-            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "10.211.55.3");
+            serviceCollection.Configure<StealthOptions>(opt => opt.Host = STEALTH_API_HOST);
             var provider = serviceCollection.BuildServiceProvider();
 
             Stealth stealth = provider.GetRequiredService<Stealth>();
@@ -77,9 +79,9 @@ namespace StealthSharp.Tests.Integration.Services
             {
                 Build = 0,
                 BuildDate = new DateTime(2021, 01, 27, 15, 0, 31),
-                GitRevision = "566c18d9",
+                GitRevision = "876fe08d",
                 GitRevNumber = 1422,
-                StealthVersion = new ushort[] {8, 11, 4}
+                StealthVersion = new ushort[] {9, 2, 0}
             };
             //act
             var actual = await _stealthService.GetStealthInfoAsync();
@@ -92,7 +94,7 @@ namespace StealthSharp.Tests.Integration.Services
         public async Task GetStealthPathAsync()
         {
             //arrange
-            var expected = @"\\Mac\Home\Documents\stealth\";
+            var expected = @"C:\g\uo\Stealth\";
             //act
             var actual = await _stealthService.GetStealthPathAsync();
             //assert
@@ -103,7 +105,7 @@ namespace StealthSharp.Tests.Integration.Services
         public async Task GetStealthProfilePathAsync()
         {
             //arrange
-            var expected = @"\\Mac\Home\Documents\stealth\";
+            var expected = @"C:\g\uo\Stealth\";
             //act
             var actual = await _stealthService.GetStealthProfilePathAsync();
             //assert
@@ -114,7 +116,7 @@ namespace StealthSharp.Tests.Integration.Services
         public async Task GetShardNameAsync()
         {
             //arrange
-            var expected = "";
+            var expected = "Ultima Forever";
             //act
             var actual = await _stealthService.GetShardNameAsync();
             //assert
@@ -125,7 +127,7 @@ namespace StealthSharp.Tests.Integration.Services
         public async Task GetShardPathAsync()
         {
             //arrange
-            var expected = @"C:\Users\maslich\AppData\Roaming\Stealth\\";
+            var expected = @"C:\Users\mmasl\AppData\Roaming\Stealth\Ultima Forever\";
             //act
             var actual = await _stealthService.GetShardPathAsync();
             //assert

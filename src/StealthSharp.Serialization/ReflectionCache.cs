@@ -20,13 +20,14 @@ namespace StealthSharp.Serialization
         private readonly Dictionary<Type, IReflectionMetadata?> _dictionary = new();
         public IReflectionMetadata? GetMetadata(Type type)
         {
-            if (!_dictionary.ContainsKey(type))
-            {
-                if (type.GetCustomAttribute<SerializableAttribute>() is not null)
-                    _dictionary[type] = new ReflectionMetadata(type);
-                else
-                    _dictionary[type] = null;
-            }
+            if (_dictionary.ContainsKey(type)) 
+                return _dictionary[type];
+            
+            if (type.GetCustomAttribute<SerializableAttribute>() is not null)
+                _dictionary[type] = new ReflectionMetadata(type);
+            else
+                _dictionary[type] = null;
+            
             return _dictionary[type];
         }
     }

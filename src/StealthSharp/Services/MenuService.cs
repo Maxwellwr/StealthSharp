@@ -13,7 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -75,12 +75,12 @@ namespace StealthSharp.Services
         public async Task<bool> WaitForMenuPresentAsync(int timeout)
         {
             var endTime = DateTime.Now.AddMilliseconds(timeout);
-            while (!await GetMenuPresentAsync() && DateTime.Now < endTime)
+            while (!await GetMenuPresentAsync().ConfigureAwait(false) && DateTime.Now < endTime)
             {
                 Thread.Sleep(10);
             }
 
-            return DateTime.Now < endTime && await GetMenuPresentAsync();
+            return DateTime.Now < endTime && await GetMenuPresentAsync().ConfigureAwait(false);
         }
     }
 }

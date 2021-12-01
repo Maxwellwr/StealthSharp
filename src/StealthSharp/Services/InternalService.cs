@@ -15,7 +15,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 
 namespace StealthSharp.Services
@@ -24,10 +24,10 @@ namespace StealthSharp.Services
     {
         private readonly StealthOptions _options;
         private readonly IStealthService _stealthService;
-        private readonly Version SUPPORTED_VERSION = new (8, 11, 4, 0);
+        private readonly Version _supportedVersion = new (9, 2, 0, 0);
         
         public InternalService(IStealthSharpClient client,
-            IOptions<StealthOptions> options,
+            IOptions<StealthOptions>? options,
             IStealthService stealthService) : base(client)
         {
             _options = options?.Value ?? new StealthOptions();
@@ -39,14 +39,14 @@ namespace StealthSharp.Services
             Client.Connect(IPAddress.Parse(_options.Host), FindPort());
             var v = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(1,0,0,0);
             (byte LangType, byte Major, byte Minor, byte Build, byte Rev) b = (3, (byte)v.Major, (byte)v.Minor,(byte)v.Build,(byte)v.Revision);
-            await Client.SendPacketAsync(PacketType.SCLangVersion, b);
+            await Client.SendPacketAsync(PacketType.SCLangVersion, b).ConfigureAwait(false);
 
-            var about = await _stealthService.GetStealthInfoAsync();
+            var about = await _stealthService.GetStealthInfoAsync().ConfigureAwait(false);
             var stealthVersion = new Version(about.StealthVersion[0], about.StealthVersion[1], about.StealthVersion[2],
                 about.Build);
-            if (stealthVersion < SUPPORTED_VERSION)
+            if (stealthVersion < _supportedVersion)
                 throw new InvalidOperationException(
-                    $"Version {stealthVersion} not supported. Minimum supported version is {SUPPORTED_VERSION}");
+                    $"Version {stealthVersion} not supported. Minimum supported version is {_supportedVersion}");
         }
         
         private int FindPort()
@@ -63,13 +63,9 @@ namespace StealthSharp.Services
             var len = BinaryPrimitives.ReadUInt16LittleEndian(buffer.AsSpan());
             stream.Read(buffer, 0, len);
             if (len == 2)
-            {
                 return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
-            }
-            else
-            {
-                return (int) BinaryPrimitives.ReadUInt32LittleEndian(buffer);
-            }
+
+            return (int) BinaryPrimitives.ReadUInt32LittleEndian(buffer);
         }
     }
 }

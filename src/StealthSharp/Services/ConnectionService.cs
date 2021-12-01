@@ -12,7 +12,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 
 namespace StealthSharp.Services
@@ -92,13 +92,13 @@ namespace StealthSharp.Services
         public async Task<bool> CheckLagAsync(int timeoutMs)
         {
             var result = false;
-            await CheckLagBeginAsync();
+            await CheckLagBeginAsync().ConfigureAwait(false);
             var stopTime = DateTime.Now + new TimeSpan(0, 0, 0, 0, timeoutMs);
             var checkLagEndRes = false;
             do
             {
                 Thread.Sleep(20);
-                checkLagEndRes = await Client.SendPacketAsync<bool>(PacketType.SCIsCheckLagEnd);
+                checkLagEndRes = await Client.SendPacketAsync<bool>(PacketType.SCIsCheckLagEnd).ConfigureAwait(false);
             } while (DateTime.Now <= stopTime && !checkLagEndRes);
 
             if (checkLagEndRes)
@@ -106,7 +106,7 @@ namespace StealthSharp.Services
                 result = true;
             }
 
-            await CheckLagEndAsync();
+            await CheckLagEndAsync().ConfigureAwait(false);
 
             return result;
         }

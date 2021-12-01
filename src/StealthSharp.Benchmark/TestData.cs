@@ -9,8 +9,6 @@
 
 #endregion
 
-using StealthSharp.Enum;
-using StealthSharp.Network;
 using StealthSharp.Serialization;
 
 namespace StealthSharp.Benchmark

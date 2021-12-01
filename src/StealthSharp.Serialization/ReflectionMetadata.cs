@@ -23,21 +23,20 @@ namespace StealthSharp.Serialization
 
         internal ReflectionMetadata(Type type)
         {
-            Endianness = type.GetCustomAttribute<SerializableAttribute>()?.Endianness ?? Endianness.LittleEndian;
-            Properties = GetTypeProperties(type);
+            var attribute = type.GetCustomAttribute<SerializableAttribute>();
+            Endianness = attribute?.Endianness ?? Endianness.LittleEndian;
+            Properties = GetTypeProperties(type).ToArray();
         }
-        private static List<PacketProperty> GetTypeProperties(Type type)
+
+        private static IEnumerable<PacketProperty> GetTypeProperties(Type? type)
         {
-            var packetProperties = new List<PacketProperty>();
-
-            foreach (var property in type.GetProperties().OrderBy(p => p.MetadataToken))
-            {
-                PacketProperty packetProperty = new(property);
-                packetProperties.Add(packetProperty);
-            }
-
-            return packetProperties;
+            if (type is null)
+                return Enumerable.Empty<PacketProperty>();
+            return GetTypeProperties(type.BaseType).Concat(type
+                .GetTypeInfo()
+                .DeclaredProperties
+                .OrderBy(p => p.MetadataToken)
+                .Select(property => new PacketProperty(property)));
         }
-
     }
 }

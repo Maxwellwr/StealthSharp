@@ -14,9 +14,10 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Target Info.
     /// </summary>
+    [Serialization.Serializable()]
     public class TargetInfo
     {
-        public uint ID { get; set; }
+        public uint Id { get; set; }
         public ushort Tile { get; set; }
         public ushort X { get; set; }
         public ushort Y { get; set; }

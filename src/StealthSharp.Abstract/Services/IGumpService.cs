@@ -21,7 +21,7 @@ namespace StealthSharp.Services
 
         Task<bool> GetIsGumpAsync();
 
-        Task AddGumpIgnoreByIDAsync(uint id);
+        Task AddGumpIgnoreByIdAsync(uint id);
 
         Task AddGumpIgnoreBySerialAsync(uint serial);
 
@@ -35,7 +35,7 @@ namespace StealthSharp.Services
 
         Task<List<string>> GetGumpFullLinesAsync(ushort gumpIndex);
 
-        Task<uint> GetGumpIDAsync(ushort gumpIndex);
+        Task<uint> GetGumpIdAsync(ushort gumpIndex);
 
         Task<GumpInfo> GetGumpInfoAsync(ushort gumpIndex);
 

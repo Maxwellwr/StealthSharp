@@ -21,8 +21,8 @@ namespace StealthSharp.Serialization
 
         public PacketProperty(PropertyInfo propertyInfo)
         {
-            PropertyType = propertyInfo.PropertyType;
             _propertyInfo = propertyInfo;
+            PropertyType = propertyInfo.PropertyType;
         }
 
         public object? Get(object data) =>

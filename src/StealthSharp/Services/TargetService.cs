@@ -11,7 +11,7 @@
 
 using System;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -41,7 +41,7 @@ namespace StealthSharp.Services
 
         public async Task<bool> GetTargetPresentAsync()
         {
-            return (await GetTargetIdAsync()) > 0;
+            return (await GetTargetIdAsync().ConfigureAwait(false)) > 0;
         }
 
         public Task<uint> GetLastTargetAsync()
@@ -94,21 +94,21 @@ namespace StealthSharp.Services
         {
             var enddate = DateTime.Now.AddMilliseconds(maxWaitTimeMs);
 
-            while (DateTime.Now < enddate && !await GetClientTargetResponsePresentAsync())
+            while (DateTime.Now < enddate && !await GetClientTargetResponsePresentAsync().ConfigureAwait(false))
             {
             }
 
-            return await GetClientTargetResponsePresentAsync();
+            return await GetClientTargetResponsePresentAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> WaitForTargetAsync(int maxWaitTimeMs)
         {
             var endTime = DateTime.Now.AddMilliseconds(maxWaitTimeMs);
-            while (await GetTargetIdAsync() == 0 && DateTime.Now < endTime)
+            while (await GetTargetIdAsync().ConfigureAwait(false) == 0 && DateTime.Now < endTime)
             {
             }
 
-            return await GetTargetIdAsync() > 0;
+            return await GetTargetIdAsync().ConfigureAwait(false) > 0;
         }
 
         public Task WaitTargetGroundAsync(ushort objType)

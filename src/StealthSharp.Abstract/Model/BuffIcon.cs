@@ -13,12 +13,13 @@ using System;
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class BuffIcon
     {
-        public ushort Attribute_ID { get; set; }
+        public ushort AttributeId { get; set; }
         public DateTime TimeStart { get; set; }
         public ushort Seconds { get; set; }
-        public uint ClilocID1 { get; set; }
-        public uint ClilocID2 { get; set; }
+        public uint ClilocId1 { get; set; }
+        public uint ClilocId2 { get; set; }
     }
 }

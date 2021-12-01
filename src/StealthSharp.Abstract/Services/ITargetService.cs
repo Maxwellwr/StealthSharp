@@ -36,21 +36,21 @@ namespace StealthSharp.Services
 
         Task ClientRequestTileTargetAsync();
 
-        Task TargetToObjectAsync(uint objectID);
+        Task TargetToObjectAsync(uint objectId);
 
         Task TargetToTileAsync(ushort tileModel, ushort x, ushort y, sbyte z);
 
         Task TargetToXYZAsync(ushort x, ushort y, sbyte z);
 
-        Task<bool> WaitForClientTargetResponseAsync(int maxWaitTimeMS);
+        Task<bool> WaitForClientTargetResponseAsync(int maxWaitTimeMs);
 
-        Task<bool> WaitForTargetAsync(int maxWaitTimeMS);
+        Task<bool> WaitForTargetAsync(int maxWaitTimeMs);
 
         Task WaitTargetGroundAsync(ushort objType);
 
         Task WaitTargetLastAsync();
 
-        Task WaitTargetObjectAsync(uint objID);
+        Task WaitTargetObjectAsync(uint objId);
 
         Task WaitTargetSelfAsync();
 

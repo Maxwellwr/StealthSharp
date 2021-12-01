@@ -12,7 +12,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -275,15 +275,15 @@ namespace StealthSharp.Services
             return (ushort) (ret + my);
         }
 
-        public Task<List<MyPoint>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy)
+        public Task<List<WorldPoint3D>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy)
         {
-            return Client.SendPacketAsync<(ushort, ushort, bool, int), List<MyPoint>>(PacketType.SCGetPathArray,
+            return Client.SendPacketAsync<(ushort, ushort, bool, int), List<WorldPoint3D>>(PacketType.SCGetPathArray,
                 (destX, destY, optimized, accuracy));
         }
 
-        public Task<List<MyPoint>> GetPathArray3DAsync(PathReqeust pathRequest)
+        public Task<List<WorldPoint3D>> GetPathArray3DAsync(PathReqeust pathRequest)
         {
-            return Client.SendPacketAsync<PathReqeust, List<MyPoint>>(PacketType.SCGetPathArray3D, pathRequest);
+            return Client.SendPacketAsync<PathReqeust, List<WorldPoint3D>>(PacketType.SCGetPathArray3D, pathRequest);
         }
 
         public Task<uint> GetLastStepQUsedDoorAsync()

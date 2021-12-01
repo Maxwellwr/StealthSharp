@@ -9,6 +9,10 @@
 
 #endregion
 
+using System;
+using System.Reflection;
+using StealthSharp.Serialization;
+
 namespace StealthSharp
 {
     public static class EnumExtensions
@@ -16,7 +20,15 @@ namespace StealthSharp
         public static bool GetEnum<T>(this string name, out T result)
             where T : struct
         {
-            return System.Enum.TryParse<T>(name.Replace(" ", string.Empty), true, out result);
+            return Enum.TryParse(name.Replace(" ", string.Empty), true, out result);
+        }
+
+        public static Type? GetEnumDataType(this Enum @enum)
+        {
+            var enumType = @enum.GetType();
+            return enumType.GetMember(@enum.ToString())[0]
+                .GetCustomAttribute<EventDataTypeAttribute>(false)?
+                .DataType;
         }
     }
 }

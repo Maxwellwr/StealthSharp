@@ -9,13 +9,16 @@
 
 #endregion
 
+using System;
+
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public class GumpInfo
     {
         public uint Serial { get; set; }
 
-        public uint GumpID { get; set; }
+        public uint GumpId { get; set; }
 
         public ushort X { get; set; }
 
@@ -31,60 +34,57 @@ namespace StealthSharp.Model
 
         public bool NoClose { get; set; }
 
-        
-        public ExtGumpInfo ExtData { get; set; }
+
+        public ExtGumpInfo ExtData { get; set; } = new();
     }
 
+    [Serialization.Serializable()]
     public class ExtGumpInfo
     {
-        
-        public Group[] Groups { get; set; }
+        public Group[] Groups { get; set; } = Array.Empty<Group>();
 
-        
-        public EndGroup[] EndGroups { get; set; }
+        public EndGroup[] EndGroups { get; set; }= Array.Empty<EndGroup>();
 
-        
-        public GumpButton[] GumpButtons { get; set; }
+        public GumpButton[] GumpButtons { get; set; }= Array.Empty<GumpButton>();
 
-        
-        public ButtonTileArt[] ButtonTileArts { get; set; }
+        public ButtonTileArt[] ButtonTileArts { get; set; }= Array.Empty<ButtonTileArt>();
 
-        public CheckBox[] CheckBoxes { get; set; }
+        public CheckBox[] CheckBoxes { get; set; }= Array.Empty<CheckBox>();
 
-        public CheckerTransparency[] CheckerTrans { get; set; }
+        public CheckerTransparency[] CheckerTrans { get; set; }= Array.Empty<CheckerTransparency>();
 
-        public CroppedText[] CroppedText { get; set; }
+        public CroppedText[] CroppedText { get; set; }= Array.Empty<CroppedText>();
 
-        public GumpPic[] GumpPics { get; set; }
+        public GumpPic[] GumpPics { get; set; }= Array.Empty<GumpPic>();
 
-        public GumpPicTiled[] GumpPicTiled { get; set; }
+        public GumpPicTiled[] GumpPicTiled { get; set; }= Array.Empty<GumpPicTiled>();
 
-        public RadioButton[] RadioButtons { get; set; }
+        public RadioButton[] RadioButtons { get; set; }= Array.Empty<RadioButton>();
 
-        public ResizePic[] ResizePics { get; set; }
+        public ResizePic[] ResizePics { get; set; }= Array.Empty<ResizePic>();
 
-        public GumpText[] GumpText { get; set; }
+        public GumpText[] GumpText { get; set; }= Array.Empty<GumpText>();
 
-        public TextEntry[] TextEntries { get; set; }
+        public TextEntry[] TextEntries { get; set; }= Array.Empty<TextEntry>();
 
-        public string[] Text { get; set; }
+        public string[] Text { get; set; }= Array.Empty<string>();
 
-        public TextEntryLimited[] TextEntriesLimited { get; set; }
+        public TextEntryLimited[] TextEntriesLimited { get; set; }= Array.Empty<TextEntryLimited>();
 
-        public TilePic[] TilePics { get; set; }
+        public TilePic[] TilePics { get; set; }= Array.Empty<TilePic>();
 
-        public TilePicture[] TilePicHue { get; set; }
+        public TilePicture[] TilePicHue { get; set; }= Array.Empty<TilePicture>();
 
-        public Tooltip[] Tooltips { get; set; }
+        public Tooltip[] Tooltips { get; set; }= Array.Empty<Tooltip>();
 
-        public HtmlGump[] HtmlGump { get; set; }
+        public HtmlGump[] HtmlGump { get; set; }= Array.Empty<HtmlGump>();
 
-        public XmfHTMLGump[] XmfHtmlGump { get; set; }
+        public XmfHTMLGump[] XmfHtmlGump { get; set; }= Array.Empty<XmfHTMLGump>();
 
-        public XmfHTMLGumpColor[] XmfHTMLGumpColor { get; set; }
+        public XmfHTMLGumpColor[] XmfHTMLGumpColor { get; set; }= Array.Empty<XmfHTMLGumpColor>();
 
-        public XmfHTMLTok[] XmfHTMLTok { get; set; }
+        public XmfHTMLTok[] XmfHTMLTok { get; set; }= Array.Empty<XmfHTMLTok>();
 
-        public ItemProperty[] ItemProperties { get; set; }
+        public ItemProperty[] ItemProperties { get; set; }= Array.Empty<ItemProperty>();
     }
 }

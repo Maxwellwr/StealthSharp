@@ -16,7 +16,7 @@ namespace StealthSharp.Services
 {
     public interface IJournalService
     {
-        Task<int> GetFoundedParamIDAsync();
+        Task<int> GetFoundedParamIdAsync();
 
         Task<int> GetHighJournalAsync();
 
@@ -24,7 +24,7 @@ namespace StealthSharp.Services
 
         Task<int> GetLineCountAsync();
 
-        Task<uint> GetLineIDAsync();
+        Task<uint> GetLineIdAsync();
 
         Task<int> GetLineIndexAsync();
 
@@ -68,8 +68,8 @@ namespace StealthSharp.Services
 
         Task SetJournalLineAsync(int stringIndex, string text);
 
-        Task<bool> WaitJournalLineAsync(DateTime startTime, string str, int maxWaitTimeMS = 0);
+        Task<bool> WaitJournalLineAsync(DateTime startTime, string str, int maxWaitTimeMs = 0);
 
-        Task<bool> WaitJournalLineSystemAsync(DateTime startTime, string str, int maxWaitTimeMS = 0);
+        Task<bool> WaitJournalLineSystemAsync(DateTime startTime, string str, int maxWaitTimeMs = 0);
     }
 }

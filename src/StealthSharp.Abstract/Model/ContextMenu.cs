@@ -13,9 +13,10 @@ using System.Collections.Generic;
 
 namespace StealthSharp.Model
 {
+    [Serialization.Serializable()]
     public struct ContextMenu
     {
-        public uint ID { get; set; }
+        public uint Id { get; set; }
 
         public byte EntriesNumber { get; set; }
 

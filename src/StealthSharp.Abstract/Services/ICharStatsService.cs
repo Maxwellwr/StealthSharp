@@ -73,10 +73,10 @@ namespace StealthSharp.Services
         Task<uint> GetGoldAsync();
 
         /// <summary>
-        ///     Same as <see cref="Life" />. Returns the char - healthy(HITS).
+        ///     Same as <see cref="GetLifeAsync" />. Returns the char - healthy(HITS).
         ///     If there is no connection to the UO server - returns 0.
         /// </summary>
-        Task<int> GetHPAsync();
+        Task<int> GetHPAsync() => GetLifeAsync();
 
         /// <summary>
         ///     Returns the player's - intelligence(INT).
@@ -85,7 +85,7 @@ namespace StealthSharp.Services
         Task<int> GetIntAsync();
 
         /// <summary>
-        ///     Same as <see cref="HP" />. Returns the char - healthy(HITS).
+        ///     Same as <see cref="GetHPAsync" />. Returns the char - healthy(HITS).
         ///     If there is no connection to the UO server - returns 0.
         /// </summary>
         Task<int> GetLifeAsync();
@@ -105,15 +105,15 @@ namespace StealthSharp.Services
         Task<int> GetManaAsync();
 
         /// <summary>
-        ///     Same as <see cref="MaxLife" />. In 99% of cases as well <see cref="Str" />. Can differ only if the admin changes
+        ///     Same as <see cref="GetMaxLifeAsync" />. In 99% of cases as well <see cref="GetStrAsync" />. Can differ only if the admin changes
         ///     the parameters specifically object(char, SPC) and puts his hands MaxHP other than Str(usually in a big way).
         ///     Returns the char - the maximum number of health(Max HITS).
         ///     If there is no connection to the UO server - returns 0.
         /// </summary>
-        Task<int> GetMaxHPAsync();
+        Task<int> GetMaxHPAsync() => GetMaxLifeAsync();
 
         /// <summary>
-        ///     Same as <see cref="MaxHP" />. In 99% of cases as well <see cref="Str" />. Can differ only if the admin changes the
+        ///     Same as <see cref="GetMaxHPAsync" />. In 99% of cases as well <see cref="GetStrAsync" />. Can differ only if the admin changes the
         ///     parameters specifically object(char, SPC) and puts his hands MaxHP other than Str(usually in a big way).
         ///     Returns the char - the maximum number of health(Max HITS).
         ///     If there is no connection to the UO server - returns 0.
@@ -121,7 +121,7 @@ namespace StealthSharp.Services
         Task<int> GetMaxLifeAsync();
 
         /// <summary>
-        ///     In 99% of the same <see cref="Int" />. Can differ only if the admin changes the parameters specifically
+        ///     In 99% of the same <see cref="GetIntAsync" />. Can differ only if the admin changes the parameters specifically
         ///     object(char, SPC) and puts his hands MaxMana different from Int(usually in a big way).
         ///     Returns the char - the maximum amount of mana(Max Mana).
         ///     If there is no connection to the UO server - returns 0.
@@ -129,12 +129,12 @@ namespace StealthSharp.Services
         Task<int> GetMaxManaAsync();
 
         /// <summary>
-        ///     In 99% of the same <see cref="Dex" />. Can differ only if the admin changes the parameters specifically
+        ///     In 99% of the same <see cref="GetDexAsync" />. Can differ only if the admin changes the parameters specifically
         ///     object(char, SPC) and puts his hands MaxStam different from Dex(usually in a big way).
         ///     Returns the chara - the maximum amount of stamina(Max Stamina).
         ///     If there is no connection to the UO server - returns 0.
         /// </summary>
-        Task<int> GetMaxStamAsync();
+        Task<int> GetMaxStaminaAsync();
 
         /// <summary>
         ///     Returns the char - Maximum Weight(Weight).
@@ -175,7 +175,7 @@ namespace StealthSharp.Services
         ///     Возвращает параметр чара - стамина (Stamina).
         ///     В случае, если отсутствует соединение с UO сервером - вернет 0.
         /// </summary>
-        Task<int> GetStamAsync();
+        Task<int> GetStaminaAsync();
 
         /// <summary>
         ///     Возвращает параметр чара - сила (STR).
@@ -229,7 +229,7 @@ namespace StealthSharp.Services
 
         Task<uint> GetSelfHandleAsync();
 
-        Task<Point> GetQuestArrowAsync();
+        Task<WorldPoint> GetQuestArrowAsync();
 
         /// <summary>
         ///     Returns the number of the Map of the current character.
@@ -258,11 +258,11 @@ namespace StealthSharp.Services
 
         Task<sbyte> GetZAsync();
 
-        Task<string> GetAltNameAsync(uint objID);
+        Task<string> GetAltNameAsync(uint objId);
 
-        Task<uint> GetPriceAsync(uint objID);
+        Task<uint> GetPriceAsync(uint objId);
 
-        Task<string> GetTitleAsync(uint objID);
+        Task<string> GetTitleAsync(uint objId);
 
         Task<byte> GetStatLockStateAsync(byte statNum);
     }

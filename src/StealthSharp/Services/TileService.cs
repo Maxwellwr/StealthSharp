@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
@@ -50,7 +50,7 @@ namespace StealthSharp.Services
             ushort[] tileTypes)
         {
             var tasks = tileTypes.Select(t => GetLandTilesArrayAsync(xmin, ymin, xmax, ymax, worldNum, t));
-            return (await Task.WhenAll(tasks)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
+            return (await Task.WhenAll(tasks).ConfigureAwait(false)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
         }
 
         public Task<byte> GetLayerCountAsync(ushort x, ushort y, byte worldNum)
@@ -88,7 +88,7 @@ namespace StealthSharp.Services
             ushort ymax, byte worldNum, ushort[] tileTypes)
         {
             var tasks = tileTypes.Select(t => GetStaticTilesArrayAsync(xmin, ymin, xmax, ymax, worldNum, t));
-            return (await Task.WhenAll(tasks)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
+            return (await Task.WhenAll(tasks).ConfigureAwait(false)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
         }
 
         public Task<byte> GetSurfaceZAsync(ushort x, ushort y, byte worldNum)

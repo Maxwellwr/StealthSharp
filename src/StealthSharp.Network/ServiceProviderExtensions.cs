@@ -21,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddStealthSharpClient(
             this IServiceCollection serviceCollection)
-            => AddStealthSharpClient(serviceCollection, opt => { });
+            => AddStealthSharpClient(serviceCollection, _ => { });
 
         public static IServiceCollection AddStealthSharpClient(
             this IServiceCollection serviceCollection, Action<SerializationOptions> configAction)

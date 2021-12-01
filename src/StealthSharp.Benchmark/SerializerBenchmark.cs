@@ -14,9 +14,10 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Microsoft.Extensions.Options;
 using Moq;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
+using StealthSharp.Serialization.Converters;
 
 namespace StealthSharp.Benchmark
 {
@@ -25,7 +26,7 @@ namespace StealthSharp.Benchmark
     [MemoryDiagnoser]
     public class SerializerBenchmark
     {
-        private readonly IPacketSerializer _serializer;
+        private readonly IMarshaler _marshaler;
         private readonly PacketHeader _testData;
 
         public SerializerBenchmark()
@@ -33,17 +34,15 @@ namespace StealthSharp.Benchmark
             var refCache = new ReflectionCache();
             var spMock = new Mock<IServiceProvider>();
             var converter = new CustomConverterFactory(spMock.Object);
-            var marshaler = new Marshaler(refCache, null, converter);
-            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,
-                refCache, marshaler, converter);
+            _marshaler = new Marshaler(new Mock<IOptions<SerializationOptions>>().Object,
+                refCache, converter);
 
             spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<DateTime>))))
-                .Returns(new DateTimeConverter(_serializer, marshaler));
+                .Returns(new DateTimeConverter(_marshaler));
 
             _testData = new PacketHeader()
             {
                 PacketType = PacketType.SCGetStealthInfo,
-                CorrelationId = 1,
                 Length = 10
             };
         }
@@ -51,7 +50,7 @@ namespace StealthSharp.Benchmark
         [Benchmark]
         public byte[] Serialize()
         {
-            using var res = _serializer.Serialize(_testData);
+            using var res = _marshaler.Serialize(_testData);
             return res.Memory.ToArray();
         }
 
@@ -61,7 +60,7 @@ namespace StealthSharp.Benchmark
         {
             using var res = new SerializationResult(6);
             new byte[]{1,0,2,0,3,0}.AsSpan().CopyTo(res.Memory.Span);
-            var deres = _serializer.Deserialize<AboutData>(res);
+            var deres = _marshaler.Deserialize<AboutData>(res);
             return deres;
         }
     }

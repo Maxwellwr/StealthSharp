@@ -14,29 +14,34 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Options;
 using Moq;
-using StealthSharp.Enum;
+using StealthSharp.Enumeration;
+using StealthSharp.Event;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
+using StealthSharp.Serialization.Converters;
 using StealthSharp.Tests.DataGenerators;
 using Xunit;
 
 namespace StealthSharp.Tests.Unit
 {
+    [Trait( "Category", "Unit")]
     public class DeserializationTest
     {
-        private readonly IPacketSerializer _serializer;
+        private readonly IMarshaler _marshaler;
 
         public DeserializationTest()
         {
             var refCache = new ReflectionCache();
             var spMock = new Mock<IServiceProvider>();
             var converter = new CustomConverterFactory(spMock.Object);
-            var marshaler = new Marshaler(refCache, null, converter);
-            _serializer = new PacketSerializer(new Mock<IOptions<SerializationOptions>>().Object,
-                refCache,  marshaler, converter);
+            _marshaler = new Marshaler(new Mock<IOptions<SerializationOptions>>().Object,
+                refCache,  converter);
 
             spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<DateTime>))))
-                .Returns(new DateTimeConverter(_serializer, marshaler));
+                .Returns(new DateTimeConverter(_marshaler));
+            
+            spMock.Setup(sp => sp.GetService(It.Is<Type>(t => t == typeof(ICustomConverter<ServerEventData>))))
+                .Returns(new ServerEventDataConverter(_marshaler, refCache));
         }
 
         [Theory]
@@ -56,7 +61,7 @@ namespace StealthSharp.Tests.Unit
             var result = new SerializationResult(bytes.Length);
             bytes.CopyTo(result.Memory.Span);
             //act
-            var actual = _serializer.Deserialize<T>(result);
+            var actual = _marshaler.Deserialize<T>(result);
 
             //assert
             Assert.Equal(expected, actual);
@@ -64,21 +69,43 @@ namespace StealthSharp.Tests.Unit
 
         [Theory]
         [ClassData(typeof(SerializeDataGenerator))]
-        public void Deserialize_complex_type_should_work(PacketHeader expected, object body, string testValue)
+        public void Deserialize_complex_type_should_work<T>(PacketHeader expected, ushort corId, T body, string testValue)
         {
             //arrange
             var bytes = FromHexString(testValue);
             var result = new SerializationResult(bytes.Length-8);
-            bytes.Slice(8).CopyTo(result.Memory.Span);
+            bytes[8..].CopyTo(result.Memory.Span);
             //act
-            var (len, packetType, correlationId)=DeserializePacket(bytes.Slice(0, 8)); 
-            var actual = _serializer.Deserialize(result, body.GetType());
+            var (len, packetType)=DeserializePacket(bytes[..6]);
+            _marshaler.Deserialize(bytes[6..8], typeof(ushort), out var correlationId);
+            var actual = _marshaler.Deserialize<T>(result);
 
             //assert
+            Assert.Equal(len, (uint)bytes.Length - 4);
             Assert.Equal(expected.Length, len);
             Assert.Equal(expected.PacketType, packetType);
-            Assert.Equal(expected.CorrelationId, correlationId);
+            Assert.Equal(typeof(ushort), correlationId.GetType());
+            Assert.Equal(corId, (ushort)correlationId);
             Assert.Equal(body, actual);
+        }
+        
+        [Theory]
+        [ClassData(typeof(EventDataGenerator))]
+        public void deserialization_server_event_data_should_work<T>(PacketHeader expected, T eventData, string testValue)
+        {
+            //arrange
+            var bytes = FromHexString(testValue.Replace(" ",""));
+            var result = new SerializationResult(bytes.Length-6);
+            bytes[6..].CopyTo(result.Memory.Span);
+            //act
+            var (len, packetType)=DeserializePacket(bytes[..6]); 
+            var actual = _marshaler.Deserialize<T>(result);
+            //assert
+            Assert.Equal(len, (uint)bytes.Length - 4);
+            Assert.Equal(expected.Length, len);
+            Assert.Equal(expected.PacketType, packetType);
+            Assert.NotNull(actual);
+            Assert.Equal(eventData, actual);
         }
 
         [Fact]
@@ -89,21 +116,22 @@ namespace StealthSharp.Tests.Unit
             var expected = new PacketHeader()
             {
                 Length = 19,
-                PacketType = PacketType.SCJournal,
-                CorrelationId = 255
+                PacketType = PacketType.SCJournal
             };
             string testValue = "130000007B00FF00010000000200030400000004050607";
             var bytes = FromHexString(testValue);
             var result = new SerializationResult(bytes.Length-8);
-            bytes.Slice(8).CopyTo(result.Memory.Span);
+            bytes[8..].CopyTo(result.Memory.Span);
             //act
-            var (len, packetType, correlationId)=DeserializePacket(bytes.Slice(0, 8)); 
-            var actual = _serializer.Deserialize<(int, short, byte, byte[])>(result);
+            var (len, packetType)=DeserializePacket(bytes[..6]); 
+            _marshaler.Deserialize(bytes[6..8], typeof(ushort), out var correlationId);
+            var actual = _marshaler.Deserialize<(int, short, byte, byte[])>(result);
 
             //assert
             Assert.Equal(expected.Length, len);
             Assert.Equal(expected.PacketType, packetType);
-            Assert.Equal(expected.CorrelationId, correlationId);
+            Assert.Equal(typeof(ushort), correlationId.GetType());
+            Assert.Equal((ushort)255, (ushort)correlationId);
             Assert.Equal(body.Item1, actual.Item1);
             Assert.Equal(body.Item2, actual.Item2);
             Assert.Equal(body.Item3, actual.Item3);
@@ -117,20 +145,21 @@ namespace StealthSharp.Tests.Unit
             var expected = new PacketHeader()
             {
                 Length = 4,
-                PacketType = PacketType.SCGetStealthInfo,
-                CorrelationId = 1
+                PacketType = PacketType.SCGetStealthInfo
             };
             string testValue = "040000000C000100";
             var bytes = FromHexString(testValue);
             var result = new SerializationResult(bytes.Length-8);
-            bytes.Slice(8).CopyTo(result.Memory.Span);
+            bytes[8..].CopyTo(result.Memory.Span);
             //act
-            var (len, packetType, correlationId)=DeserializePacket(bytes.Slice(0, 8));
+            var (len, packetType)=DeserializePacket(bytes[..6]);
+            _marshaler.Deserialize(bytes[6..8], typeof(ushort), out var correlationId);
 
             //assert
             Assert.Equal(expected.Length, len);
             Assert.Equal(expected.PacketType, packetType);
-            Assert.Equal(expected.CorrelationId, correlationId);
+            Assert.Equal(typeof(ushort), correlationId.GetType());
+            Assert.Equal((ushort)1, (ushort)correlationId);
         }
 
         [Fact]
@@ -140,27 +169,28 @@ namespace StealthSharp.Tests.Unit
             var expected = new PacketHeader()
             {
                 PacketType = PacketType.SCLangVersion,
-                CorrelationId = 4,
                 Length = 36
             };
             var body = new TypeWithListString()
             {
-                ClilocID = 34578,
+                ClilocId = 34578,
                 Params = new List<string>() {"aa", "bb", "cc"}
             };
-            string testValue = "24000000050004001287000003000000040000006100610004000000620062000400000063006300";
+            const string testValue = "24000000050004001287000003000000040000006100610004000000620062000400000063006300";
             var bytes = FromHexString(testValue);
             var result = new SerializationResult(bytes.Length-8);
-            bytes.Slice(8).CopyTo(result.Memory.Span);
+            bytes[8..].CopyTo(result.Memory.Span);
             //act
-            var (len, packetType, correlationId)=DeserializePacket(bytes.Slice(0, 8)); 
-            var actual = _serializer.Deserialize<TypeWithListString>(result);
+            var (len, packetType)=DeserializePacket(bytes[..6]); 
+            _marshaler.Deserialize(bytes[6..8], typeof(ushort), out var correlationId);
+            var actual = _marshaler.Deserialize<TypeWithListString>(result);
 
             //assert
             Assert.Equal(expected.Length, len);
             Assert.Equal(expected.PacketType, packetType);
-            Assert.Equal(expected.CorrelationId, correlationId);
-            Assert.Equal(body.ClilocID, actual.ClilocID);
+            Assert.Equal(typeof(ushort), correlationId.GetType());
+            Assert.Equal((ushort)4, (ushort)correlationId);
+            Assert.Equal(body.ClilocId, actual.ClilocId);
             Assert.Equal(body.Params, actual.Params);
         }
 
@@ -170,7 +200,7 @@ namespace StealthSharp.Tests.Unit
             //arrange
             var body = new TypeWithDynamicBody()
             {
-                ClilocID = 34578,
+                ClilocId = 34578,
                 ExtData = new DynamicBody()
                 {
                     Arr1 = new[] {1, 2},
@@ -179,7 +209,7 @@ namespace StealthSharp.Tests.Unit
                     {
                         new TypeWithListString()
                         {
-                            ClilocID = 6,
+                            ClilocId = 6,
                             Params = new List<string>() {"123"}
                         }
                     }
@@ -188,29 +218,30 @@ namespace StealthSharp.Tests.Unit
             var expected = new PacketHeader()
             {
                 PacketType = PacketType.SCLangVersion,
-                CorrelationId = 4,
                 Length = 56
             };
-            string testValue = "38000000 0500 0400 12870000 02000000 01000000 02000000 05000000 0100 0200 0300 0400 0500 01000000 06000000 01000000 06000000 3100 3200 3300";
+            const string testValue = "38000000 0500 0400 12870000 02000000 01000000 02000000 05000000 0100 0200 0300 0400 0500 01000000 06000000 01000000 06000000 3100 3200 3300";
             var bytes = FromHexString(testValue.Replace(" ",""));
             var result = new SerializationResult(bytes.Length-8);
-            bytes.Slice(8).CopyTo(result.Memory.Span);
+            bytes[8..].CopyTo(result.Memory.Span);
             //act
-            var (len, packetType, correlationId)=DeserializePacket(bytes.Slice(0, 8)); 
-            var actual = _serializer.Deserialize<TypeWithDynamicBody>(result);
+            var (len, packetType)=DeserializePacket(bytes[..6]);
+            _marshaler.Deserialize(bytes[6..8], typeof(ushort), out var correlationId);
+            var actual = _marshaler.Deserialize<TypeWithDynamicBody>(result);
 
             //assert
             Assert.Equal(expected.Length, len);
             Assert.Equal(expected.PacketType, packetType);
-            Assert.Equal(expected.CorrelationId, correlationId);
-            Assert.Equal(body.ClilocID, actual.ClilocID);
+            Assert.Equal(typeof(ushort), correlationId.GetType());
+            Assert.Equal((ushort)4, (ushort)correlationId);
+            Assert.Equal(body.ClilocId, actual.ClilocId);
             Assert.Equal(body.ExtData.Arr1, actual.ExtData.Arr1);
             Assert.Equal(body.ExtData.Arr2, actual.ExtData.Arr2);
             Assert.Equal(body.ExtData.Arr3.Length, actual.ExtData.Arr3.Length);
-            Assert.Equal(body.ExtData.Arr3[0].ClilocID, actual.ExtData.Arr3[0].ClilocID);
+            Assert.Equal(body.ExtData.Arr3[0].ClilocId, actual.ExtData.Arr3[0].ClilocId);
             Assert.Equal(body.ExtData.Arr3[0].Params, actual.ExtData.Arr3[0].Params);
         }
-
+        
         private static Span<byte> FromHexString(string hex) =>
             Enumerable.Range(0, hex.Length)
                 .Where(x => x % 2 == 0)
@@ -218,14 +249,13 @@ namespace StealthSharp.Tests.Unit
                 .ToArray()
                 .AsSpan();
 
-        private (uint len, PacketType packetType, ushort correlationId) DeserializePacket(Span<byte> bytes)
+        private (uint len, PacketType packetType) DeserializePacket(Span<byte> bytes)
         {
-            _serializer.Deserialize(bytes.Slice(0, 4), typeof(uint), out var len);
-            _serializer.Deserialize(bytes.Slice(4, 2), typeof(PacketType), out var packetType);
-            _serializer.Deserialize(bytes.Slice(6, 2), typeof(ushort), out var correlationId);
-            if (len is null || packetType is null || correlationId is null)
+            _marshaler.Deserialize(bytes[..4], typeof(uint), out var len);
+            _marshaler.Deserialize(bytes[4..6], typeof(PacketType), out var packetType);
+            if (len is null || packetType is null)
                 throw new NullReferenceException();
-            return ((uint)len, (PacketType)packetType, (ushort)correlationId);
+            return ((uint)len, (PacketType)packetType);
         }
     }
 }
