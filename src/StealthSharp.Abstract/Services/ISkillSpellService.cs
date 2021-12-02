@@ -44,7 +44,7 @@ namespace StealthSharp.Services
 
         Task ToggleFlyAsync();
 
-        Task UseOtherPaperdollScrollAsync(uint iD);
+        Task UseOtherPaperdollScrollAsync(uint id);
 
         Task UsePrimaryAbilityAsync();
 

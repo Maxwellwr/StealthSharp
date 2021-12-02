@@ -17,33 +17,38 @@ namespace StealthSharp
     public class Stealth
     {
         private readonly IServiceProvider _serviceProvider;
+        
+        public IConnectionService Connection => GetStealthService<IConnectionService>();
 
-        public IEventSystemService EventSystem => _serviceProvider.GetRequiredService<IEventSystemService>();
-        public IConnectionService Connection => _serviceProvider.GetRequiredService<IConnectionService>();
+        public IClientService Client => GetStealthService<IClientService>();
 
-        public IClientService Client => _serviceProvider.GetRequiredService<IClientService>();
+        public IJournalService Journal => GetStealthService<IJournalService>();
 
-        public IJournalService Journal => _serviceProvider.GetRequiredService<IJournalService>();
+        public IObjectSearchService Search => GetStealthService<IObjectSearchService>();
 
-        public IObjectSearchService Search => _serviceProvider.GetRequiredService<IObjectSearchService>();
+        public IGameObjectService GameObject => GetStealthService<IGameObjectService>();
 
-        public IGameObjectService GameObject => _serviceProvider.GetRequiredService<IGameObjectService>();
+        public IMoveItemService MoveItem => GetStealthService<IMoveItemService>();
 
-        public IMoveItemService MoveItem => _serviceProvider.GetRequiredService<IMoveItemService>();
+        public IMoveService Move => GetStealthService<IMoveService>();
 
-        public IMoveService Move => _serviceProvider.GetRequiredService<IMoveService>();
+        public ITargetService Target => GetStealthService<ITargetService>();
 
-        public ITargetService Target => _serviceProvider.GetRequiredService<ITargetService>();
+        public ICharStatsService Char => GetStealthService<ICharStatsService>();
+        
+        public IAttackService Attack => GetStealthService<IAttackService>();
 
-        public ICharStatsService Char => _serviceProvider.GetRequiredService<ICharStatsService>();
+        public ILayerService Layer => GetStealthService<ILayerService>();
 
-        public IGumpService Gump => _serviceProvider.GetRequiredService<IGumpService>();
+        public IMenuService Menu => GetStealthService<IMenuService>();
 
-        public ISkillSpellService SkillSpell => _serviceProvider.GetRequiredService<ISkillSpellService>();
+        public IGumpService Gump => GetStealthService<IGumpService>();
 
-        public IViberService Viber => _serviceProvider.GetRequiredService<IViberService>();
+        public ISkillSpellService SkillSpell => GetStealthService<ISkillSpellService>();
 
-        public ITelegramService Telegram => _serviceProvider.GetRequiredService<ITelegramService>();
+        public IViberService Viber => GetStealthService<IViberService>();
+
+        public ITelegramService Telegram => GetStealthService<ITelegramService>();
 
         public T GetStealthService<T>() where T : notnull => _serviceProvider.GetRequiredService<T>();
         
@@ -54,7 +59,7 @@ namespace StealthSharp
 
         public async Task ConnectToStealthAsync()
         {
-            var internalService = _serviceProvider.GetRequiredService<InternalService>();
+            var internalService = GetStealthService<InternalService>();
             await internalService.ConnectToStealthAsync().ConfigureAwait(false);
         }
     }

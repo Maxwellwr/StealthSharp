@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StealthSharp;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
+using StealthSharp.Serialization;
 using StealthSharp.Services;
 
 namespace TestScript
@@ -14,7 +15,11 @@ namespace TestScript
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddStealthSharp();
-            serviceCollection.Configure<StealthOptions>(opt => opt.Host = "127.0.0.1");
+            serviceCollection.Configure<StealthOptions>(opt =>
+            {
+                opt.Host = "127.0.0.1";
+                opt.Port = 47602;
+            });
             var provider = serviceCollection.BuildServiceProvider();
 
             var stealth = provider.GetRequiredService<Stealth>();
@@ -337,7 +342,9 @@ namespace TestScript
                 Console.WriteLine($"DrawObject Id {se.Id}.");
             }
 
-            await stealth.EventSystem
+            var eventSystem = stealth.GetStealthService<IEventSystemService>();
+
+            await eventSystem
                     //.OnDrawObject((id) => Console.WriteLine($"DrawObject Id {id.Id}"))
                     .OnItemInfo((id) => Console.WriteLine($"Item info Id {id.Id}"))
                     .OnSpeech((s) => Console.WriteLine($"Speech Id {s.Sender.Id}"))
@@ -349,7 +356,7 @@ namespace TestScript
 
             Console.WriteLine("Unsubscribe from sound");
             
-            await stealth.EventSystem.Unsubscribe(EventType.DrawObject, (Action<Identity>)Se);
+            await eventSystem.Unsubscribe(EventType.DrawObject, (Action<Identity>)Se);
         }
 
         private static async Task GetGumpAsync(Stealth stealth)
