@@ -63,16 +63,16 @@ Advanced - Available through `stealth.GetStealthService<T>()`
 
 | Group | Access | Context |
 | ---- | ---- | ----|
-| Event System | stealth.GetStealthService<IEventSystemService>() | Event management |
-| Context Menu | stealth.GetStealthService<IContextMenuService>() | Working with context menu |
-| Gesture | stealth.GetStealthService<IGestureService>() | Gestures |
-| Global Chat | stealth.GetStealthService<IGlobalChatService>() | Global chat |
-| Global Stealth Vars | stealth.GetStealthService<IGlobalService>() | Managing global variables |
-| Info window | stealth.GetStealthService<IInfoWindowService>() | Using Stealth info window |
-| Map | stealth.GetStealthService<IMapService>() | Draw on map |
-| Market | stealth.GetStealthService<IMarketService>() | AutoBuy and AutoSell |
-| Party | stealth.GetStealthService<IPartyService>() | Party management |
-| Reagents | stealth.GetStealthService<IReagentService>() | Count regs in Backpack |
-| Stealth | stealth.GetStealthService<IStealthService>() | Stealth management |
-| Tiles | stealth.GetStealthService<ITileService>() | Tiles |
-| Trade | stealth.GetStealthService<ITradeService>() | Trading |
+| Event System | `stealth.GetStealthService<IEventSystemService>()` | Event management |
+| Context Menu | `stealth.GetStealthService<IContextMenuService>()` | Working with context menu |
+| Gesture | `stealth.GetStealthService<IGestureService>()` | Gestures |
+| Global Chat | `stealth.GetStealthService<IGlobalChatService>()` | Global chat |
+| Global Stealth Vars | `stealth.GetStealthService<IGlobalService>()` | Managing global variables |
+| Info window | `stealth.GetStealthService<IInfoWindowService>()` | Using Stealth info window |
+| Map | `stealth.GetStealthService<IMapService>()` | Draw on map |
+| Market | `stealth.GetStealthService<IMarketService>()` | AutoBuy and AutoSell |
+| Party | `stealth.GetStealthService<IPartyService>()` | Party management |
+| Reagents | `stealth.GetStealthService<IReagentService>()` | Count regs in Backpack |
+| Stealth | `stealth.GetStealthService<IStealthService>()` | Stealth management |
+| Tiles | `stealth.GetStealthService<ITileService>()` | Tiles |
+| Trade | `stealth.GetStealthService<ITradeService>()` | Trading |
