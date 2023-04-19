@@ -1,6 +1,7 @@
 name: Stealth Sharp
 
 on:
+  workflow_dispatch:
   release:
     types: [ published ]
 
