@@ -9,10 +9,14 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -50,7 +54,7 @@ namespace StealthSharp.Services
 
         public Task AutoBuyAsync(ushort itemType, ushort itemColor, ushort quantity)
         {
-             return Client.SendPacketAsync(PacketType.SCAutoBuy, (itemType, itemColor, quantity));
+            return Client.SendPacketAsync(PacketType.SCAutoBuy, (itemType, itemColor, quantity));
         }
 
         public Task AutoBuyExAsync(ushort itemType, ushort itemColor, ushort quantity, uint price, string name)

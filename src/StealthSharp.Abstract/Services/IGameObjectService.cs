@@ -9,10 +9,14 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -42,7 +46,7 @@ namespace StealthSharp.Services
 
         Task<int> GetMaxManaAsync(uint objId);
 
-        Task<int> GetMaxStamAsync(uint objId);
+        Task<int> GetMaxStaminaAsync(uint objId);
 
         Task<string> GetNameAsync(uint objId);
 
@@ -52,9 +56,9 @@ namespace StealthSharp.Services
 
         Task<int> GetQuantityAsync(uint objId);
 
-        Task<int> GetStamAsync(uint objId);
+        Task<int> GetStaminaAsync(uint objId);
 
-        Task<Bitmap?> GetStaticArtAsync(uint id, ushort hue);
+        Task<Image?> GetStaticArtAsync(uint id, ushort hue);
 
         Task<int> GetStrAsync(uint objId);
 
@@ -99,6 +103,8 @@ namespace StealthSharp.Services
         Task<bool> IsDeadAsync(uint objId);
 
         Task<bool> IsFemaleAsync(uint objId);
+        
+        Task<bool> IsHouseAsync(uint objId);
 
         Task<bool> IsHiddenAsync(uint objId);
 

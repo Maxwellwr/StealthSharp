@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Event
 {
@@ -27,12 +31,12 @@ namespace StealthSharp.Event
 
         protected bool Equals(UpdateObjectStatsEvent other)
         {
-            return Object.Equals(other.Object) && 
+            return Object.Equals(other.Object) &&
                    CurrentLife == other.CurrentLife &&
                    MaxLife == other.MaxLife &&
-                   CurrentMana == other.CurrentMana && 
+                   CurrentMana == other.CurrentMana &&
                    MaxMana == other.MaxMana &&
-                   CurrentStamina == other.CurrentStamina && 
+                   CurrentStamina == other.CurrentStamina &&
                    MaxStamina == other.MaxStamina;
         }
 

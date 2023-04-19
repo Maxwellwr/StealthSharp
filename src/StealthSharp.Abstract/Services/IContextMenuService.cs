@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -20,7 +24,7 @@ namespace StealthSharp.Services
         Task ClearContextMenuAsync();
 
         Task<List<string>> GetContextMenuAsync();
-        
+
         Task<ContextMenu> GetContextMenuRecAsync();
 
         Task RequestContextMenuAsync(uint id);

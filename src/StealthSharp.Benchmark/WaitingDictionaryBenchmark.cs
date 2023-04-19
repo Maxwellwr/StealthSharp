@@ -9,20 +9,25 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Drenalol.WaitingDictionary;
 
+#endregion
+
 namespace StealthSharp.Benchmark
 {
-    [MarkdownExporter, HtmlExporter]
-    [SimpleJob(RunStrategy.Throughput, launchCount: 1)]
+    [MarkdownExporter]
+    [HtmlExporter]
+    [SimpleJob(RunStrategy.Throughput, 1)]
     [MemoryDiagnoser]
     public class WaitingDictionaryBenchmark
     {
         private readonly WaitingDictionary<ushort, object> _dictionary;
-        
+
 
         public WaitingDictionaryBenchmark()
         {
@@ -31,7 +36,9 @@ namespace StealthSharp.Benchmark
 
         [GlobalSetup]
         public Task GlobalSetup()
-            => Task.CompletedTask;
+        {
+            return Task.CompletedTask;
+        }
 
         [Benchmark]
         public Task SetAndRetrieveValueWithRestoreContext()
@@ -40,7 +47,7 @@ namespace StealthSharp.Benchmark
             var setTask = _dictionary.SetAsync(1, new object());
             return Task.WhenAll(waitTask, setTask);
         }
-        
+
         [Benchmark]
         public async Task SetAndRetrieveValueWithoutRestoreContext()
         {
@@ -48,6 +55,5 @@ namespace StealthSharp.Benchmark
             var setTask = _dictionary.SetAsync(1, new object());
             await Task.WhenAll(waitTask, setTask).ConfigureAwait(false);
         }
-
     }
 }

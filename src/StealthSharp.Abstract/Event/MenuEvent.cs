@@ -1,21 +1,27 @@
 ﻿#region Copyright
+
 // // -----------------------------------------------------------------------
 // // <copyright file="DialogEvent.cs" company="StealthSharp">
 // // Copyright (c) StealthSharp. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // // </copyright>
 // // -----------------------------------------------------------------------
+
 #endregion
+
+#region
 
 using System;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Event
 {
     [Serialization.Serializable()]
     public class MenuEvent
     {
-        public Identity Dialog { get; init; } = new ();
+        public Identity Dialog { get; init; } = new();
         public Identity Menu { get; init; } = new();
 
         protected bool Equals(MenuEvent other)

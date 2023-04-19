@@ -9,9 +9,15 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public class TextEntryLimited
     {
         public int X { get; set; }

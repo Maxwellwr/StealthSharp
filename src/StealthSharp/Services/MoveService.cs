@@ -9,12 +9,16 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -160,97 +164,64 @@ namespace StealthSharp.Services
             var x2 = x;
             var y2 = y;
 
-            if ((dir == Direction.NorthEast) ||
-                (dir == Direction.East) ||
-                (dir == Direction.SouthEast))
-            {
-                x2 = (ushort) (x + 1);
-            }
+            if (dir == Direction.NorthEast ||
+                dir == Direction.East ||
+                dir == Direction.SouthEast)
+                x2 = (ushort)(x + 1);
 
-            if ((dir == Direction.SouthWest) ||
-                (dir == Direction.West) ||
-                (dir == Direction.NorthWest))
-            {
-                x2 = (ushort) (x - 1);
-            }
+            if (dir == Direction.SouthWest ||
+                dir == Direction.West ||
+                dir == Direction.NorthWest)
+                x2 = (ushort)(x - 1);
 
-            if ((dir == Direction.North) ||
-                (dir == Direction.South))
-            {
+            if (dir == Direction.North ||
+                dir == Direction.South)
                 x2 = x;
-            }
 
-            if ((dir == Direction.SouthEast) ||
-                (dir == Direction.South) ||
-                (dir == Direction.SouthWest))
-            {
-                y2 = (ushort) (y + 1);
-            }
+            if (dir == Direction.SouthEast ||
+                dir == Direction.South ||
+                dir == Direction.SouthWest)
+                y2 = (ushort)(y + 1);
 
-            if ((dir == Direction.NorthWest) ||
-                (dir == Direction.North) ||
-                (dir == Direction.NorthEast))
-            {
-                y2 = (ushort) (y - 1);
-            }
+            if (dir == Direction.NorthWest ||
+                dir == Direction.North ||
+                dir == Direction.NorthEast)
+                y2 = (ushort)(y - 1);
 
-            if ((dir == Direction.East) ||
-                (dir == Direction.West))
-            {
+            if (dir == Direction.East ||
+                dir == Direction.West)
                 y2 = y;
-            }
 
             return (x2, y2);
         }
 
         public Direction CalcDir(ushort xFrom, ushort yFrom, ushort xTo, ushort yTo)
         {
-            var diffx = (ushort) Math.Abs(xFrom - xTo);
-            var diffy = (ushort) Math.Abs(yFrom - yTo);
-            if (diffx == 0 && diffy == 0)
-            {
-                return Direction.Unknown;
-            }
+            var diffx = (ushort)Math.Abs(xFrom - xTo);
+            var diffy = (ushort)Math.Abs(yFrom - yTo);
+            if (diffx == 0 && diffy == 0) return Direction.Unknown;
 
-            if ((diffx / (diffy + 0.1)) >= 2)
+            if (diffx / (diffy + 0.1) >= 2)
             {
-                if (xFrom > xTo)
-                {
-                    return Direction.West;
-                }
+                if (xFrom > xTo) return Direction.West;
 
                 return Direction.East;
             }
 
-            if ((diffy / (diffx + 0.1)) >= 2)
+            if (diffy / (diffx + 0.1) >= 2)
             {
-                if (yFrom > yTo)
-                {
-                    return Direction.North;
-                }
+                if (yFrom > yTo) return Direction.North;
 
                 return Direction.South;
             }
 
-            if (xFrom > xTo && yFrom > yTo)
-            {
-                return Direction.NorthWest;
-            }
+            if (xFrom > xTo && yFrom > yTo) return Direction.NorthWest;
 
-            if (xFrom > xTo && yFrom < yTo)
-            {
-                return Direction.SouthWest;
-            }
+            if (xFrom > xTo && yFrom < yTo) return Direction.SouthWest;
 
-            if (xFrom < xTo && yFrom > yTo)
-            {
-                return Direction.NorthEast;
-            }
+            if (xFrom < xTo && yFrom > yTo) return Direction.NorthEast;
 
-            if (xFrom < xTo && yFrom < yTo)
-            {
-                return Direction.SouthEast;
-            }
+            if (xFrom < xTo && yFrom < yTo) return Direction.SouthEast;
 
             return Direction.Unknown;
         }
@@ -267,12 +238,12 @@ namespace StealthSharp.Services
 
         public ushort Dist(ushort x1, ushort y1, ushort x2, ushort y2)
         {
-            var dx = (ushort) Math.Abs(x1 - x2);
-            var dy = (ushort) Math.Abs(y1 - y2);
+            var dx = (ushort)Math.Abs(x1 - x2);
+            var dy = (ushort)Math.Abs(y1 - y2);
 
-            var ret = (dx > dy) ? dy : dx;
-            var my = (ushort) Math.Abs(dx - dy);
-            return (ushort) (ret + my);
+            var ret = dx > dy ? dy : dx;
+            var my = (ushort)Math.Abs(dx - dy);
+            return (ushort)(ret + my);
         }
 
         public Task<List<WorldPoint3D>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy)
@@ -341,12 +312,12 @@ namespace StealthSharp.Services
 
         public Task<byte> StepAsync(byte direction, bool running)
         {
-            return Client.SendPacketAsync<(byte,bool), byte>(PacketType.SCStep, (direction, running));
+            return Client.SendPacketAsync<(byte, bool), byte>(PacketType.SCStep, (direction, running));
         }
 
         public Task<int> StepQAsync(byte direction, bool running)
         {
-            return Client.SendPacketAsync<(byte,bool), int>(PacketType.SCStepQ, (direction, running));
+            return Client.SendPacketAsync<(byte, bool), int>(PacketType.SCStepQ, (direction, running));
         }
     }
 }

@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +27,8 @@ using MoreLinq.Extensions;
 using StealthSharp.Enumeration;
 using StealthSharp.Event;
 using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Network
 {
@@ -296,10 +300,7 @@ namespace StealthSharp.Network
         public IDisposable Subscribe(IObserver<ServerEventData> observer)
         {
             // Check whether observer is already registered. If not, add it
-            if (!_observers.Contains(observer))
-            {
-                _observers.Add(observer);
-            }
+            if (!_observers.Contains(observer)) _observers.Add(observer);
 
             return new Unsubscriber<ServerEventData>(_observers, observer);
         }

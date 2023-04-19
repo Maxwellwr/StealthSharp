@@ -9,11 +9,15 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -86,7 +90,7 @@ namespace StealthSharp.Services
 
         public Task<int> ChangeProfileAsync(string name, string shardName, string charName)
         {
-            return Client.SendPacketAsync<(string, string, string),int>(PacketType.SCChangeProfileEx, (name, shardName, charName));
+            return Client.SendPacketAsync<(string, string, string), int>(PacketType.SCChangeProfileEx, (name, shardName, charName));
         }
 
         public async Task<bool> CheckLagAsync(int timeoutMs)
@@ -101,10 +105,7 @@ namespace StealthSharp.Services
                 checkLagEndRes = await Client.SendPacketAsync<bool>(PacketType.SCIsCheckLagEnd).ConfigureAwait(false);
             } while (DateTime.Now <= stopTime && !checkLagEndRes);
 
-            if (checkLagEndRes)
-            {
-                result = true;
-            }
+            if (checkLagEndRes) result = true;
 
             await CheckLagEndAsync().ConfigureAwait(false);
 

@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System;
 using StealthSharp.Enumeration;
+
+#endregion
 
 namespace StealthSharp.Event
 {
@@ -28,8 +32,8 @@ namespace StealthSharp.Event
         {
             return MessengerType == other.MessengerType &&
                    SenderNickname == other.SenderNickname &&
-                   SenderId == other.SenderId && 
-                   ChatId == other.ChatId && 
+                   SenderId == other.SenderId &&
+                   ChatId == other.ChatId &&
                    EventMsg == other.EventMsg &&
                    EventType == other.EventType;
         }

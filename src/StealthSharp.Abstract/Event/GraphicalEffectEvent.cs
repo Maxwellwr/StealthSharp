@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Event
 {
@@ -29,10 +33,10 @@ namespace StealthSharp.Event
         protected bool Equals(GraphicalEffectEvent other)
         {
             return Source.Equals(other.Source) &&
-                   SourcePoint.Equals(other.SourcePoint) && 
+                   SourcePoint.Equals(other.SourcePoint) &&
                    Destination.Equals(other.Destination) &&
-                   DestinationPoint.Equals(other.DestinationPoint) && 
-                   Type == other.Type && 
+                   DestinationPoint.Equals(other.DestinationPoint) &&
+                   Type == other.Type &&
                    ItemId == other.ItemId &&
                    FixedDirection == other.FixedDirection;
         }

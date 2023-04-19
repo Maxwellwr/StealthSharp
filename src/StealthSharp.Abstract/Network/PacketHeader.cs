@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using StealthSharp.Enumeration;
 using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Network
 {

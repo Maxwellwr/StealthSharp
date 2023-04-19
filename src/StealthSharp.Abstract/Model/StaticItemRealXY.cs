@@ -9,12 +9,18 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
     /// <summary>
     ///     StaticItemRealXY.
     /// </summary>
-    [Serialization.Serializable()]
+    [Serializable()]
     public class StaticItemRealXY
     {
         public ushort Tile { get; set; }

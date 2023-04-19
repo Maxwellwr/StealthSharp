@@ -9,7 +9,12 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
+using StealthSharp.Serialization;
+
+#endregion
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -18,7 +23,7 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Found Tile.
     /// </summary>
-    [Serialization.Serializable()]
+    [Serializable()]
     public class FoundTile
     {
         public ushort Tile { get; set; }
@@ -28,10 +33,7 @@ namespace StealthSharp.Model
 
         public override bool Equals(object? obj)
         {
-            if (obj is FoundTile ft)
-            {
-                return ft.X == X && ft.Y == Y && ft.Z == Z;
-            }
+            if (obj is FoundTile ft) return ft.X == X && ft.Y == Y && ft.Z == Z;
 
             // ReSharper disable once BaseObjectEqualsIsObjectEquals
             return base.Equals(obj);

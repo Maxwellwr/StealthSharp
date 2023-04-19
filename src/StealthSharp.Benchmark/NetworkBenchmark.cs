@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
@@ -16,10 +18,13 @@ using Microsoft.Extensions.DependencyInjection;
 using StealthSharp.Model;
 using StealthSharp.Services;
 
+#endregion
+
 namespace StealthSharp.Benchmark
 {
-    [MarkdownExporter, HtmlExporter]
-    [SimpleJob(RunStrategy.Throughput, launchCount: 1)]
+    [MarkdownExporter]
+    [HtmlExporter]
+    [SimpleJob(RunStrategy.Throughput, 1)]
     [MemoryDiagnoser]
     public class NetworkBenchmark
     {
@@ -39,10 +44,12 @@ namespace StealthSharp.Benchmark
 
         [GlobalSetup]
         public Task GlobalSetup()
-            => _stealth.ConnectToStealthAsync();
+        {
+            return _stealth.ConnectToStealthAsync();
+        }
 
         //[Benchmark]
-        public Task<StealthSharp.Model.AboutData> GetAboutPacket()
+        public Task<Model.AboutData> GetAboutPacket()
         {
             return _stealthService.GetStealthInfoAsync();
         }

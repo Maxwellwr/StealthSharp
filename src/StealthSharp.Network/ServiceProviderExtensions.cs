@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System;
 using StealthSharp.Network;
 using StealthSharp.Serialization;
+
+#endregion
 
 // ReSharper disable CheckNamespace Microsoft DI Extension methods recommend to place in Microsoft namespace https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage#register-services-for-di  
 namespace Microsoft.Extensions.DependencyInjection
@@ -21,7 +25,9 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddStealthSharpClient(
             this IServiceCollection serviceCollection)
-            => AddStealthSharpClient(serviceCollection, _ => { });
+        {
+            return AddStealthSharpClient(serviceCollection, _ => { });
+        }
 
         public static IServiceCollection AddStealthSharpClient(
             this IServiceCollection serviceCollection, Action<SerializationOptions> configAction)

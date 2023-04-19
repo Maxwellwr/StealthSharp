@@ -18,6 +18,6 @@ namespace StealthSharp.Enumeration
         OutOfSight = 2,
         DoesNotBelong = 3,
         AlreadyHolding = 4,
-        MustWait = 5,
+        MustWait = 5
     }
 }

@@ -9,9 +9,15 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public class XmfHTMLTok
     {
         public int X { get; set; }
@@ -25,7 +31,7 @@ namespace StealthSharp.Model
         public int Page { get; set; }
         public int ElemNum { get; set; }
 
-        
+
         public string Arguments { get; set; } = string.Empty;
     }
 }

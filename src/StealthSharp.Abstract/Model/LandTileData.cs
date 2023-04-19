@@ -9,12 +9,18 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
     /// <summary>
     ///     Land Tile Data.
     /// </summary>
-    [Serialization.Serializable()]
+    [Serializable()]
     public class LandTileData
     {
         public uint Flags { get; set; }

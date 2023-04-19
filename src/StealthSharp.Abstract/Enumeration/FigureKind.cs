@@ -11,12 +11,12 @@
 
 namespace StealthSharp.Enumeration
 {
-    public enum FigureKind: byte
+    public enum FigureKind : byte
     {
         Line,
         Ellipse,
         Rectangle,
         Direction,
-        Text,
+        Text
     }
 }

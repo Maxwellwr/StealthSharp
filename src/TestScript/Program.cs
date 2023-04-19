@@ -1,17 +1,20 @@
-﻿using System;
+﻿#region
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using StealthSharp;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
-using StealthSharp.Serialization;
 using StealthSharp.Services;
+
+#endregion
 
 namespace TestScript
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddStealthSharp();
@@ -351,11 +354,11 @@ namespace TestScript
                     .OnCharAnimation((id) => Console.WriteLine($"Animation Id {id.Object.Id}"))
                     .OnDrawObject(Se)
                 ;
-           
+
             await Task.Delay(10000);
 
             Console.WriteLine("Unsubscribe from sound");
-            
+
             await eventSystem.Unsubscribe(EventType.DrawObject, (Action<Identity>)Se);
         }
 

@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -44,7 +48,7 @@ namespace StealthSharp.Services
 
         public Task<uint> GetTradeContainerAsync(byte tradeNum, byte num)
         {
-            return Client.SendPacketAsync<(byte,byte), uint>(PacketType.SCGetTradeContainer, (tradeNum, num));
+            return Client.SendPacketAsync<(byte, byte), uint>(PacketType.SCGetTradeContainer, (tradeNum, num));
         }
 
         public Task<uint> GetTradeOpponentAsync(byte tradeNum)
@@ -59,7 +63,7 @@ namespace StealthSharp.Services
 
         public Task<bool> TradeCheckAsync(byte tradeNum, byte num)
         {
-            return Client.SendPacketAsync<(byte,byte), bool>(PacketType.SCTradeCheck, (tradeNum, num));
+            return Client.SendPacketAsync<(byte, byte), bool>(PacketType.SCTradeCheck, (tradeNum, num));
         }
     }
 }

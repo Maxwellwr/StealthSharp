@@ -9,12 +9,18 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
     /// <summary>
     ///     Extended Info.
     /// </summary>
-    [Serialization.Serializable()]
+    [Serializable()]
     public class ExtendedInfo
     {
         public ushort MaxWeight { get; set; }

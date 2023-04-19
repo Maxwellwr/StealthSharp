@@ -14,6 +14,6 @@ namespace StealthSharp.Enumeration
     public enum TileFlagsType : byte
     {
         Land = 0,
-        Static = 1,
+        Static = 1
     }
 }

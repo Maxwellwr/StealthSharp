@@ -9,15 +9,19 @@
 
 #endregion
 
+#region
+
 using BenchmarkDotNet.Running;
+
+#endregion
 
 namespace StealthSharp.Benchmark
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            //var serializer = BenchmarkRunner.Run<SerializerBenchmark>();
+            var serializer = BenchmarkRunner.Run<SerializerBenchmark>();
             var network = BenchmarkRunner.Run<NetworkBenchmark>();
             //var waitingDictionary = BenchmarkRunner.Run<WaitingDictionaryBenchmark>();
         }

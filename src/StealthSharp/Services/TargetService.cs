@@ -9,11 +9,15 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -41,7 +45,7 @@ namespace StealthSharp.Services
 
         public async Task<bool> GetTargetPresentAsync()
         {
-            return (await GetTargetIdAsync().ConfigureAwait(false)) > 0;
+            return await GetTargetIdAsync().ConfigureAwait(false) > 0;
         }
 
         public Task<uint> GetLastTargetAsync()
@@ -61,7 +65,7 @@ namespace StealthSharp.Services
 
         public Task<bool> CheckLOSAsync(ushort xf, ushort yf, sbyte zf, ushort xt, ushort yt, sbyte zt, byte worldNum)
         {
-            return Client.SendPacketAsync<(ushort, ushort, sbyte, ushort, ushort, sbyte, byte),bool>(PacketType.SCCheckLOS,
+            return Client.SendPacketAsync<(ushort, ushort, sbyte, ushort, ushort, sbyte, byte), bool>(PacketType.SCCheckLOS,
                 (xf, yf, zf, xt, yt, zt, worldNum));
         }
 

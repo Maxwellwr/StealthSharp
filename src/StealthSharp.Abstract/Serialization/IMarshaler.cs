@@ -9,19 +9,28 @@
 
 #endregion
 
+#region
+
 using System;
+
+#endregion
 
 namespace StealthSharp.Serialization
 {
     public interface IMarshaler
     {
-        ISerializationResult Serialize(object data);
+        ISerializationResult Serialize<T>(T data);
         void Serialize(in Span<byte> span, object data, Endianness endianness = Endianness.LittleEndian);
         void Deserialize(in Span<byte> span, Type dataType, out object value, Endianness endianness = Endianness.LittleEndian);
-        T Deserialize<T>(ISerializationResult data) => (T)Deserialize(data, typeof(T));
+
+        T Deserialize<T>(ISerializationResult data)
+        {
+            return (T)Deserialize(data, typeof(T));
+        }
+
         object Deserialize(ISerializationResult data, Type targetType);
-        
-        int SizeOf(object element);
+
+        int SizeOf<T>(T element);
 
         /// <summary>
         /// Size of simple types like byte, int, short or Enum underlying type

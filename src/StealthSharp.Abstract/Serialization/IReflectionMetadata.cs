@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
+
+#endregion
 
 namespace StealthSharp.Serialization
 {

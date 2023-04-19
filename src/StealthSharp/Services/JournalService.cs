@@ -9,10 +9,14 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -90,22 +94,22 @@ namespace StealthSharp.Services
 
         public Task AddChatUserIgnoreAsync(string user)
         {
-             return Client.SendPacketAsync(PacketType.SCUAddChatUserIgnore, user);
+            return Client.SendPacketAsync(PacketType.SCUAddChatUserIgnore, user);
         }
 
         public Task AddJournalIgnoreAsync(string str)
         {
-             return Client.SendPacketAsync(PacketType.SCAddJournalIgnore, str);
+            return Client.SendPacketAsync(PacketType.SCAddJournalIgnore, str);
         }
 
         public Task AddToJournalAsync(string text)
         {
-             return Client.SendPacketAsync(PacketType.SCAddToJournal, text);
+            return Client.SendPacketAsync(PacketType.SCAddToJournal, text);
         }
 
         public Task AddToSystemJournalAsync(string text)
         {
-             return Client.SendPacketAsync(PacketType.SCAddToSystemJournal, text);
+            return Client.SendPacketAsync(PacketType.SCAddToSystemJournal, text);
         }
 
         public Task AddToSystemJournalAsync(string format, params object[] args)
@@ -115,22 +119,22 @@ namespace StealthSharp.Services
 
         public Task ClearChatUserIgnoreAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCClearChatUserIgnore);
+            return Client.SendPacketAsync(PacketType.SCClearChatUserIgnore);
         }
 
         public Task ClearJournalAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCClearJournal);
+            return Client.SendPacketAsync(PacketType.SCClearJournal);
         }
 
         public Task ClearJournalIgnoreAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCClearJournalIgnore);
+            return Client.SendPacketAsync(PacketType.SCClearJournalIgnore);
         }
 
         public Task ClearSystemJournalAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCClearSystemJournal);
+            return Client.SendPacketAsync(PacketType.SCClearSystemJournal);
         }
 
         public Task<int> InJournalAsync(string str)
@@ -150,7 +154,7 @@ namespace StealthSharp.Services
 
         public Task SetJournalLineAsync(int stringIndex, string text)
         {
-             return Client.SendPacketAsync(PacketType.SCSetJournalLine, (stringIndex, text));
+            return Client.SendPacketAsync(PacketType.SCSetJournalLine, (stringIndex, text));
         }
 
         public async Task<bool> WaitJournalLineAsync(DateTime startTime, string str, int maxWaitTimeMs = 0)
@@ -160,11 +164,8 @@ namespace StealthSharp.Services
 
             do
             {
-                if (await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime).ConfigureAwait(false) >= 0)
-                {
-                    return true;
-                }
-            } while (infinite || (stopTime > DateTime.Now));
+                if (await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime).ConfigureAwait(false) >= 0) return true;
+            } while (infinite || stopTime > DateTime.Now);
 
             return false;
         }
@@ -176,12 +177,10 @@ namespace StealthSharp.Services
 
             do
             {
-                if ((await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime).ConfigureAwait(false) >= 0)
+                if (await InJournalBetweenTimesAsync(str, startTime, infinite ? DateTime.Now : stopTime).ConfigureAwait(false) >= 0
                     && (await GetLineNameAsync().ConfigureAwait(false)).Equals("System"))
-                {
                     return true;
-                }
-            } while (infinite || (stopTime > DateTime.Now));
+            } while (infinite || stopTime > DateTime.Now);
 
             return false;
         }

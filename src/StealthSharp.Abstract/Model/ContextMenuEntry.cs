@@ -9,9 +9,15 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public struct ContextMenuEntry
     {
         public ushort Tag { get; set; }

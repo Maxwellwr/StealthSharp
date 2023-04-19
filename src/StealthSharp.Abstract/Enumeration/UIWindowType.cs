@@ -16,6 +16,6 @@ namespace StealthSharp.Enumeration
         Paperdoll = 0,
         Status,
         CharProfile,
-        Container,
+        Container
     }
 }

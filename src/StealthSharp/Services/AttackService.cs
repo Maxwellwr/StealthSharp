@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -19,10 +23,9 @@ namespace StealthSharp.Services
     {
         private readonly ICharStatsService _charStatsService;
         private readonly IGameObjectService _gameObjectService;
-        
 
-        public AttackService(IStealthSharpClient client, 
-            
+
+        public AttackService(IStealthSharpClient client,
             ICharStatsService charStatsService,
             IGameObjectService gameObjectService)
             : base(client)

@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,6 +18,8 @@ using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -43,23 +47,23 @@ namespace StealthSharp.Services
 
         public Task AutoMenuAsync(string menuCaption, string elementCaption)
         {
-             return Client.SendPacketAsync(PacketType.SCAutoMenu, (menuCaption, elementCaption));
+            return Client.SendPacketAsync(PacketType.SCAutoMenu, (menuCaption, elementCaption));
         }
 
         public Task CancelMenuAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCCancelMenu);
+            return Client.SendPacketAsync(PacketType.SCCancelMenu);
         }
 
         public Task CloseMenuAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCCloseMenu);
+            return Client.SendPacketAsync(PacketType.SCCloseMenu);
         }
 
         public Task<List<string>> GetMenuItemsAsync(string menuCaption)
         {
             return Client.SendPacketAsync<string, List<string>>(PacketType.SCGetMenuItems,
-                 menuCaption);
+                menuCaption);
         }
 
         public Task<List<MenuItem>> GetMenuItemsExAsync(string menuCaption)
@@ -69,16 +73,13 @@ namespace StealthSharp.Services
 
         public Task WaitMenuAsync(string menuCaption, string elementCaption)
         {
-             return Client.SendPacketAsync(PacketType.SCWaitMenu, (menuCaption, elementCaption));
+            return Client.SendPacketAsync(PacketType.SCWaitMenu, (menuCaption, elementCaption));
         }
 
         public async Task<bool> WaitForMenuPresentAsync(int timeout)
         {
             var endTime = DateTime.Now.AddMilliseconds(timeout);
-            while (!await GetMenuPresentAsync().ConfigureAwait(false) && DateTime.Now < endTime)
-            {
-                Thread.Sleep(10);
-            }
+            while (!await GetMenuPresentAsync().ConfigureAwait(false) && DateTime.Now < endTime) Thread.Sleep(10);
 
             return DateTime.Now < endTime && await GetMenuPresentAsync().ConfigureAwait(false);
         }

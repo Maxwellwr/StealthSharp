@@ -9,12 +9,16 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Buffers;
 using System.IO;
 using System.IO.Pipelines;
 using System.Threading;
 using System.Threading.Tasks;
+
+#endregion
 
 namespace StealthSharp.Network
 {
@@ -49,12 +53,19 @@ namespace StealthSharp.Network
             }
         }
 
-        public static void Examine(this PipeReader reader, SequencePosition consumed, SequencePosition examined) =>
+        public static void Examine(this PipeReader reader, SequencePosition consumed, SequencePosition examined)
+        {
             reader.AdvanceTo(consumed, examined);
+        }
 
-        public static void Consume(this PipeReader reader, SequencePosition consume) => reader.AdvanceTo(consume);
+        public static void Consume(this PipeReader reader, SequencePosition consume)
+        {
+            reader.AdvanceTo(consume);
+        }
 
-        public static ReadOnlySequence<byte> Slice(in this ReadResult readResult, int start, int length) =>
-            readResult.Buffer.Slice(start, length);
+        public static ReadOnlySequence<byte> Slice(in this ReadResult readResult, int start, int length)
+        {
+            return readResult.Buffer.Slice(start, length);
+        }
     }
 }

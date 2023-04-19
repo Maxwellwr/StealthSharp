@@ -9,11 +9,16 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
+using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public class ClilocItemRec
     {
         public uint ClilocId { get; set; }

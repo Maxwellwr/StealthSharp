@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -24,7 +28,7 @@ namespace StealthSharp.Services
 
         public Task SetGlobalAsync(VarRegion globalRegion, string varName, string varValue)
         {
-             return Client.SendPacketAsync(PacketType.SCSetGlobal, (globalRegion, varName, varValue));
+            return Client.SendPacketAsync(PacketType.SCSetGlobal, (globalRegion, varName, varValue));
         }
 
         public Task<string> GetGlobalAsync(VarRegion globalRegion, string varName)

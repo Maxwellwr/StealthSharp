@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using System;
+
+#endregion
 
 namespace StealthSharp.Model
 {
@@ -17,7 +21,7 @@ namespace StealthSharp.Model
     ///     My Point.
     /// </summary>
     [Serialization.Serializable()]
-    public class WorldPoint3D: WorldPoint
+    public class WorldPoint3D : WorldPoint
     {
         public sbyte Z { get; init; }
 

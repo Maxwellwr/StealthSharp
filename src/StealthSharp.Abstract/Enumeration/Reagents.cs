@@ -20,6 +20,6 @@ namespace StealthSharp.Enumeration
         MR = 0xF86,
         NS = 0xF88,
         SA = 0xF8C,
-        SS = 0xF8D,
+        SS = 0xF8D
     }
 }

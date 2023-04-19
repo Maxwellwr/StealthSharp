@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System;
 using StealthSharp.Enumeration;
+
+#endregion
 
 namespace StealthSharp
 {
@@ -20,26 +24,44 @@ namespace StealthSharp
         {
         }
 
-        public static StealthSharpException ConverterError(string converterName) =>
-            new($"Converter {converterName} does not have generic type");
+        public static StealthSharpException ConverterError(string converterName)
+        {
+            return new StealthSharpException($"Converter {converterName} does not have generic type");
+        }
 
-        public static StealthSharpException ConnectionBroken() => new("Connection was broken");
-        
-        public static StealthSharpException StealthError(ErrorCode errorCode) => new($"Error code {errorCode}");
+        public static StealthSharpException ConnectionBroken()
+        {
+            return new StealthSharpException("Connection was broken");
+        }
 
-        public static StealthSharpException EventNotFound(EventType eventType) =>
-            new($"Event {eventType} not found in Enum {nameof(EventType)}");
+        public static StealthSharpException StealthError(ErrorCode errorCode)
+        {
+            return new StealthSharpException($"Error code {errorCode}");
+        }
 
-        public static StealthSharpException EventNotSupportedData(EventType eventType, Type eventDataType) =>
-            new($"Not supported {eventDataType} type for event {eventType}");
+        public static StealthSharpException EventNotFound(EventType eventType)
+        {
+            return new StealthSharpException($"Event {eventType} not found in Enum {nameof(EventType)}");
+        }
 
-        public static StealthSharpException ErrorCreateType(Type type) => 
-            new($"Create instance of event type {type} failed");
+        public static StealthSharpException EventNotSupportedData(EventType eventType, Type eventDataType)
+        {
+            return new StealthSharpException($"Not supported {eventDataType} type for event {eventType}");
+        }
 
-        public static StealthSharpException UnknownParameterType(Type propertyType) => 
-            new($"Type {propertyType} can't be used in event data");
+        public static StealthSharpException ErrorCreateType(Type type)
+        {
+            return new StealthSharpException($"Create instance of event type {type} failed");
+        }
 
-        public static StealthSharpException UnknownParameterType(ParameterType paramType) => 
-            new($"Unsupported parameter {paramType}");
+        public static StealthSharpException UnknownParameterType(Type propertyType)
+        {
+            return new StealthSharpException($"Type {propertyType} can't be used in event data");
+        }
+
+        public static StealthSharpException UnknownParameterType(ParameterType paramType)
+        {
+            return new StealthSharpException($"Unsupported parameter {paramType}");
+        }
     }
 }

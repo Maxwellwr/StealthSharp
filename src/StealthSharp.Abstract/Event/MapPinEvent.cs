@@ -1,14 +1,20 @@
 ﻿#region Copyright
+
 // // -----------------------------------------------------------------------
 // // <copyright file="MapPinEvent.cs" company="StealthSharp">
 // // Copyright (c) StealthSharp. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // // </copyright>
 // // -----------------------------------------------------------------------
+
 #endregion
+
+#region
 
 using System;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Event
 {
@@ -22,8 +28,8 @@ namespace StealthSharp.Event
 
         protected bool Equals(MapPinEvent other)
         {
-            return Identity.Equals(other.Identity) && 
-                   Action == other.Action && 
+            return Identity.Equals(other.Identity) &&
+                   Action == other.Action &&
                    PinId == other.PinId &&
                    Point.Equals(other.Point);
         }

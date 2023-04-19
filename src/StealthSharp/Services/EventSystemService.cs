@@ -9,12 +9,16 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Event;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -54,13 +58,13 @@ namespace StealthSharp.Services
                 _delegates.Remove(eventType);
             }
         }
-        
+
         private void ProcessEvent(ServerEventData data)
         {
             if (_delegates.ContainsKey(data.EventType))
                 _delegates[data.EventType]?.DynamicInvoke(data.GetEventData());
         }
-        
+
         public void OnCompleted()
         {
         }

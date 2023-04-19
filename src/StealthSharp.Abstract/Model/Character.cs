@@ -1,18 +1,24 @@
 ﻿#region Copyright
+
 // // -----------------------------------------------------------------------
 // // <copyright file="Character.cs" company="StealthSharp">
 // // Copyright (c) StealthSharp. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // // </copyright>
 // // -----------------------------------------------------------------------
+
 #endregion
 
+#region
+
 using System;
+
+#endregion
 
 namespace StealthSharp.Model
 {
     [Serialization.Serializable()]
-    public class Character:Identity
+    public class Character : Identity
     {
         public string Name { get; init; } = string.Empty;
 

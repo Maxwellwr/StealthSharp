@@ -1,23 +1,29 @@
 #region Copyright
+
 // // -----------------------------------------------------------------------
 // // <copyright file="StealthSharp.cs" company="StealthSharp">
 // // Copyright (c) StealthSharp. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // // </copyright>
 // // -----------------------------------------------------------------------
+
 #endregion
+
+#region
 
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using StealthSharp.Services;
 
+#endregion
+
 namespace StealthSharp
 {
     public class Stealth
     {
         private readonly IServiceProvider _serviceProvider;
-        
+
         public IConnectionService Connection => GetStealthService<IConnectionService>();
 
         public IClientService Client => GetStealthService<IClientService>();
@@ -35,7 +41,7 @@ namespace StealthSharp
         public ITargetService Target => GetStealthService<ITargetService>();
 
         public ICharStatsService Char => GetStealthService<ICharStatsService>();
-        
+
         public IAttackService Attack => GetStealthService<IAttackService>();
 
         public ILayerService Layer => GetStealthService<ILayerService>();
@@ -46,12 +52,11 @@ namespace StealthSharp
 
         public ISkillSpellService SkillSpell => GetStealthService<ISkillSpellService>();
 
-        public IViberService Viber => GetStealthService<IViberService>();
+        public T GetStealthService<T>() where T : notnull
+        {
+            return _serviceProvider.GetRequiredService<T>();
+        }
 
-        public ITelegramService Telegram => GetStealthService<ITelegramService>();
-
-        public T GetStealthService<T>() where T : notnull => _serviceProvider.GetRequiredService<T>();
-        
         public Stealth(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;

@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using StealthSharp;
 using StealthSharp.Network;
 using StealthSharp.Services;
+
+#endregion
 
 // ReSharper disable CheckNamespace Microsoft DI Extension methods recommend to place in Microsoft namespace https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage#register-serviceCollection-for-di  
 namespace Microsoft.Extensions.DependencyInjection
@@ -27,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 c.StringSizeType = typeof(uint);
             });
             serviceCollection.AddSingleton<IPacketCorrelationGenerator<ushort>, PacketCorrelationGenerator>();
-            
+
             serviceCollection.AddServices();
             serviceCollection.AddSingleton<Stealth, Stealth>();
             serviceCollection.AddTransient<InternalService, InternalService>();

@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System.Collections;
 using System.Collections.Generic;
 using StealthSharp.Enumeration;
@@ -16,11 +18,13 @@ using StealthSharp.Event;
 using StealthSharp.Model;
 using StealthSharp.Network;
 
+#endregion
+
 namespace StealthSharp.Tests.DataGenerators
 {
     public class EventDataGenerator : IEnumerable<object[]>
     {
-        private List<object[]> _data = new()
+        private readonly List<object[]> _data = new()
         {
             new object[]
             {
@@ -394,7 +398,7 @@ namespace StealthSharp.Tests.DataGenerators
                     Length = 30
                 },
                 new ServerEventData<SetGlobalVarEvent>(
-                    EventType.SetGlobalVar, 
+                    EventType.SetGlobalVar,
                     new SetGlobalVarEvent { Name = "Var", Value = "Value" }),
                 "1E000000030025020006000000560061007200000A000000560061006C0075006500"
             },
@@ -432,11 +436,17 @@ namespace StealthSharp.Tests.DataGenerators
                     Text = "Sample text"
                 }),
                 "3300000003002703030800000C000000530041006D0070006C0065000016000000530061006D0070006C00650020007400650078007400"
-            },
+            }
         };
 
-        public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
+        public IEnumerator<object[]> GetEnumerator()
+        {
+            return _data.GetEnumerator();
+        }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

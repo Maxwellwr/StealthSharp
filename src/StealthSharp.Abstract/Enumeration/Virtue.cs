@@ -20,6 +20,6 @@ namespace StealthSharp.Enumeration
         Justice = 0x6D,
         Sacrifice = 0x6E,
         Spirituality = 0x6F,
-        Valor = 0x70,
+        Valor = 0x70
     }
 }

@@ -14,6 +14,6 @@ namespace StealthSharp.Enumeration
     public enum VarRegion
     {
         RegStealth,
-        RegChar,
+        RegChar
     }
 }

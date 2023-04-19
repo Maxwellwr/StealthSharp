@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Reflection;
 using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp
 {

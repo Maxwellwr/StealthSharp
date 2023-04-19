@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -24,12 +28,12 @@ namespace StealthSharp.Services
 
         public Task ClearInfoWindowAsync()
         {
-             return Client.SendPacketAsync(PacketType.SCClearInfoWindow);
+            return Client.SendPacketAsync(PacketType.SCClearInfoWindow);
         }
 
         public Task FillInfoWindowAsync(string str)
         {
-             return Client.SendPacketAsync(PacketType.SCFillNewWindow, str);
+            return Client.SendPacketAsync(PacketType.SCFillNewWindow, str);
         }
     }
 }

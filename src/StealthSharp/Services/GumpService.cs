@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +18,8 @@ using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -33,7 +37,7 @@ namespace StealthSharp.Services
 
         public async Task<bool> GetIsGumpAsync()
         {
-            return (await GetGumpsCountAsync().ConfigureAwait(false)) > 0;
+            return await GetGumpsCountAsync().ConfigureAwait(false) > 0;
         }
 
         public Task AddGumpIgnoreByIdAsync(uint id)
@@ -141,10 +145,7 @@ namespace StealthSharp.Services
 
         public async Task WaitGumpAsync(string value)
         {
-            if (!string.IsNullOrEmpty(value))
-            {
-                await WaitGumpAsync(BitConverter.ToInt32(Encoding.Unicode.GetBytes(value.Trim()), 0)).ConfigureAwait(false);
-            }
+            if (!string.IsNullOrEmpty(value)) await WaitGumpAsync(BitConverter.ToInt32(Encoding.Unicode.GetBytes(value.Trim()), 0)).ConfigureAwait(false);
         }
 
         public Task WaitGumpAsync(int value)

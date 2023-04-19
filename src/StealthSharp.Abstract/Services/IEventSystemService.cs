@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
+
+#endregion
 
 namespace StealthSharp.Services
 {

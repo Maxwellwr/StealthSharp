@@ -9,10 +9,14 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -46,7 +50,7 @@ namespace StealthSharp.Services
 
         Task<uint> GetTileFlagsAsync(TileFlagsType group, ushort tile);
 
-        Task<(bool result, sbyte destZ)> IsWorldCellPassableAsync(ushort currX, ushort currY, sbyte z, ushort destX, ushort destY, 
+        Task<(bool result, sbyte destZ)> IsWorldCellPassableAsync(ushort currX, ushort currY, sbyte z, ushort destX, ushort destY,
             byte worldNum);
 
         Task<List<StaticItemRealXY>> ReadStaticsXYAsync(ushort x, ushort y, byte worldNum);

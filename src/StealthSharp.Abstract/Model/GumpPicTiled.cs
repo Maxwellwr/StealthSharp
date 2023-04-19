@@ -9,17 +9,23 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public class GumpPicTiled
     {
         public int X { get; set; }
-        public int Y{ get; set; }
-        public int Width{ get; set; }
-        public int Height{ get; set; }
-        public int GumpId{ get; set; }
-        public int Page{ get; set; }
-        public int ElemNum{ get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int GumpId { get; set; }
+        public int Page { get; set; }
+        public int ElemNum { get; set; }
     }
 }

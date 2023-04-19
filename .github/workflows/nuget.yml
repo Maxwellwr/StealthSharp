@@ -2,7 +2,7 @@ name: Stealth Sharp
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   build:
@@ -14,19 +14,19 @@ jobs:
       NUGET_APIKEY: ${{ secrets.NUGET_TOKEN }}
       VERSION: ${{ github.event.release.tag_name }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 5.0.x
-    - name: Restore dependencies
-      run: dotnet restore $PROJECT_FOLDER
-    - name: Build
-      run: dotnet build -p:Version=$VERSION -c Release --no-restore $PROJECT_FOLDER
-    - name: Test
-      run: dotnet test --no-build --verbosity normal -c Release --filter Category=Unit $PROJECT_FOLDER
-    - name: Pack
-      run: dotnet pack -p:Version=$VERSION -p:PackageOutputPath=../$NUPKG_FOLDER -c Release --no-build --nologo $PROJECT_FOLDER
-    - name: Deploy
-      run: dotnet nuget push "${PROJECT_FOLDER}/${NUPKG_FOLDER}/*.${VERSION}.nupkg" -s https://nuget.org -k ${NUGET_APIKEY} 
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Restore dependencies
+        run: dotnet restore $PROJECT_FOLDER
+      - name: Build
+        run: dotnet build -p:Version=$VERSION -c Release --no-restore $PROJECT_FOLDER
+      - name: Test
+        run: dotnet test --no-build --verbosity normal -c Release --filter Category=Unit $PROJECT_FOLDER
+      - name: Pack
+        run: dotnet pack -p:Version=$VERSION -p:PackageOutputPath=../$NUPKG_FOLDER -c Release --no-build --nologo $PROJECT_FOLDER
+      - name: Deploy
+        run: dotnet nuget push "${PROJECT_FOLDER}/${NUPKG_FOLDER}/*.${VERSION}.nupkg" -s https://nuget.org -k ${NUGET_APIKEY} 
 

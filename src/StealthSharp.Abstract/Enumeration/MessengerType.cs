@@ -15,6 +15,6 @@ namespace StealthSharp.Enumeration
     {
         Unknown = 0,
         Telegram = 1,
-        Viber = 2,
+        Viber = 2
     }
 }

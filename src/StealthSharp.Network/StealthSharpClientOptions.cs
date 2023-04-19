@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System.IO.Pipelines;
 using System.Net.Sockets;
+
+#endregion
 
 namespace StealthSharp.Network
 {

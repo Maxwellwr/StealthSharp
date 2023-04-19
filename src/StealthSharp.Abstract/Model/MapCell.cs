@@ -9,12 +9,18 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
     /// <summary>
     ///     Map Cell.
     /// </summary>
-    [Serialization.Serializable()]
+    [Serializable()]
     public struct MapCell
     {
         public ushort Tile { get; set; }

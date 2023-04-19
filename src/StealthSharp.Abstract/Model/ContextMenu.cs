@@ -9,11 +9,16 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
+using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public struct ContextMenu
     {
         public uint Id { get; set; }
@@ -22,7 +27,7 @@ namespace StealthSharp.Model
 
         public bool NewCliloc { get; set; }
 
-        
+
         public List<ContextMenuEntry> Entries { get; set; }
     }
 }

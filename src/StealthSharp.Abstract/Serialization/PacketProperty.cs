@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Reflection;
+
+#endregion
 
 namespace StealthSharp.Serialization
 {
@@ -25,10 +29,14 @@ namespace StealthSharp.Serialization
             PropertyType = propertyInfo.PropertyType;
         }
 
-        public object? Get(object data) =>
-            _propertyInfo.GetValue(data);
+        public object? Get(object data)
+        {
+            return _propertyInfo.GetValue(data);
+        }
 
-        public void Set(object input, object? value) =>
+        public void Set(object input, object? value)
+        {
             _propertyInfo.SetValue(input, value);
+        }
     }
 }

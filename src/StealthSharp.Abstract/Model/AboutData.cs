@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using System;
+
+#endregion
 
 namespace StealthSharp.Model
 {
@@ -24,7 +28,7 @@ namespace StealthSharp.Model
         public DateTime BuildDate { get; init; }
         public ushort GitRevNumber { get; init; }
         public string? GitRevision { get; set; }
-        
+
         protected bool Equals(AboutData other)
         {
             return Build == other.Build && BuildDate.Equals(other.BuildDate) && GitRevNumber == other.GitRevNumber;
@@ -34,7 +38,7 @@ namespace StealthSharp.Model
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((AboutData) obj);
+            return obj.GetType() == GetType() && Equals((AboutData)obj);
         }
 
         public override int GetHashCode()

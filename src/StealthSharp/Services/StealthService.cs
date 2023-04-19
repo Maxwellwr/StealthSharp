@@ -9,12 +9,16 @@
 
 #endregion
 
+#region
+
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {

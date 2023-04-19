@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -63,7 +67,7 @@ namespace StealthSharp.Services
         Task<byte> GetSkillLockStateAsync(string skillName);
 
         Task<bool> IsActiveSpellAbility(string spellName);
-        
+
         Task<bool> IsActiveSpellAbility(Spell spell);
     }
 }

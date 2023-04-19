@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
@@ -19,10 +21,13 @@ using StealthSharp.Network;
 using StealthSharp.Serialization;
 using StealthSharp.Serialization.Converters;
 
+#endregion
+
 namespace StealthSharp.Benchmark
 {
-    [MarkdownExporter, HtmlExporter]
-    [SimpleJob(RunStrategy.Throughput, launchCount: 1)]
+    [MarkdownExporter]
+    [HtmlExporter]
+    [SimpleJob(RunStrategy.Throughput, 1)]
     [MemoryDiagnoser]
     public class SerializerBenchmark
     {
@@ -59,7 +64,7 @@ namespace StealthSharp.Benchmark
         public AboutData Deserialize()
         {
             using var res = new SerializationResult(6);
-            new byte[]{1,0,2,0,3,0}.AsSpan().CopyTo(res.Memory.Span);
+            new byte[] { 1, 0, 2, 0, 3, 0 }.AsSpan().CopyTo(res.Memory.Span);
             var deres = _marshaler.Deserialize<AboutData>(res);
             return deres;
         }

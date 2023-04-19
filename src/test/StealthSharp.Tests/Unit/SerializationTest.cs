@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,9 +25,11 @@ using StealthSharp.Serialization.Converters;
 using StealthSharp.Tests.DataGenerators;
 using Xunit;
 
+#endregion
+
 namespace StealthSharp.Tests.Unit
 {
-    [Trait( "Category", "Unit")]
+    [Trait("Category", "Unit")]
     public class SerializationTest
     {
         private readonly IMarshaler _marshaler;
@@ -79,7 +83,7 @@ namespace StealthSharp.Tests.Unit
             using var result2 = _marshaler.Serialize(body!);
 
             //assert
-            var actual = ToHexString(result1.Memory.ToArray()) 
+            var actual = ToHexString(result1.Memory.ToArray())
                          + ToHexString(correlation.Memory.ToArray())
                          + ToHexString(result2.Memory.ToArray());
             Assert.Equal(testValue.Length, (uint)result1.Length + correlation.Length + result2.Length - 4);
@@ -119,19 +123,19 @@ namespace StealthSharp.Tests.Unit
             var actual = ToHexString(result.Memory.ToArray());
             Assert.Equal(expected, actual);
         }
-        
+
         [Fact]
         public void Serialize_empty_ArrayList_should_work()
         {
             //arrange
-            var testValue = new ArrayList(){null,null};
+            var testValue = new ArrayList() { null, null };
             var expected = "00000000";
             //act
             using var result = _marshaler.Serialize(testValue);
 
             //assert
             var actual = ToHexString(result.Memory.ToArray());
-            
+
             Assert.Equal(expected, actual);
         }
 
@@ -145,7 +149,7 @@ namespace StealthSharp.Tests.Unit
                 Length = 0x17,
                 PacketType = PacketType.SCJournal
             };
-            string expected = "17000000 7B00 FF00 01000000 0200 03 04000000 04 05 06 07 00000000"
+            var expected = "17000000 7B00 FF00 01000000 0200 03 04000000 04 05 06 07 00000000"
                 .Replace(" ", "");
             //act
             using var result1 = _marshaler.Serialize(testValue);
@@ -173,14 +177,14 @@ namespace StealthSharp.Tests.Unit
                 PacketType = PacketType.SCLangVersion,
                 Length = 36
             };
-            string expected = "24000000050004001287000003000000040000006100610004000000620062000400000063006300";
+            var expected = "24000000050004001287000003000000040000006100610004000000620062000400000063006300";
             //act
             using var result1 = _marshaler.Serialize(testValue);
             using var correlation = _marshaler.Serialize((ushort)4);
             using var result2 = _marshaler.Serialize(body);
 
             //assert
-            var actual = ToHexString(result1.Memory.ToArray()) 
+            var actual = ToHexString(result1.Memory.ToArray())
                          + ToHexString(correlation.Memory.ToArray())
                          + ToHexString(result2.Memory.ToArray());
             Assert.Equal(expected, actual);
@@ -212,7 +216,7 @@ namespace StealthSharp.Tests.Unit
                 PacketType = PacketType.SCLangVersion,
                 Length = 56
             };
-            string expected =
+            var expected =
                 "38000000 0500 0400 12870000 02000000 01000000 02000000 05000000 0100 0200 0300 0400 0500 01000000 06000000 01000000 06000000 3100 3200 3300";
             //act
             using var result1 = _marshaler.Serialize(testValue);
@@ -220,13 +224,15 @@ namespace StealthSharp.Tests.Unit
             using var result2 = _marshaler.Serialize(body);
 
             //assert
-            var actual = ToHexString(result1.Memory.ToArray()) 
+            var actual = ToHexString(result1.Memory.ToArray())
                          + ToHexString(correlation.Memory.ToArray())
                          + ToHexString(result2.Memory.ToArray());
             Assert.Equal(expected.Replace(" ", ""), actual);
         }
 
-        private static string ToHexString(IEnumerable<byte> array) =>
-            string.Concat(array.Select(b => b.ToString("X2")));
+        private static string ToHexString(IEnumerable<byte> array)
+        {
+            return string.Concat(array.Select(b => b.ToString("X2")));
+        }
     }
 }

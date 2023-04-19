@@ -9,13 +9,17 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -86,7 +90,7 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint, int>(PacketType.SCGetMaxMana, objId);
         }
 
-        public Task<int> GetMaxStamAsync(uint objId)
+        public Task<int> GetMaxStaminaAsync(uint objId)
         {
             return Client.SendPacketAsync<uint, int>(PacketType.SCGetMaxStam, objId);
         }
@@ -111,22 +115,19 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint, int>(PacketType.SCGetQuantity, objId);
         }
 
-        public Task<int> GetStamAsync(uint objId)
+        public Task<int> GetStaminaAsync(uint objId)
         {
             return Client.SendPacketAsync<uint, int>(PacketType.SCGetStam, objId);
         }
 
-        public async Task<Bitmap?> GetStaticArtAsync(uint objType, ushort objColor)
+        public async Task<Image?> GetStaticArtAsync(uint objType, ushort objColor)
         {
             var res = await Client.SendPacketAsync<(uint, ushort), byte[]>(PacketType.SCGetStaticArtBitmap, (objType, objColor)).ConfigureAwait(false);
 
-            if (res.Length == 0)
-            {
-                return null;
-            }
+            if (res.Length == 0) return null;
 
             MemoryStream ms = new(res);
-            return new Bitmap(ms);
+            return await Image.LoadAsync(ms).ConfigureAwait(false);
         }
 
         public Task<int> GetStrAsync(uint objId)
@@ -177,6 +178,11 @@ namespace StealthSharp.Services
         public Task<bool> IsFemaleAsync(uint objId)
         {
             return Client.SendPacketAsync<uint, bool>(PacketType.SCIsFemale, objId);
+        }
+        
+        public Task<bool> IsHouseAsync(uint objId)
+        {
+            return Client.SendPacketAsync<uint, bool>(PacketType.SCIsHouse, objId);
         }
 
         public Task<bool> IsHiddenAsync(uint objId)

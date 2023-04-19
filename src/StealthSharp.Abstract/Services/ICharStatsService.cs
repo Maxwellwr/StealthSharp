@@ -9,9 +9,13 @@
 
 #endregion
 
+#region
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -76,7 +80,10 @@ namespace StealthSharp.Services
         ///     Same as <see cref="GetLifeAsync" />. Returns the char - healthy(HITS).
         ///     If there is no connection to the UO server - returns 0.
         /// </summary>
-        Task<int> GetHPAsync() => GetLifeAsync();
+        Task<int> GetHPAsync()
+        {
+            return GetLifeAsync();
+        }
 
         /// <summary>
         ///     Returns the player's - intelligence(INT).
@@ -110,7 +117,10 @@ namespace StealthSharp.Services
         ///     Returns the char - the maximum number of health(Max HITS).
         ///     If there is no connection to the UO server - returns 0.
         /// </summary>
-        Task<int> GetMaxHPAsync() => GetMaxLifeAsync();
+        Task<int> GetMaxHPAsync()
+        {
+            return GetMaxLifeAsync();
+        }
 
         /// <summary>
         ///     Same as <see cref="GetMaxHPAsync" />. In 99% of cases as well <see cref="GetStrAsync" />. Can differ only if the admin changes the

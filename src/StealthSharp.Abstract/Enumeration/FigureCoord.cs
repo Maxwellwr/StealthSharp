@@ -11,9 +11,9 @@
 
 namespace StealthSharp.Enumeration
 {
-    public enum FigureCoord: byte
+    public enum FigureCoord : byte
     {
         World,
-        Screen,
+        Screen
     }
 }

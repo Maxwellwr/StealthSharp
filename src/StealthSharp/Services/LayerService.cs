@@ -9,12 +9,17 @@
 
 #endregion
 
+#region
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Model;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -53,17 +58,13 @@ namespace StealthSharp.Services
 
             var objId = await ObjAtLayerExAsync(Layer.LHand, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (objId != 0)
-            {
                 lh = await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false), 0xff,
                     0xff, 0).ConfigureAwait(false);
-            }
 
             objId = await ObjAtLayerExAsync(Layer.RHand, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (objId != 0)
-            {
                 rh = await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false), 0xff,
                     0xff, 0).ConfigureAwait(false);
-            }
 
             return lh && rh;
         }
@@ -75,15 +76,9 @@ namespace StealthSharp.Services
 
         public async Task<bool> EquipAsync(Layer layer, uint objId)
         {
-            if (!System.Enum.IsDefined(typeof(Layer), layer))
-            {
-                return false;
-            }
+            if (!Enum.IsDefined(typeof(Layer), layer)) return false;
 
-            if (!await _moveItemService.DragItemAsync(objId, 1).ConfigureAwait(false))
-            {
-                return false;
-            }
+            if (!await _moveItemService.DragItemAsync(objId, 1).ConfigureAwait(false)) return false;
 
             Thread.Sleep(20);
 
@@ -115,15 +110,9 @@ namespace StealthSharp.Services
         public async Task<bool> EquiptAsync(Layer layer, ushort objType)
         {
             var obj = await _objectSearchService.FindTypeAsync(objType, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false)).ConfigureAwait(false);
-            if (obj == 0 || !System.Enum.IsDefined(typeof(Layer), layer))
-            {
-                return false;
-            }
+            if (obj == 0 || !Enum.IsDefined(typeof(Layer), layer)) return false;
 
-            if (!await _moveItemService.DragItemAsync(obj, 1).ConfigureAwait(false))
-            {
-                return false;
-            }
+            if (!await _moveItemService.DragItemAsync(obj, 1).ConfigureAwait(false)) return false;
 
             return await WearItemAsync(layer, obj).ConfigureAwait(false);
         }
@@ -140,10 +129,7 @@ namespace StealthSharp.Services
 
         public Task<uint> ObjAtLayerExAsync(Layer layer, uint playerId)
         {
-            if (!System.Enum.IsDefined(typeof(Layer), layer))
-            {
-                return Task.FromResult(0u);
-            }
+            if (!Enum.IsDefined(typeof(Layer), layer)) return Task.FromResult(0u);
 
             return Client.SendPacketAsync<(Layer, uint), uint>(PacketType.SCObjAtLayerEx, (layer, playerId));
         }
@@ -159,14 +145,12 @@ namespace StealthSharp.Services
             var clientVersion = await Client.SendPacketAsync<int>(PacketType.SCGetClientVersionInt).ConfigureAwait(false);
             if (clientVersion < 7007400)
             {
-                foreach (Layer layer in System.Enum.GetValues(typeof(Layer)))
-                {
+                foreach (Layer layer in Enum.GetValues(typeof(Layer)))
                     if (await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false) > 0)
                     {
                         result &= await UnequipAsync(layer).ConfigureAwait(false);
                         Thread.Sleep(await GetDressSpeedAsync().ConfigureAwait(false) * 1000);
                     }
-                }
             }
             else
             {
@@ -178,37 +162,23 @@ namespace StealthSharp.Services
 
         public async Task<bool> UnequipAsync(Layer layer)
         {
-            if (!System.Enum.IsDefined(typeof(Layer), layer))
-            {
-                return false;
-            }
+            if (!Enum.IsDefined(typeof(Layer), layer)) return false;
 
             var objId = await ObjAtLayerExAsync(layer, await _charStatsService.GetSelfAsync().ConfigureAwait(false)).ConfigureAwait(false);
             if (objId != 0)
-            {
                 return await _moveItemService.MoveItemAsync(objId, 1, await _objectSearchService.GetBackpackAsync().ConfigureAwait(false), 0,
                     0, 0).ConfigureAwait(false);
-            }
 
             return false;
         }
 
         public async Task<bool> WearItemAsync(Layer layer, uint objId)
         {
-            if (await _moveItemService.GetPickedUpItemAsync().ConfigureAwait(false) == 0)
-            {
-                return false;
-            }
+            if (await _moveItemService.GetPickedUpItemAsync().ConfigureAwait(false) == 0) return false;
 
-            if (!System.Enum.IsDefined(typeof(Layer), layer))
-            {
-                return false;
-            }
+            if (!Enum.IsDefined(typeof(Layer), layer)) return false;
 
-            if (await _charStatsService.GetSelfAsync().ConfigureAwait(false) == 0x00)
-            {
-                return false;
-            }
+            if (await _charStatsService.GetSelfAsync().ConfigureAwait(false) == 0x00) return false;
 
             await Client.SendPacketAsync(PacketType.SCWearItem, (layer, objId)).ConfigureAwait(false);
             await _moveItemService.SetPickedUpItemAsync(0).ConfigureAwait(false);

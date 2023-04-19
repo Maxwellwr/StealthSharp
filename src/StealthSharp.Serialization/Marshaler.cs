@@ -9,14 +9,19 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+#region
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Extensions.Options;
+
+#endregion
 
 [assembly: InternalsVisibleTo("StealthSharp.Tests")]
 
@@ -38,7 +43,7 @@ namespace StealthSharp.Serialization
                 customConverterFactory ?? throw new ArgumentNullException(nameof(customConverterFactory));
         }
 
-        public ISerializationResult Serialize(object data)
+        public ISerializationResult Serialize<T>(T data)
         {
             var realLength = SizeOf(data);
             var reflectionMetadata = _reflectionCache.GetMetadata(data.GetType());
@@ -47,14 +52,16 @@ namespace StealthSharp.Serialization
             return serializationResult;
         }
 
-        public void Serialize(in Span<byte> span, object data, Endianness endianness = Endianness.LittleEndian) =>
+        public void Serialize(in Span<byte> span, object data, Endianness endianness = Endianness.LittleEndian)
+        {
             ConvertToBytes(data, span, endianness);
+        }
 
         public object Deserialize(ISerializationResult data, Type targetType)
         {
             if (data.Memory.IsEmpty)
                 throw new ArgumentOutOfRangeException(nameof(data), "Empty memory not allowed");
-            
+
             var reflectionMetadata = _reflectionCache.GetMetadata(targetType);
 
             InnerDeserialize(reflectionMetadata, data.Memory.Span, out var deserializationResult, targetType);
@@ -63,8 +70,10 @@ namespace StealthSharp.Serialization
         }
 
         public void Deserialize(in Span<byte> span, Type dataType, out object value,
-            Endianness endianness = Endianness.LittleEndian) =>
+            Endianness endianness = Endianness.LittleEndian)
+        {
             ConvertFromBytes(out value, dataType, span, endianness);
+        }
 
         private void InnerSerialize(IReflectionMetadata? reflectionMetadata, in Span<byte> span, object data)
         {
@@ -108,7 +117,7 @@ namespace StealthSharp.Serialization
                     break;
                 case bool @bool:
                     CheckSpanSize<bool>(span);
-                    span[0] = (@bool ? (byte)1 : (byte)0);
+                    span[0] = @bool ? (byte)1 : (byte)0;
                     break;
                 case char @char:
                     CheckSpanSize<char>(span);
@@ -175,6 +184,7 @@ namespace StealthSharp.Serialization
                             index += SizeOf(enumerator.Current);
                             itemCount++;
                         }
+
                         ConvertToBytes(
                             sizeType == typeof(int) ? itemCount : Convert.ChangeType(itemCount, sizeType),
                             span,
@@ -207,9 +217,7 @@ namespace StealthSharp.Serialization
                         _customConverterFactory.TryGetConverter(propertyValue.GetType(),
                             out var converter) &&
                         converter!.TryConvertToBytes(propertyValue, span, GetSystemEndianness()))
-                    {
                         break;
-                    }
 
                     throw SerializationException.ConverterNotFoundType(propertyValue.GetType().ToString());
             }
@@ -359,13 +367,9 @@ namespace StealthSharp.Serialization
                     {
                         ConvertFromBytes(out var item, underlineType, span[index..], GetSystemEndianness());
                         if (((IList)propertyValue).Count > i)
-                        {
                             ((IList)propertyValue)[i] = item;
-                        }
                         else
-                        {
                             ((IList)propertyValue).Add(item);
-                        }
 
                         index += SizeOf(item);
                     }
@@ -389,11 +393,9 @@ namespace StealthSharp.Serialization
                 }
 
                 if (_customConverterFactory != null &&
-                    (_customConverterFactory.TryGetConverter(propertyType, out var converter)) &&
+                    _customConverterFactory.TryGetConverter(propertyType, out var converter) &&
                     converter!.TryConvertFromBytes(out propertyValue!, span, endianness))
-                {
                     return;
-                }
 
                 throw SerializationException.ConverterNotFoundType(propertyType.ToString());
             }
@@ -402,19 +404,11 @@ namespace StealthSharp.Serialization
             static IEnumerable<Type> GetTupleTypes(Type[] genericTypes)
             {
                 foreach (var type in genericTypes)
-                {
                     if (type.Name.StartsWith("ValueTuple"))
-                    {
                         foreach (var subType in GetTupleTypes(type.GenericTypeArguments))
-                        {
                             yield return subType;
-                        }
-                    }
                     else
-                    {
                         yield return type;
-                    }
-                }
             }
 
             IEnumerable<object> GetTupleValues(List<Type> tupleTypes, in Span<byte> tupleSpan)
@@ -435,14 +429,20 @@ namespace StealthSharp.Serialization
             }
         }
 
-        public int SizeOf(object element)
+        public int SizeOf<T>(T element)
         {
+            if (element == null) throw new ArgumentNullException(nameof(element));
+            
             switch (element)
             {
                 case string s:
                     return SizeOf(_options.StringSizeType) + s.Length * 2;
                 case IList array:
                 {
+                    return array
+                        .OfType<object?>()
+                        .Where(e => e is not null)
+                        .Aggregate(SizeOf(_options.ArrayCountType), (c, e) => c + SizeOf(e!));
                     return Enumerable.Range(0, array.Count)
                         .Where(idx => array[idx] is not null)
                         .Sum(idx => SizeOf(array[idx]!)) + SizeOf(_options.ArrayCountType);
@@ -463,9 +463,7 @@ namespace StealthSharp.Serialization
 
                     if (_customConverterFactory != null &&
                         _customConverterFactory.TryGetConverter(element.GetType(), out var converter))
-                    {
                         return converter!.SizeOf(element);
-                    }
 
                     return SizeOf(element.GetType());
                 }
@@ -479,15 +477,9 @@ namespace StealthSharp.Serialization
         /// <returns>Size in bytes</returns>
         public int SizeOf(Type type)
         {
-            if (type == typeof(bool))
-            {
-                return SizeOf(typeof(byte));
-            }
+            if (type == typeof(bool)) return SizeOf(typeof(byte));
 
-            if (type.IsEnum)
-            {
-                return SizeOf(type.GetEnumUnderlyingType());
-            }
+            if (type.IsEnum) return SizeOf(type.GetEnumUnderlyingType());
 
             var reflectionMetadata = _reflectionCache.GetMetadata(type);
             if (reflectionMetadata != null)
@@ -495,9 +487,7 @@ namespace StealthSharp.Serialization
 
             if (_customConverterFactory != null &&
                 _customConverterFactory.TryGetConverter(type, out var converter))
-            {
                 return converter!.SizeOf(type);
-            }
 
             return Marshal.SizeOf(type);
         }
@@ -514,7 +504,7 @@ namespace StealthSharp.Serialization
                 typeof(ValueTuple<,,,,>),
                 typeof(ValueTuple<,,,,,>),
                 typeof(ValueTuple<,,,,,,>),
-                typeof(ValueTuple<,,,,,,,>),
+                typeof(ValueTuple<,,,,,,,>)
             };
             var numTuples = (int)Math.Ceiling((double)values.Count / maxTupleMembers);
 
@@ -525,7 +515,7 @@ namespace StealthSharp.Serialization
             for (var tupleIndex = numTuples - 1; tupleIndex >= 0; tupleIndex--)
             {
                 var hasRest = currentTuple != null;
-                var numTupleMembers = hasRest ? maxTupleMembers : values.Count - (maxTupleMembers * tupleIndex);
+                var numTupleMembers = hasRest ? maxTupleMembers : values.Count - maxTupleMembers * tupleIndex;
                 var tupleArity = numTupleMembers + (hasRest ? 1 : 0);
 
                 var typeArguments = new Type[tupleArity];
@@ -549,11 +539,15 @@ namespace StealthSharp.Serialization
             return currentTuple!;
         }
 
-        private static bool NeedReverse(Endianness endianness) =>
-            endianness != GetSystemEndianness();
+        private static bool NeedReverse(Endianness endianness)
+        {
+            return endianness != GetSystemEndianness();
+        }
 
-        private static Endianness GetSystemEndianness() =>
-            BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
+        private static Endianness GetSystemEndianness()
+        {
+            return BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
+        }
 
         private void CheckSpanSize<T>(in ReadOnlySpan<byte> span)
         {

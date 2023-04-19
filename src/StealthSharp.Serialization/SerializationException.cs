@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using System;
+
+#endregion
 
 namespace StealthSharp.Serialization
 {
@@ -19,19 +23,29 @@ namespace StealthSharp.Serialization
         {
         }
 
-        public static SerializationException CollectionItemTypeNotFoundException(string missingTypeName) =>
-            new ($"Element type of collection {missingTypeName} not found");
+        public static SerializationException CollectionItemTypeNotFoundException(string missingTypeName)
+        {
+            return new SerializationException($"Element type of collection {missingTypeName} not found");
+        }
 
-        public static SerializationException ConverterNotFoundType(string typeName) =>
-            new ($"Converter not found for type {typeName}");
+        public static SerializationException ConverterNotFoundType(string typeName)
+        {
+            return new SerializationException($"Converter not found for type {typeName}");
+        }
 
-        public static SerializationException SpanSizeException(string typeName) =>
-            new($"Array length lower, then size of type {typeName}");
+        public static SerializationException SpanSizeException(string typeName)
+        {
+            return new SerializationException($"Array length lower, then size of type {typeName}");
+        }
 
-        public static SerializationException CreateInstanceException(string typeName) =>
-            new($"Can not create instance of type {typeName}");
-        
-        public static SerializationException NullNotSupportedException(string message) =>
-            new("Null  not supported. " + message);
+        public static SerializationException CreateInstanceException(string typeName)
+        {
+            return new SerializationException($"Can not create instance of type {typeName}");
+        }
+
+        public static SerializationException NullNotSupportedException(string message)
+        {
+            return new SerializationException("Null  not supported. " + message);
+        }
     }
 }

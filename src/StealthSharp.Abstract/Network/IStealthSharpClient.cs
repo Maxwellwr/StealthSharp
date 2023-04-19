@@ -9,6 +9,8 @@
 
 #endregion
 
+#region
+
 using System;
 using System.IO.Pipelines;
 using System.Net;
@@ -16,6 +18,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Event;
+
+#endregion
 
 namespace StealthSharp.Network
 {
@@ -33,9 +37,7 @@ namespace StealthSharp.Network
         ///     <see cref="bool" />
         /// </returns>
         /// <exception cref="StealthSharpException"></exception>
-        Task<(bool status, ushort correlationId)> SendAsync(PacketType packetType,
-            object? body = null,
-            CancellationToken token = default);
+        Task<(bool status, ushort correlationId)> SendAsync(PacketType packetType, object? body = null, CancellationToken token = default);
 
         /// <summary>
         ///     Begins an asynchronous request to receive response associated with the specified ID from a
@@ -47,7 +49,6 @@ namespace StealthSharp.Network
         ///     <see cref="Task{TResult}" />
         /// </returns>
         /// <exception cref="StealthSharpException"></exception>
-        Task<TBody> ReceiveAsync<TBody>(ushort responseId,
-            CancellationToken token = default);
+        Task<TBody> ReceiveAsync<TBody>(ushort responseId, CancellationToken token = default);
     }
 }

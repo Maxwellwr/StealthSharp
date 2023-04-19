@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using System;
+
+#endregion
 
 namespace StealthSharp.Model
 {

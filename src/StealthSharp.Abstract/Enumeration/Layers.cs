@@ -40,6 +40,6 @@ namespace StealthSharp.Enumeration
         Rstk = 0x1A,
         NRstk = 0x1B,
         Sell = 0x1C,
-        Bank = 0x1D,
+        Bank = 0x1D
     }
 }

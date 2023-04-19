@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using System.Diagnostics.CodeAnalysis;
+
+#endregion
 
 namespace StealthSharp.Enumeration
 {
@@ -276,8 +280,10 @@ namespace StealthSharp.Enumeration
         SCMobileCanBeRenamed = 253,
         SCChangeStatLockState = 254,
         SCGetStaticArtBitmap = 255,
+
         // 256 - Reserved,
         SCSetAlarm = 257,
+
         // 258-261 HTTP
         SCInviteToParty = 262,
         SCRemoveFromParty = 263,
@@ -289,6 +295,7 @@ namespace StealthSharp.Enumeration
         SCPartyLeave = 269,
         SCPartyMembersList = 270,
         SCInParty = 271,
+
         //272-277 ICQ Obsolete
         SCGetTileFlags = 278,
         SCGetLandTileData = 280,
@@ -381,13 +388,13 @@ namespace StealthSharp.Enumeration
         SCEquipLastWeapon = 370,
         SCCreateChar = 371,
         SCGetStatLockState = 372,
-        SCBookGetPageText =373,
+        SCBookGetPageText = 373,
         SCBookSetText = 374,
         SCBookSetPageText = 375,
         SCBookClearText = 376,
         SCBookSetHeader = 377,
 //new mothods add HERE ^^^
-
+        SCIsHouse = 382,
 
 //mover vars!
         SCSetMoveOpenDoor = 400,
@@ -426,6 +433,6 @@ namespace StealthSharp.Enumeration
         SCAddFigure = 550,
         SCRemoveFigure = 551,
         SCUpdateFigure = 552,
-        SCClearFigures = 553,
+        SCClearFigures = 553
     }
 }

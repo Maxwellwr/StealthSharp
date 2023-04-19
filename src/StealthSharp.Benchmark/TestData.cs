@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Benchmark
 {

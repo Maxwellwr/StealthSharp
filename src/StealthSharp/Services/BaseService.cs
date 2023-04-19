@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {

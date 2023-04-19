@@ -56,6 +56,6 @@ namespace StealthSharp.Enumeration
         LandPrefixAn,
         LandInternal,
         LandMap,
-        LandUnknown3,
+        LandUnknown3
     }
 }

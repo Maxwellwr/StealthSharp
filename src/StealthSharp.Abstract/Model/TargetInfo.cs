@@ -9,12 +9,18 @@
 
 #endregion
 
+#region
+
+using StealthSharp.Serialization;
+
+#endregion
+
 namespace StealthSharp.Model
 {
     /// <summary>
     ///     Target Info.
     /// </summary>
-    [Serialization.Serializable()]
+    [Serializable()]
     public class TargetInfo
     {
         public uint Id { get; set; }

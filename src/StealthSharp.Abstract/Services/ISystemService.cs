@@ -9,14 +9,18 @@
 
 #endregion
 
+#region
+
 using System.Threading.Tasks;
+
+#endregion
 
 namespace StealthSharp.Services
 {
     public interface ISystemService
     {
         Task SetSilentModeAsync(bool value);
-        
+
         Task<bool> GetSilentModeAsync();
 
         Task AlarmAsync();

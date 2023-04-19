@@ -9,8 +9,12 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Buffers;
+
+#endregion
 
 namespace StealthSharp.Serialization
 {
@@ -29,7 +33,7 @@ namespace StealthSharp.Serialization
         }
 
         public SerializationResult(ReadOnlySequence<byte> sequence)
-        : this((int)sequence.Length)
+            : this((int)sequence.Length)
         {
             sequence.CopyTo(_rentedArray);
         }

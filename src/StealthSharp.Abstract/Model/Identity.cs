@@ -9,7 +9,11 @@
 
 #endregion
 
+#region
+
 using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Model
 {
@@ -31,5 +35,6 @@ namespace StealthSharp.Model
         public override int GetHashCode()
         {
             return (int)Id;
-        } }
+        }
+    }
 }

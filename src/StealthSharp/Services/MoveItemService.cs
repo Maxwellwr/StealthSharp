@@ -9,11 +9,15 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using StealthSharp.Enumeration;
 using StealthSharp.Network;
+
+#endregion
 
 namespace StealthSharp.Services
 {
@@ -25,7 +29,6 @@ namespace StealthSharp.Services
 
         public MoveItemService(
             IStealthSharpClient client,
-            
             ICharStatsService charStatsService,
             IGameObjectService gameObjectService,
             IObjectSearchService objectSearchService)
@@ -73,34 +76,24 @@ namespace StealthSharp.Services
         {
             var rescount = count;
 
-            if (await _charStatsService.GetDeadAsync().ConfigureAwait(false))
-            {
-                throw new InvalidOperationException("Error: " + nameof(DragItemAsync) + " [Character is dead]");
-            }
+            if (await _charStatsService.GetDeadAsync().ConfigureAwait(false)) throw new InvalidOperationException("Error: " + nameof(DragItemAsync) + " [Character is dead]");
 
             if (await GetPickedUpItemAsync().ConfigureAwait(false) != 0 &&
                 await _gameObjectService.IsObjectExistsAsync(await GetPickedUpItemAsync().ConfigureAwait(false)).ConfigureAwait(false))
-            {
                 throw new InvalidOperationException("Error: " + nameof(DragItemAsync) +
                                                     " [Must drop current item before dragging a new one]");
-            }
 
             var quantity = await _gameObjectService.GetQuantityAsync(itemId).ConfigureAwait(false);
 
             if (!await _gameObjectService.IsObjectExistsAsync(itemId).ConfigureAwait(false))
-            {
                 throw new InvalidOperationException("Error: " + nameof(DragItemAsync) + " [Object not found]");
-            }
 
-            if (count <= 0 || count > quantity)
-            {
-                rescount = quantity;
-            }
+            if (count <= 0 || count > quantity) rescount = quantity;
 
             await Client.SendPacketAsync(PacketType.SCDragItem,
                 (itemId, rescount)).ConfigureAwait(false);
 
-            return (await GetPickedUpItemAsync().ConfigureAwait(false)) == itemId;
+            return await GetPickedUpItemAsync().ConfigureAwait(false) == itemId;
         }
 
         public async Task<bool> DropAsync(uint itemId, int count, int x, int y, int z)
@@ -130,10 +123,7 @@ namespace StealthSharp.Services
 
         public async Task<bool> MoveItemAsync(uint itemId, int count, uint moveIntoId, int x, int y, int z)
         {
-            if (await DragItemAsync(itemId, count).ConfigureAwait(false))
-            {
-                return await DropItemAsync(moveIntoId, x, y, z).ConfigureAwait(false);
-            }
+            if (await DragItemAsync(itemId, count).ConfigureAwait(false)) return await DropItemAsync(moveIntoId, x, y, z).ConfigureAwait(false);
 
             return false;
         }
@@ -154,25 +144,15 @@ namespace StealthSharp.Services
 
             await _objectSearchService.FindTypeExAsync(itemsType, itemsColor, container, false).ConfigureAwait(false);
 
-            if ((await _objectSearchService.GetFindedListAsync().ConfigureAwait(false)).Count == 0)
-            {
-                return false;
-            }
+            if ((await _objectSearchService.GetFindedListAsync().ConfigureAwait(false)).Count == 0) return false;
 
-            if (await GetDropDelayAsync().ConfigureAwait(false) > delayMs)
-            {
-                delayMs = (int) (await GetDropDelayAsync().ConfigureAwait(false));
-            }
+            if (await GetDropDelayAsync().ConfigureAwait(false) > delayMs) delayMs = (int)await GetDropDelayAsync().ConfigureAwait(false);
 
             beforeMoveCount = (await _objectSearchService.GetFindedListAsync().ConfigureAwait(false)).Count;
             if (maxItems <= 0 || maxItems > beforeMoveCount)
-            {
                 moveItemsCount = beforeMoveCount;
-            }
             else
-            {
                 moveItemsCount = maxItems;
-            }
 
             for (var i = 0; i < moveItemsCount; i++)
             {

@@ -16,6 +16,6 @@ namespace StealthSharp.Enumeration
         Connected = 0,
         Disconnected = 1,
         Message = 2,
-        Error = 3,
+        Error = 3
     }
 }

@@ -9,10 +9,14 @@
 
 #endregion
 
+#region
+
 using System;
 using System.Linq;
 using StealthSharp.Enumeration;
 using StealthSharp.Event;
+
+#endregion
 
 namespace StealthSharp.Serialization.Converters
 {
@@ -39,7 +43,7 @@ namespace StealthSharp.Serialization.Converters
                 if (eventDataType is null)
                     return false;
 
-                
+
                 var propertyType = typeof(ServerEventData<>).MakeGenericType(eventDataType);
                 var data = propertyType.GetProperty(nameof(ServerEventData<object>.EventData))?.GetValue(propertyValue);
                 if (data is null)
@@ -51,7 +55,7 @@ namespace StealthSharp.Serialization.Converters
                 var metadata = _reflectionCache.GetMetadata(eventDataType);
 
                 _marshaler.Serialize(span.Slice(position++, 1), GetTotalParametersCount(metadata));
-                return Serialize(metadata, span[position..], data, endianness) == span.Length-position;
+                return Serialize(metadata, span[position..], data, endianness) == span.Length - position;
             }
             catch
             {
@@ -112,7 +116,7 @@ namespace StealthSharp.Serialization.Converters
                 size += Deserialize(metadata, span[size..], ref eventDataValue, endianness);
 
                 propertyValue = ActivatorHelper.CreateInstance(propertyType, eventType, eventDataValue);
-                
+
 
                 return size == span.Length;
             }
@@ -129,24 +133,22 @@ namespace StealthSharp.Serialization.Converters
             if (metadata is null)
             {
                 _marshaler.Deserialize(span[position++..], typeof(ParameterType), out var paramType, endianness);
-                
+
                 _marshaler.Deserialize(span[position..], GetTypeForParameter((ParameterType)paramType)
                     , out var paramValue, endianness);
                 position += _marshaler.SizeOf(paramValue);
                 var valueType = eventDataValue.GetType();
-                eventDataValue = valueType.IsEnum ? 
-                    Enum.ToObject(valueType, paramValue):  
-                    Convert.ChangeType(paramValue, valueType);
+                eventDataValue = valueType.IsEnum ? Enum.ToObject(valueType, paramValue) : Convert.ChangeType(paramValue, valueType);
             }
             else
             {
                 foreach (var property in metadata.Properties)
                 {
                     var propertyMetadata = _reflectionCache.GetMetadata(property.PropertyType);
-                    var eventPropertyValue =  ActivatorHelper.CreateInstanceParameterless(property.PropertyType);
-                        
+                    var eventPropertyValue = ActivatorHelper.CreateInstanceParameterless(property.PropertyType);
+
                     position += Deserialize(propertyMetadata, span[position..], ref eventPropertyValue, endianness);
-                    
+
                     property.Set(eventDataValue, eventPropertyValue);
                 }
             }
@@ -176,8 +178,8 @@ namespace StealthSharp.Serialization.Converters
             if (data is null)
                 return 0;
             if (metadata is null)
-                return _marshaler.SizeOf(data) + _marshaler.SizeOf(typeof(ParameterType)); 
-            
+                return _marshaler.SizeOf(data) + _marshaler.SizeOf(typeof(ParameterType));
+
             return metadata.Properties.Aggregate(0,
                 (current, property) =>
                     current
@@ -192,9 +194,10 @@ namespace StealthSharp.Serialization.Converters
                     (current, property) =>
                         (byte)(current + GetTotalParametersCount(_reflectionCache.GetMetadata(property.PropertyType))));
         }
-        
-        private static ParameterType GetParameterType(Type propertyType) =>
-            (propertyType.IsEnum ? propertyType.GetEnumUnderlyingType() : propertyType) switch
+
+        private static ParameterType GetParameterType(Type propertyType)
+        {
+            return (propertyType.IsEnum ? propertyType.GetEnumUnderlyingType() : propertyType) switch
             {
                 { } stringType when stringType == typeof(string) => ParameterType.String,
                 { } uintType when uintType == typeof(uint) => ParameterType.Uint,
@@ -206,9 +209,11 @@ namespace StealthSharp.Serialization.Converters
                 { } boolType when boolType == typeof(bool) => ParameterType.Bool,
                 _ => throw StealthSharpException.UnknownParameterType(propertyType)
             };
+        }
 
-        private static Type GetTypeForParameter(ParameterType paramType) =>
-            paramType switch
+        private static Type GetTypeForParameter(ParameterType paramType)
+        {
+            return paramType switch
             {
                 ParameterType.String => typeof(string),
                 ParameterType.Uint => typeof(uint),
@@ -220,5 +225,6 @@ namespace StealthSharp.Serialization.Converters
                 ParameterType.Bool => typeof(bool),
                 _ => throw StealthSharpException.UnknownParameterType(paramType)
             };
+        }
     }
 }

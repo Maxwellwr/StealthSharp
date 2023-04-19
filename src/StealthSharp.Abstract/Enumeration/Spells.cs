@@ -250,6 +250,6 @@ namespace StealthSharp.Enumeration
         // Shared Passives
         EnchantedSummoning = 715,
         Intuition = 718,
-        WarriorsGifts = 733,
+        WarriorsGifts = 733
     }
 }

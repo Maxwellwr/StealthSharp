@@ -9,11 +9,16 @@
 
 #endregion
 
+#region
+
 using StealthSharp.Enumeration;
+using StealthSharp.Serialization;
+
+#endregion
 
 namespace StealthSharp.Model
 {
-    [Serialization.Serializable()]
+    [Serializable()]
     public class MapFigure
     {
         public FigureKind Kind { get; set; }

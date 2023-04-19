@@ -1,21 +1,27 @@
 ﻿#region Copyright
+
 // // -----------------------------------------------------------------------
 // // <copyright file="GumpTextEntryEvent.cs" company="StealthSharp">
 // // Copyright (c) StealthSharp. All rights reserved.
 // // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // // </copyright>
 // // -----------------------------------------------------------------------
+
 #endregion
+
+#region
 
 using System;
 using StealthSharp.Model;
+
+#endregion
 
 namespace StealthSharp.Event
 {
     [Serialization.Serializable()]
     public class GumpTextEntryEvent
     {
-        public Identity Identity { get; init; } = new ();
+        public Identity Identity { get; init; } = new();
         public string Title { get; init; } = "";
         public byte InputStyle { get; init; }
         public uint MaxValue { get; init; }
@@ -23,10 +29,10 @@ namespace StealthSharp.Event
 
         protected bool Equals(GumpTextEntryEvent other)
         {
-            return Identity.Equals(other.Identity) && 
-                   Title == other.Title && 
+            return Identity.Equals(other.Identity) &&
+                   Title == other.Title &&
                    InputStyle == other.InputStyle &&
-                   MaxValue == other.MaxValue && 
+                   MaxValue == other.MaxValue &&
                    Title2 == other.Title2;
         }
 
