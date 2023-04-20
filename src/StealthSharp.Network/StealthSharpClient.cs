@@ -119,17 +119,17 @@ namespace StealthSharp.Network
                 using var correlation = _marshaler.Serialize(correlationId);
 
                 var writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(serializedHeader.Memory, _baseCancellationToken);
+                    await _networkStreamPipeWriter.WriteAsync(serializedHeader.Memory, _baseCancellationToken).ConfigureAwait(false);
                 if (writeResult.IsCanceled || writeResult.IsCompleted)
                     return (false, correlationId);
                 writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(correlation.Memory, _baseCancellationToken);
+                    await _networkStreamPipeWriter.WriteAsync(correlation.Memory, _baseCancellationToken).ConfigureAwait(false);
                 if (writeResult.IsCanceled || writeResult.IsCompleted)
                     return (false, correlationId);
                 if (serializedBody.Length > 0)
                 {
                     writeResult =
-                        await _networkStreamPipeWriter.WriteAsync(serializedBody.Memory, _baseCancellationToken);
+                        await _networkStreamPipeWriter.WriteAsync(serializedBody.Memory, _baseCancellationToken).ConfigureAwait(false);
 
                     if (writeResult.IsCanceled || writeResult.IsCompleted)
                         return (false, correlationId);
@@ -161,7 +161,7 @@ namespace StealthSharp.Network
             if (_disposing)
                 throw new ObjectDisposedException(nameof(_tcpClient));
 
-            var serializationResult = await _completeResponses.WaitAsync(responseId, token);
+            var serializationResult = await _completeResponses.WaitAsync(responseId, token).ConfigureAwait(false);
             var response = _marshaler.Deserialize<TBody>(serializationResult);
             return response;
         }
@@ -247,7 +247,7 @@ namespace StealthSharp.Network
                             var requestId =
                                 _marshaler.Deserialize<ushort>(new SerializationResult(sequence.Slice(0, 2)));
                             await _completeResponses.SetAsync(requestId, new SerializationResult(sequence.Slice(2)),
-                                true);
+                                true).ConfigureAwait(false);
                         }
                             break;
                         case PacketType.SCScriptDLLTerminate:

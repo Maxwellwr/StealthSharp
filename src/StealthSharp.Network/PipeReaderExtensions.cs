@@ -33,7 +33,7 @@ namespace StealthSharp.Network
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var readResult = await reader.ReadAsync(cancellationToken);
+                var readResult = await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
                 if (readResult.IsCanceled)
                     throw new OperationCanceledException();
