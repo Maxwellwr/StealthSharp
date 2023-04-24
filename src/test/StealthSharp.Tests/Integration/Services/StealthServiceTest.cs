@@ -22,120 +22,119 @@ using Xunit;
 
 #endregion
 
-namespace StealthSharp.Tests.Integration.Services
+namespace StealthSharp.Tests.Integration.Services;
+
+[Trait("Category", "Integration")]
+public class StealthServiceTest
 {
-    [Trait("Category", "Integration")]
-    public class StealthServiceTest
+    private const string STEALTH_API_HOST = "127.0.0.1";
+    private readonly IStealthService _stealthService;
+
+    public StealthServiceTest()
     {
-        private const string STEALTH_API_HOST = "127.0.0.1";
-        private readonly IStealthService _stealthService;
+        IServiceCollection serviceCollection = new ServiceCollection();
+        serviceCollection.AddStealthSharp();
+        serviceCollection.Configure<StealthOptions>(opt => opt.Host = STEALTH_API_HOST);
+        var provider = serviceCollection.BuildServiceProvider();
 
-        public StealthServiceTest()
+        var stealth = provider.GetRequiredService<Stealth>();
+        _stealthService = stealth.GetStealthService<IStealthService>();
+        stealth.ConnectToStealthAsync().GetAwaiter().GetResult();
+    }
+
+    [Fact]
+    public async Task GetCurrentScriptPathAsync()
+    {
+        //arrange
+        var expected = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        //act
+        var actual = await _stealthService.GetCurrentScriptPathAsync();
+        //assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetProfileNameAsync()
+    {
+        //arrange
+        var expected = "test";
+        //act
+        var actual = await _stealthService.GetProfileNameAsync();
+        //assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetProfileShardNameAsync()
+    {
+        //arrange
+        var expected = "Zuluhotel.com";
+        //act
+        var actual = await _stealthService.GetProfileShardNameAsync();
+        //assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task GetStealthInfoAsync()
+    {
+        //arrange
+        var expected = new AboutData()
         {
-            IServiceCollection serviceCollection = new ServiceCollection();
-            serviceCollection.AddStealthSharp();
-            serviceCollection.Configure<StealthOptions>(opt => opt.Host = STEALTH_API_HOST);
-            var provider = serviceCollection.BuildServiceProvider();
+            Build = 0,
+            BuildDate = new DateTime(2021, 01, 27, 15, 0, 31),
+            GitRevision = "3adbcabc",
+            GitRevNumber = 1422,
+            StealthVersion = new ushort[] { 9, 6, 1 }
+        };
+        //act
+        var actual = await _stealthService.GetStealthInfoAsync();
+        //assert
+        Assert.Equal(expected.StealthVersion, actual.StealthVersion);
+        Assert.Equal(expected.GitRevision, actual.GitRevision);
+    }
 
-            var stealth = provider.GetRequiredService<Stealth>();
-            _stealthService = stealth.GetStealthService<IStealthService>();
-            stealth.ConnectToStealthAsync().GetAwaiter().GetResult();
-        }
+    [Fact]
+    public async Task GetStealthPathAsync()
+    {
+        //arrange
+        var expected = @"C:\uo\stealth\";
+        //act
+        var actual = await _stealthService.GetStealthPathAsync();
+        //assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public async Task GetCurrentScriptPathAsync()
-        {
-            //arrange
-            var expected = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            //act
-            var actual = await _stealthService.GetCurrentScriptPathAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
+    [Fact]
+    public async Task GetStealthProfilePathAsync()
+    {
+        //arrange
+        var expected = @"C:\uo\stealth\";
+        //act
+        var actual = await _stealthService.GetStealthProfilePathAsync();
+        //assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public async Task GetProfileNameAsync()
-        {
-            //arrange
-            var expected = "test";
-            //act
-            var actual = await _stealthService.GetProfileNameAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
+    [Fact]
+    public async Task GetShardNameAsync()
+    {
+        //arrange
+        var expected = "Zuluhotel.com";
+        //act
+        var actual = await _stealthService.GetShardNameAsync();
+        //assert
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public async Task GetProfileShardNameAsync()
-        {
-            //arrange
-            var expected = "Zuluhotel.com";
-            //act
-            var actual = await _stealthService.GetProfileShardNameAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public async Task GetStealthInfoAsync()
-        {
-            //arrange
-            var expected = new AboutData()
-            {
-                Build = 0,
-                BuildDate = new DateTime(2021, 01, 27, 15, 0, 31),
-                GitRevision = "3adbcabc",
-                GitRevNumber = 1422,
-                StealthVersion = new ushort[] { 9, 6, 1 }
-            };
-            //act
-            var actual = await _stealthService.GetStealthInfoAsync();
-            //assert
-            Assert.Equal(expected.StealthVersion, actual.StealthVersion);
-            Assert.Equal(expected.GitRevision, actual.GitRevision);
-        }
-
-        [Fact]
-        public async Task GetStealthPathAsync()
-        {
-            //arrange
-            var expected = @"C:\uo\stealth\";
-            //act
-            var actual = await _stealthService.GetStealthPathAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public async Task GetStealthProfilePathAsync()
-        {
-            //arrange
-            var expected = @"C:\uo\stealth\";
-            //act
-            var actual = await _stealthService.GetStealthProfilePathAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public async Task GetShardNameAsync()
-        {
-            //arrange
-            var expected = "Zuluhotel.com";
-            //act
-            var actual = await _stealthService.GetShardNameAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
-        public async Task GetShardPathAsync()
-        {
-            //arrange
-            var expected = @"C:\Users\mmasl\AppData\Roaming\Stealth\Zuluhotel.com\";
-            //act
-            var actual = await _stealthService.GetShardPathAsync();
-            //assert
-            Assert.Equal(expected, actual);
-        }
+    [Fact]
+    public async Task GetShardPathAsync()
+    {
+        //arrange
+        var expected = @"C:\Users\mmasl\AppData\Roaming\Stealth\Zuluhotel.com\";
+        //act
+        var actual = await _stealthService.GetShardPathAsync();
+        //assert
+        Assert.Equal(expected, actual);
     }
 }

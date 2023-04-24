@@ -21,11 +21,13 @@ namespace StealthSharp.Model
     public class StaticTileData
     {
         public ulong Flags { get; set; }
-        public int Weight { get; set; }
+        public ushort Weight { get; set; }
+        public ushort AnimId { get; set; }
         public int Height { get; set; }
         public byte RadarColorR { get; set; }
         public byte RadarColorG { get; set; }
         public byte RadarColorB { get; set; }
+        public byte RadarColorA { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 }
