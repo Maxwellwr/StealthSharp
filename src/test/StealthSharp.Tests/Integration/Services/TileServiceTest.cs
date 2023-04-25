@@ -56,4 +56,15 @@ public class TileServiceTest
         //assert
         Assert.Equivalent(expected, actual);
     }
+
+    [Fact]
+    public async Task GetMapCellAsync()
+    {
+        //arrange
+        var expected = new MapCell(){Tile = 0, Z = 0};
+        //act
+        var actual = await _tileService.GetMapCellAsync(new WorldPoint(1024,1024), 0);
+        //assert
+        Assert.Equivalent(expected, actual);
+    }
 }

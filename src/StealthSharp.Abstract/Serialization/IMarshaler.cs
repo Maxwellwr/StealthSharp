@@ -12,6 +12,7 @@
 #region
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
@@ -19,7 +20,7 @@ namespace StealthSharp.Serialization
 {
     public interface IMarshaler
     {
-        ISerializationResult Serialize<T>(T data);
+        ISerializationResult Serialize<T>([DisallowNull]T data);
         void Serialize(in Span<byte> span, object data, Endianness endianness = Endianness.LittleEndian);
         void Deserialize(in Span<byte> span, Type dataType, out object value, Endianness endianness = Endianness.LittleEndian);
 
