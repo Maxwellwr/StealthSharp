@@ -23,6 +23,21 @@ namespace StealthSharp.Model
     [Serialization.Serializable()]
     public class WorldPoint3D : WorldPoint
     {
+        public WorldPoint3D()
+        {
+            Z = 0;
+        }
+        public WorldPoint3D(ushort x, ushort y, sbyte z) :base(x,y)
+        {
+            Z = z;
+        }
+
+        public void Deconstruct(out ushort x, out ushort y, out sbyte z)
+        {
+            (x, y) = this;
+            z = Z;
+        }
+        
         public sbyte Z { get; init; }
 
         protected bool Equals(WorldPoint3D other)

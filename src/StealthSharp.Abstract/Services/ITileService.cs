@@ -22,37 +22,28 @@ namespace StealthSharp.Services
 {
     public interface ITileService
     {
-        Task<string> ConvertIntToFlagsAsync(byte group, uint flags);
-
         Task<LandTileData> GetLandTileDataAsync(ushort tile);
 
-        Task<List<FoundTile>> GetLandTilesArrayAsync(ushort xmin, ushort ymin, ushort xmax, ushort ymax, byte worldNum,
-            ushort tileType);
+        Task<List<FoundTile>> GetLandTilesArrayAsync(WorldRect rect, byte worldNum, ushort tileType);
 
-        Task<List<FoundTile>> GetLandTilesArrayExAsync(ushort xmin, ushort ymin, ushort xmax, ushort ymax, byte worldNum,
-            ushort[] tileTypes);
+        Task<List<FoundTile>> GetLandTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes);
 
-        Task<byte> GetLayerCountAsync(ushort x, ushort y, byte worldNum);
+        Task<byte> GetLayerCountAsync(WorldPoint point, byte worldNum);
 
-        Task<MapCell> GetMapCellAsync(ushort x, ushort y, byte worldNum);
+        Task<MapCell> GetMapCellAsync(WorldPoint point, byte worldNum);
 
-        Task<sbyte> GetNextStepZAsync(ushort currX, ushort currY, ushort destX, ushort destY, byte worldNum, sbyte z);
+        Task<sbyte> GetNextStepZAsync(WorldPoint current, WorldPoint destination, byte worldNum, sbyte z);
 
         Task<StaticTileData> GetStaticTileDataAsync(ushort tile);
 
-        Task<List<FoundTile>> GetStaticTilesArrayAsync(ushort xmin, ushort ymin, ushort xmax, ushort ymax, byte worldNum,
-            ushort tileType);
+        Task<List<FoundTile>> GetStaticTilesArrayAsync(WorldRect rect, byte worldNum, ushort tileType);
 
-        Task<List<FoundTile>> GetStaticTilesArrayExAsync(ushort xmin, ushort ymin, ushort xmax, ushort ymax, byte worldNum,
-            ushort[] tileTypes);
+        Task<List<FoundTile>> GetStaticTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes);
 
-        Task<byte> GetSurfaceZAsync(ushort x, ushort y, byte worldNum);
+        Task<byte> GetSurfaceZAsync(WorldPoint point, byte worldNum);
 
-        Task<uint> GetTileFlagsAsync(TileFlagsType group, ushort tile);
+        Task<(bool result, sbyte destZ)> IsWorldCellPassableAsync(WorldPoint3D current, WorldPoint dest, byte worldNum);
 
-        Task<(bool result, sbyte destZ)> IsWorldCellPassableAsync(ushort currX, ushort currY, sbyte z, ushort destX, ushort destY,
-            byte worldNum);
-
-        Task<List<StaticItemRealXY>> ReadStaticsXYAsync(ushort x, ushort y, byte worldNum);
+        Task<List<StaticItemRealXY>> ReadStaticsXYAsync(WorldPoint point, byte worldNum);
     }
 }

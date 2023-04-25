@@ -332,7 +332,7 @@ namespace StealthSharp.Serialization
 
                 ConvertFromBytes(out var count, stringSizeType, span, GetSystemEndianness());
                 var stringSize = Convert.ToInt32(count);
-                propertyValue = Encoding.Unicode.GetString(span.Slice(SizeOf(stringSizeType), stringSize));
+                propertyValue = string.Concat(Encoding.Unicode.GetString(span.Slice(SizeOf(stringSizeType), stringSize)).Split('\0', StringSplitOptions.RemoveEmptyEntries));
             }
             else
             {

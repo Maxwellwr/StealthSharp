@@ -23,6 +23,24 @@ namespace StealthSharp.Model
     [Serialization.Serializable()]
     public class WorldPoint
     {
+        public WorldPoint()
+        {
+            X = 0;
+            Y = 0;
+        }
+        
+        public WorldPoint(ushort x, ushort y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public void Deconstruct(out ushort x, out ushort y)
+        {
+            x = X;
+            y = Y;
+        }
+
         public ushort X { get; init; }
         public ushort Y { get; init; }
 

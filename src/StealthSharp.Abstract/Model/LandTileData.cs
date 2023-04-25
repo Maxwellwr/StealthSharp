@@ -11,6 +11,7 @@
 
 #region
 
+using StealthSharp.Enumeration;
 using StealthSharp.Serialization;
 
 #endregion
@@ -23,8 +24,7 @@ namespace StealthSharp.Model
     [Serializable()]
     public class LandTileData
     {
-        public uint Flags { get; set; }
-        public uint Flags2 { get; set; }
+        public TileDataFlags Flags { get; set; }
         public ushort TextureId { get; set; }
 
 

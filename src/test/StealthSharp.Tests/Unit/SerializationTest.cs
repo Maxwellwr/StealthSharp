@@ -53,7 +53,7 @@ namespace StealthSharp.Tests.Unit
         [InlineData(1, "01000000")]
         [InlineData(1U, "01000000")]
         [InlineData(1L, "0100000000000000")]
-        [InlineData((ulong)1L, "0100000000000000")]
+        [InlineData(1UL, "0100000000000000")]
         [InlineData((short)1, "0100")]
         [InlineData((ushort)1, "0100")]
         [InlineData(true, "01")]
@@ -63,6 +63,20 @@ namespace StealthSharp.Tests.Unit
         {
             //arrange
 
+            //act
+            using var result = _marshaler.Serialize(testValue!);
+
+            //assert
+            var actual = ToHexString(result.Memory.ToArray());
+            Assert.Equal(expected, actual);
+        }
+        
+        [Fact]
+        public void Serialize_string_should_work()
+        {
+            //arrange
+            string testValue = "Test Value!";
+            string expected = "1600000054006500730074002000560061006C00750065002100";
             //act
             using var result = _marshaler.Serialize(testValue!);
 

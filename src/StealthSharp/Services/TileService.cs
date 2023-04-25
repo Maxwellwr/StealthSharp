@@ -29,49 +29,38 @@ namespace StealthSharp.Services
         {
         }
 
-// TODO: выяснить что что это за метод
-        public Task<string> ConvertIntToFlagsAsync(byte group, uint flags)
-        {
-            return Client.SendPacketAsync<(byte, uint), string>(PacketType.SCConvertIntegerToFlags, (group, flags));
-        }
-
         public Task<LandTileData> GetLandTileDataAsync(ushort tile)
         {
             return Client.SendPacketAsync<ushort, LandTileData>(PacketType.SCGetLandTileData, tile);
         }
 
-        public Task<List<FoundTile>> GetLandTilesArrayAsync(ushort xMin, ushort yMin, ushort xMax, ushort yMax,
-            byte worldNum,
-            ushort tileType)
+        public Task<List<FoundTile>> GetLandTilesArrayAsync(WorldRect rect, byte worldNum, ushort tileType)
         {
             return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, ushort), List<FoundTile>>(
                 PacketType.SCGetLandTilesArray,
-                (xMin, yMin, xMax, yMax, worldNum, tileType));
+                (rect.XMin, rect.YMin, rect.XMax, rect.YMax, worldNum, tileType));
         }
 
-        public async Task<List<FoundTile>> GetLandTilesArrayExAsync(ushort xmin, ushort ymin, ushort xmax, ushort ymax,
-            byte worldNum,
-            ushort[] tileTypes)
+        public async Task<List<FoundTile>> GetLandTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes)
         {
-            var tasks = tileTypes.Select(t => GetLandTilesArrayAsync(xmin, ymin, xmax, ymax, worldNum, t));
+            var tasks = tileTypes.Select(t => GetLandTilesArrayAsync(rect, worldNum, t));
             return (await Task.WhenAll(tasks).ConfigureAwait(false)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
         }
 
-        public Task<byte> GetLayerCountAsync(ushort x, ushort y, byte worldNum)
+        public Task<byte> GetLayerCountAsync(WorldPoint point, byte worldNum)
         {
-            return Client.SendPacketAsync<(ushort, ushort, byte), byte>(PacketType.SCGetLayerCount, (x, y, worldNum));
+            return Client.SendPacketAsync<(ushort, ushort, byte), byte>(PacketType.SCGetLayerCount, (point.X, point.Y, worldNum));
         }
 
-        public Task<MapCell> GetMapCellAsync(ushort x, ushort y, byte worldNum)
+        public Task<MapCell> GetMapCellAsync(WorldPoint point, byte worldNum)
         {
-            return Client.SendPacketAsync<(ushort, ushort, byte), MapCell>(PacketType.SCGetCell, (x, y, worldNum));
+            return Client.SendPacketAsync<(ushort, ushort, byte), MapCell>(PacketType.SCGetCell, (point.X, point.Y, worldNum));
         }
 
-        public Task<sbyte> GetNextStepZAsync(ushort currX, ushort currY, ushort destX, ushort destY, byte worldNum,
-            sbyte z)
+        public Task<sbyte> GetNextStepZAsync(WorldPoint current, WorldPoint dest, byte worldNum, sbyte z)
         {
             return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, sbyte), sbyte>(
-                PacketType.SCGetNextStepZ, (currX, currY, destX, destY, worldNum, z));
+                PacketType.SCGetNextStepZ, (current.X, current.Y, dest.X, dest.Y, worldNum, z));
         }
 
         public Task<StaticTileData> GetStaticTileDataAsync(ushort tile)
@@ -79,44 +68,37 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort, StaticTileData>(PacketType.SCGetStaticTileData, tile);
         }
 
-        public Task<List<FoundTile>> GetStaticTilesArrayAsync(ushort xMin, ushort yMin, ushort xMax, ushort yMax,
+        public Task<List<FoundTile>> GetStaticTilesArrayAsync(WorldRect rect,
             byte worldNum,
             ushort tileType)
         {
             return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, ushort), List<FoundTile>>(
                 PacketType.SCGetStaticTilesArray,
-                (xMin, yMin, xMax, yMax, worldNum, tileType));
+                (rect.XMin, rect.YMin, rect.XMax, rect.YMax, worldNum, tileType));
         }
 
-        public async Task<List<FoundTile>> GetStaticTilesArrayExAsync(ushort xmin, ushort ymin, ushort xmax,
-            ushort ymax, byte worldNum, ushort[] tileTypes)
+        public async Task<List<FoundTile>> GetStaticTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes)
         {
-            var tasks = tileTypes.Select(t => GetStaticTilesArrayAsync(xmin, ymin, xmax, ymax, worldNum, t));
+            var tasks = tileTypes.Select(t => GetStaticTilesArrayAsync(rect, worldNum, t));
             return (await Task.WhenAll(tasks).ConfigureAwait(false)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
         }
 
-        public Task<byte> GetSurfaceZAsync(ushort x, ushort y, byte worldNum)
+        public Task<byte> GetSurfaceZAsync(WorldPoint point, byte worldNum)
         {
-            return Client.SendPacketAsync<(ushort, ushort, byte), byte>(PacketType.SCGetSurfaceZ, (x, y, worldNum));
+            return Client.SendPacketAsync<(ushort, ushort, byte), byte>(PacketType.SCGetSurfaceZ, (point.X, point.Y, worldNum));
         }
 
-        public Task<uint> GetTileFlagsAsync(TileFlagsType group, ushort tile)
-        {
-            return Client.SendPacketAsync<(TileFlagsType, ushort), uint>(PacketType.SCGetTileFlags, (group, tile));
-        }
-
-        public Task<(bool result, sbyte destZ)> IsWorldCellPassableAsync(ushort currX, ushort currY, sbyte currZ,
-            ushort destX, ushort destY, byte worldNum)
+        public Task<(bool result, sbyte destZ)> IsWorldCellPassableAsync(WorldPoint3D current, WorldPoint dest, byte worldNum)
         {
             return Client.SendPacketAsync<(ushort, ushort, sbyte, ushort, ushort, byte), (bool, sbyte)>(
                 PacketType.SCIsWorldCellPassable,
-                (currX, currY, currZ, destX, destY, worldNum));
+                (current.X, current.Y, current.Z, dest.X, dest.Y, worldNum));
         }
 
-        public Task<List<StaticItemRealXY>> ReadStaticsXYAsync(ushort x, ushort y, byte worldNum)
+        public Task<List<StaticItemRealXY>> ReadStaticsXYAsync(WorldPoint point, byte worldNum)
         {
             return Client.SendPacketAsync<(ushort, ushort, byte), List<StaticItemRealXY>>(PacketType.SCReadStaticsXY,
-                (x, y, worldNum));
+                (point.X, point.Y, worldNum));
         }
     }
 }

@@ -71,6 +71,22 @@ namespace StealthSharp.Tests.Unit
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void Deserialize_string_should_work()
+        {
+            //arrange
+            string expected = "Test Value!";
+            string testValue = "1800000054006500730074002000560061006C007500650021000000";
+            var bytes = FromHexString(testValue);
+            var result = new SerializationResult(bytes.Length);
+            bytes.CopyTo(result.Memory.Span);
+            //act
+            var actual = _marshaler.Deserialize<string>(result);
+
+            //assert
+            Assert.Equal(expected, actual);
+        }
+
         [Theory]
         [ClassData(typeof(SerializeDataGenerator))]
         public void Deserialize_complex_type_should_work<T>(PacketHeader expected, ushort corId, T body, string testValue)
