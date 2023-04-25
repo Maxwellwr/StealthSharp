@@ -38,7 +38,7 @@ namespace StealthSharp.Serialization
                 return Enumerable.Empty<PacketProperty>();
             return GetTypeProperties(type.BaseType).Concat(type
                 .GetTypeInfo()
-                .DeclaredProperties
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public| BindingFlags.DeclaredOnly)
                 .OrderBy(p => p.MetadataToken)
                 .Select(property => new PacketProperty(property)));
         }

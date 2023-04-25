@@ -43,8 +43,10 @@ namespace StealthSharp.Serialization
                 customConverterFactory ?? throw new ArgumentNullException(nameof(customConverterFactory));
         }
 
-        public ISerializationResult Serialize<T>(T data)
+        public ISerializationResult Serialize<T>([DisallowNull] T data)
         {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            
             var realLength = SizeOf(data);
             var reflectionMetadata = _reflectionCache.GetMetadata(data.GetType());
             var serializationResult = new SerializationResult(realLength);
@@ -443,9 +445,6 @@ namespace StealthSharp.Serialization
                         .OfType<object?>()
                         .Where(e => e is not null)
                         .Aggregate(SizeOf(_options.ArrayCountType), (c, e) => c + SizeOf(e!));
-                    return Enumerable.Range(0, array.Count)
-                        .Where(idx => array[idx] is not null)
-                        .Sum(idx => SizeOf(array[idx]!)) + SizeOf(_options.ArrayCountType);
                 }
                 case ITuple tuple:
                 {

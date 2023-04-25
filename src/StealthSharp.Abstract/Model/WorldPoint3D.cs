@@ -21,15 +21,10 @@ namespace StealthSharp.Model
     ///     My Point.
     /// </summary>
     [Serialization.Serializable()]
-    public class WorldPoint3D : WorldPoint
+    public record WorldPoint3D(ushort X, ushort Y, sbyte Z) : WorldPoint(X, Y)
     {
-        public WorldPoint3D()
+        public WorldPoint3D() : this(0, 0, 0)
         {
-            Z = 0;
-        }
-        public WorldPoint3D(ushort x, ushort y, sbyte z) :base(x,y)
-        {
-            Z = z;
         }
 
         public void Deconstruct(out ushort x, out ushort y, out sbyte z)
@@ -37,20 +32,13 @@ namespace StealthSharp.Model
             (x, y) = this;
             z = Z;
         }
-        
-        public sbyte Z { get; init; }
 
-        protected bool Equals(WorldPoint3D other)
+
+        public virtual bool Equals(WorldPoint3D? other)
         {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
             return base.Equals(other) && Z == other.Z;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((WorldPoint3D)obj);
         }
 
         public override int GetHashCode()

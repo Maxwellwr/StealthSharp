@@ -14,7 +14,7 @@ using System;
 namespace StealthSharp.Model;
 
 [Serialization.Serializable()]
-public class WorldRect
+public record WorldRect
 {
     public required WorldPoint BottomLeft { get; init; }
     public required WorldPoint TopRight { get; init; }
@@ -24,6 +24,9 @@ public class WorldRect
     public ushort XMax => TopRight.X;
     public ushort YMax => TopRight.Y;
 
+    public ushort Width => (ushort)(XMax - XMin);
+    public ushort Height => (ushort)(YMax - YMin);
+    
     public WorldRect(ushort xmin, ushort ymin, ushort xmax, ushort ymax)
     {
         BottomLeft = new WorldPoint(xmin, ymin);
@@ -34,6 +37,13 @@ public class WorldRect
     {
         BottomLeft = bottomLeft;
         TopRight = topRight;
+    }
+
+    public WorldRect(WorldPoint center, ushort width, ushort depth)
+    {
+        var v = new WorldVector(checked((short)(width/2)), checked((short)(depth/2)));
+        BottomLeft = center - v;
+        TopRight = center + v;
     }
 
     public void Deconstruct(out WorldPoint bottomLeft, out WorldPoint topRight)
@@ -50,17 +60,11 @@ public class WorldRect
         ymax = YMax;
     }
 
-    protected bool Equals(WorldRect other)
+    public virtual bool Equals(WorldRect? other)
     {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
         return Equals(BottomLeft, other.BottomLeft) && Equals(TopRight, other.TopRight);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((WorldPoint)obj);
     }
 
     public override int GetHashCode()
