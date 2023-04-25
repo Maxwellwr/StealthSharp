@@ -14,11 +14,8 @@ using System;
 namespace StealthSharp.Model;
 
 [Serialization.Serializable()]
-public record WorldRect
+public record WorldRect(WorldPoint BottomLeft, WorldPoint TopRight)
 {
-    public required WorldPoint BottomLeft { get; init; }
-    public required WorldPoint TopRight { get; init; }
-
     public ushort XMin => BottomLeft.X;
     public ushort YMin => BottomLeft.Y;
     public ushort XMax => TopRight.X;
@@ -26,24 +23,20 @@ public record WorldRect
 
     public ushort Width => (ushort)(XMax - XMin);
     public ushort Height => (ushort)(YMax - YMin);
-    
-    public WorldRect(ushort xmin, ushort ymin, ushort xmax, ushort ymax)
-    {
-        BottomLeft = new WorldPoint(xmin, ymin);
-        TopRight = new WorldPoint(xmax, ymax);
-    }
 
-    public WorldRect(WorldPoint bottomLeft, WorldPoint topRight)
+    public WorldRect(): this(0,0,0,0)
     {
-        BottomLeft = bottomLeft;
-        TopRight = topRight;
+    }
+    
+    public WorldRect(ushort xmin, ushort ymin, ushort xmax, ushort ymax) :
+        this(new WorldPoint(xmin, ymin), new WorldPoint(xmax, ymax))
+    {
     }
 
     public WorldRect(WorldPoint center, ushort width, ushort depth)
+        : this(center - new WorldVector(checked((short)(width / 2)), checked((short)(depth / 2))),
+            center + new WorldVector(checked((short)(width / 2)), checked((short)(depth / 2))))
     {
-        var v = new WorldVector(checked((short)(width/2)), checked((short)(depth/2)));
-        BottomLeft = center - v;
-        TopRight = center + v;
     }
 
     public void Deconstruct(out WorldPoint bottomLeft, out WorldPoint topRight)
