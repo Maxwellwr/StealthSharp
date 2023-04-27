@@ -47,6 +47,6 @@ public class WorldCoordTest
         // arrange
         // act
         // assert
-        Assert.Throws(typeof(OverflowException),()=> init * k);
+        Assert.Throws<OverflowException>(()=> init * k);
     }
 }
