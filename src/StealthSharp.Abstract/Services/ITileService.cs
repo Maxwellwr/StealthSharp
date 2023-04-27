@@ -24,9 +24,7 @@ namespace StealthSharp.Services
     {
         Task<LandTileData> GetLandTileDataAsync(ushort tile);
 
-        Task<List<FoundTile>> GetLandTilesArrayAsync(WorldRect rect, byte worldNum, ushort tileType);
-
-        Task<List<FoundTile>> GetLandTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes);
+        Task<List<FoundTile>> GetLandTilesArrayAsync(WorldRect rect, byte worldNum, ushort[] tileTypes);
 
         Task<byte> GetLayerCountAsync(WorldPoint point, byte worldNum);
 
@@ -36,9 +34,7 @@ namespace StealthSharp.Services
 
         Task<StaticTileData> GetStaticTileDataAsync(ushort tile);
 
-        Task<List<FoundTile>> GetStaticTilesArrayAsync(WorldRect rect, byte worldNum, ushort tileType);
-
-        Task<List<FoundTile>> GetStaticTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes);
+        Task<List<FoundTile>> GetStaticTilesArrayAsync(WorldRect rect, byte worldNum, ushort[] tileTypes);
 
         Task<byte> GetSurfaceZAsync(WorldPoint point, byte worldNum);
 

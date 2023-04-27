@@ -57,7 +57,7 @@ public class StealthServiceTest
     public async Task GetProfileNameAsync()
     {
         //arrange
-        var expected = "test";
+        var expected = "1";
         //act
         var actual = await _stealthService.GetProfileNameAsync();
         //assert

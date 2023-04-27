@@ -34,17 +34,11 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort, LandTileData>(PacketType.SCGetLandTileData, tile);
         }
 
-        public Task<List<FoundTile>> GetLandTilesArrayAsync(WorldRect rect, byte worldNum, ushort tileType)
+        public Task<List<FoundTile>> GetLandTilesArrayAsync(WorldRect rect, byte worldNum, ushort[] tileTypes)
         {
-            return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, ushort), List<FoundTile>>(
+            return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, ushort[]), List<FoundTile>>(
                 PacketType.SCGetLandTilesArray,
-                (rect.XMin, rect.YMin, rect.XMax, rect.YMax, worldNum, tileType));
-        }
-
-        public async Task<List<FoundTile>> GetLandTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes)
-        {
-            var tasks = tileTypes.Select(t => GetLandTilesArrayAsync(rect, worldNum, t));
-            return (await Task.WhenAll(tasks).ConfigureAwait(false)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
+                (rect.XMin, rect.YMin, rect.XMax, rect.YMax, worldNum, tileTypes));
         }
 
         public Task<byte> GetLayerCountAsync(WorldPoint point, byte worldNum)
@@ -68,19 +62,11 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<ushort, StaticTileData>(PacketType.SCGetStaticTileData, tile);
         }
 
-        public Task<List<FoundTile>> GetStaticTilesArrayAsync(WorldRect rect,
-            byte worldNum,
-            ushort tileType)
+        public Task<List<FoundTile>> GetStaticTilesArrayAsync(WorldRect rect, byte worldNum, ushort[] tileTypes)
         {
-            return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, ushort), List<FoundTile>>(
+            return Client.SendPacketAsync<(ushort, ushort, ushort, ushort, byte, ushort[]), List<FoundTile>>(
                 PacketType.SCGetStaticTilesArray,
-                (rect.XMin, rect.YMin, rect.XMax, rect.YMax, worldNum, tileType));
-        }
-
-        public async Task<List<FoundTile>> GetStaticTilesArrayExAsync(WorldRect rect, byte worldNum, ushort[] tileTypes)
-        {
-            var tasks = tileTypes.Select(t => GetStaticTilesArrayAsync(rect, worldNum, t));
-            return (await Task.WhenAll(tasks).ConfigureAwait(false)).SelectMany(t => t).Distinct(new FoundTileComparer()).ToList();
+                (rect.XMin, rect.YMin, rect.XMax, rect.YMax, worldNum, tileTypes));
         }
 
         public Task<byte> GetSurfaceZAsync(WorldPoint point, byte worldNum)

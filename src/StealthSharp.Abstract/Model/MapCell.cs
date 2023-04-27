@@ -20,10 +20,28 @@ namespace StealthSharp.Model
     /// <summary>
     ///     Map Cell.
     /// </summary>
-    [Serializable()]
-    public struct MapCell
+    [Serializable]
+    public record MapCell
     {
-        public ushort Tile { get; set; }
-        public sbyte Z { get; set; }
+        public MapCell()
+        {
+        }
+        /// <summary>
+        ///     Map Cell.
+        /// </summary>
+        public MapCell(ushort tile, sbyte z)
+        {
+            Tile = tile;
+            Z = z;
+        }
+
+        public ushort Tile { get; init; }
+        public sbyte Z { get; init; }
+
+        public void Deconstruct(out ushort tile, out sbyte z)
+        {
+            tile = Tile;
+            z = Z;
+        }
     }
 }
