@@ -187,11 +187,6 @@ namespace StealthSharp.Services
             return _self;
         }
 
-        public Task<uint> GetSelfHandleAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<byte> GetWorldNumAsync()
         {
             return Client.SendPacketAsync<byte>(PacketType.SCGetWorldNum);
@@ -205,6 +200,19 @@ namespace StealthSharp.Services
         public Task<List<BuffIcon>> GetBuffBarInfoAsync()
         {
             return Client.SendPacketAsync<List<BuffIcon>>(PacketType.SCGetBuffBarInfo);
+        }
+
+        public async Task<WorldPoint3D> GetPosition3DAsync()
+        {
+            var coords = await Task.WhenAll(GetXAsync(), GetYAsync()).ConfigureAwait(false);
+            var z = await GetZAsync().ConfigureAwait(false);
+            return new WorldPoint3D(coords[0], coords[1], z);
+        }
+        
+        public async Task<WorldPoint> GetPositionAsync()
+        {
+            var coords = await Task.WhenAll(GetXAsync(), GetYAsync()).ConfigureAwait(false);
+            return new WorldPoint(coords[0], coords[1]);
         }
 
         public async Task<ushort> GetXAsync()

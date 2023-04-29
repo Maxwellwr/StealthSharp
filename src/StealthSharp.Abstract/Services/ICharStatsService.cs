@@ -237,8 +237,6 @@ namespace StealthSharp.Services
         /// </summary>
         Task<uint> GetSelfAsync();
 
-        Task<uint> GetSelfHandleAsync();
-
         Task<WorldPoint> GetQuestArrowAsync();
 
         /// <summary>
@@ -261,6 +259,10 @@ namespace StealthSharp.Services
         Task<ExtendedInfo> GetExtendedInfoAsync();
 
         Task<List<BuffIcon>> GetBuffBarInfoAsync();
+
+        Task<WorldPoint3D> GetPosition3DAsync();
+
+        Task<WorldPoint> GetPositionAsync();
 
         Task<ushort> GetXAsync();
 

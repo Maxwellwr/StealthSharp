@@ -159,69 +159,53 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<sbyte>(PacketType.SCPredictedZ);
         }
 
-        public ( ushort x2, ushort y2) CalcCoord(ushort x, ushort y, Direction dir)
+        public WorldPoint CalcCoord(WorldPoint point, Direction dir)
         {
-            var x2 = x;
-            var y2 = y;
+            var x2 = point.X;
+            var y2 = point.Y;
 
             if (dir == Direction.NorthEast ||
                 dir == Direction.East ||
                 dir == Direction.SouthEast)
-                x2 = (ushort)(x + 1);
+                x2 = (ushort)(point.X + 1);
 
             if (dir == Direction.SouthWest ||
                 dir == Direction.West ||
                 dir == Direction.NorthWest)
-                x2 = (ushort)(x - 1);
+                x2 = (ushort)(point.X - 1);
 
             if (dir == Direction.North ||
                 dir == Direction.South)
-                x2 = x;
+                x2 = point.X;
 
             if (dir == Direction.SouthEast ||
                 dir == Direction.South ||
                 dir == Direction.SouthWest)
-                y2 = (ushort)(y + 1);
+                y2 = (ushort)(point.Y + 1);
 
             if (dir == Direction.NorthWest ||
                 dir == Direction.North ||
                 dir == Direction.NorthEast)
-                y2 = (ushort)(y - 1);
+                y2 = (ushort)(point.Y - 1);
 
             if (dir == Direction.East ||
                 dir == Direction.West)
-                y2 = y;
+                y2 = point.Y;
 
-            return (x2, y2);
+            return new WorldPoint(x2, y2);
         }
 
-        public Direction CalcDir(ushort xFrom, ushort yFrom, ushort xTo, ushort yTo)
+        public Direction CalcDir(WorldPoint from, WorldPoint to)
         {
-            var diffx = (ushort)Math.Abs(xFrom - xTo);
-            var diffy = (ushort)Math.Abs(yFrom - yTo);
-            if (diffx == 0 && diffy == 0) return Direction.Unknown;
-
-            if (diffx / (diffy + 0.1) >= 2)
-            {
-                if (xFrom > xTo) return Direction.West;
-
-                return Direction.East;
-            }
-
-            if (diffy / (diffx + 0.1) >= 2)
-            {
-                if (yFrom > yTo) return Direction.North;
-
-                return Direction.South;
-            }
-
-            if (xFrom > xTo && yFrom > yTo) return Direction.NorthWest;
-
-            if (xFrom > xTo && yFrom < yTo) return Direction.SouthWest;
-
-            if (xFrom < xTo && yFrom > yTo) return Direction.NorthEast;
-
-            if (xFrom < xTo && yFrom < yTo) return Direction.SouthEast;
+            var diffX = (ushort)Math.Abs(from.X - to.X);
+            var diffY = (ushort)Math.Abs(from.Y - to.Y);
+            if (diffX == 0 && diffY == 0) return Direction.Unknown;
+            if (diffX / (diffY + 0.1) >= 2) return from.X > to.X ? Direction.West : Direction.East;
+            if (diffY / (diffX + 0.1) >= 2) return from.Y > to.Y ? Direction.North : Direction.South;
+            if (from.X > to.X && from.Y > to.Y) return Direction.NorthWest;
+            if (from.X > to.X && from.Y < to.Y) return Direction.SouthWest;
+            if (from.X < to.X && from.Y > to.Y) return Direction.NorthEast;
+            if (from.X < to.X && from.Y < to.Y) return Direction.SouthEast;
 
             return Direction.Unknown;
         }
@@ -236,20 +220,20 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync(PacketType.SCClearBadObjectList);
         }
 
-        public ushort Dist(ushort x1, ushort y1, ushort x2, ushort y2)
+        public ushort Dist(WorldPoint source, WorldPoint dest)
         {
-            var dx = (ushort)Math.Abs(x1 - x2);
-            var dy = (ushort)Math.Abs(y1 - y2);
+            var dx = (ushort)Math.Abs(source.X - dest.X);
+            var dy = (ushort)Math.Abs(source.Y - dest.Y);
 
             var ret = dx > dy ? dy : dx;
             var my = (ushort)Math.Abs(dx - dy);
             return (ushort)(ret + my);
         }
 
-        public Task<List<WorldPoint3D>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy)
+        public Task<List<WorldPoint3D>> GetPathArrayAsync(WorldPoint dest, bool optimized, int accuracy)
         {
             return Client.SendPacketAsync<(ushort, ushort, bool, int), List<WorldPoint3D>>(PacketType.SCGetPathArray,
-                (destX, destY, optimized, accuracy));
+                (dest.X, dest.Y, optimized, accuracy));
         }
 
         public Task<List<WorldPoint3D>> GetPathArray3DAsync(PathReqeust pathRequest)
@@ -262,22 +246,21 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync<uint>(PacketType.SCGetLastStepQUsedDoor);
         }
 
-        public Task<bool> MoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running)
+        public Task<bool> MoveXYAsync(WorldPoint dest, bool optimized, int accuracy, bool running)
         {
             return Client.SendPacketAsync<(ushort, ushort, bool, int, bool), bool>(PacketType.SCMoveXY,
-                (xDst, yDst, optimized, accuracy, running));
+                (dest.X, dest.Y, optimized, accuracy, running));
         }
 
-        public Task<bool> MoveXYZAsync(ushort xDst, ushort yDst, sbyte zDst, int accuracyXY, int accuracyZ,
-            bool running)
+        public Task<bool> MoveXYZAsync(WorldPoint3D dest, int accuracyXY, int accuracyZ, bool running)
         {
             return Client.SendPacketAsync<(ushort, ushort, sbyte, int, int, bool), bool>(PacketType.SCMoveXYZ,
-                (xDst, yDst, zDst, accuracyXY, accuracyZ, running));
+                (dest.X, dest.Y, dest.Z, accuracyXY, accuracyZ, running));
         }
 
-        public Task<bool> NewMoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running)
+        public Task<bool> NewMoveXYAsync(WorldPoint dest, bool optimized, int accuracy, bool running)
         {
-            return MoveXYZAsync(xDst, yDst, 0, accuracy, 255, running);
+            return MoveXYZAsync(new WorldPoint3D(dest.X, dest.Y, 0), accuracy, 255, running);
         }
 
         public Task StopMoverAsync()
@@ -295,9 +278,9 @@ namespace StealthSharp.Services
             throw new NotImplementedException();
         }
 
-        public Task SetBadLocationAsync(ushort x, ushort y)
+        public Task SetBadLocationAsync(WorldPoint point)
         {
-            return Client.SendPacketAsync(PacketType.SCSetBadLocation, (x, y));
+            return Client.SendPacketAsync(PacketType.SCSetBadLocation, point);
         }
 
         public Task SetBadObjectAsync(ushort objType, ushort color, byte radius)
@@ -305,9 +288,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync(PacketType.SCSetBadObject, (objType, color, radius));
         }
 
-        public Task SetGoodLocationAsync(ushort x, ushort y)
+        public Task SetGoodLocationAsync(WorldPoint point)
         {
-            return Client.SendPacketAsync(PacketType.SCSetGoodLocation, (x, y));
+            return Client.SendPacketAsync(PacketType.SCSetGoodLocation, point);
         }
 
         public Task<byte> StepAsync(byte direction, bool running)

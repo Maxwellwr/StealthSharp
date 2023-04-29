@@ -48,25 +48,25 @@ namespace StealthSharp.Services
         Task<ushort> GetPredictedXAsync();
         Task<ushort> GetPredictedYAsync();
         Task<sbyte> GetPredictedZAsync();
-        ( ushort x2, ushort y2) CalcCoord(ushort x, ushort y, Direction dir);
-        Direction CalcDir(ushort xFrom, ushort yFrom, ushort xTo, ushort yTo);
+        WorldPoint CalcCoord(WorldPoint point, Direction dir);
+        Direction CalcDir(WorldPoint from, WorldPoint to);
         Task ClearBadLocationListAsync();
         Task ClearBadObjectListAsync();
-        ushort Dist(ushort x1, ushort y1, ushort x2, ushort y2);
-        Task<List<WorldPoint3D>> GetPathArrayAsync(ushort destX, ushort destY, bool optimized, int accuracy);
+        ushort Dist(WorldPoint source, WorldPoint dest);
+        Task<List<WorldPoint3D>> GetPathArrayAsync(WorldPoint dest, bool optimized, int accuracy);
 
         Task<List<WorldPoint3D>> GetPathArray3DAsync(PathReqeust pathReqeust);
 
         Task<uint> GetLastStepQUsedDoorAsync();
-        Task<bool> MoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running);
-        Task<bool> MoveXYZAsync(ushort xDst, ushort yDst, sbyte zDst, int accuracyXY, int accuracyZ, bool running);
-        Task<bool> NewMoveXYAsync(ushort xDst, ushort yDst, bool optimized, int accuracy, bool running);
+        Task<bool> MoveXYAsync(WorldPoint dest, bool optimized, int accuracy, bool running);
+        Task<bool> MoveXYZAsync(WorldPoint3D dest, int accuracyXY, int accuracyZ, bool running);
+        Task<bool> NewMoveXYAsync(WorldPoint dest, bool optimized, int accuracy, bool running);
         Task StopMoverAsync();
         Task OpenDoorAsync();
         Task<bool> RawMoveAsync(byte direction, bool running);
-        Task SetBadLocationAsync(ushort x, ushort y);
+        Task SetBadLocationAsync(WorldPoint point);
         Task SetBadObjectAsync(ushort objType, ushort color, byte radius);
-        Task SetGoodLocationAsync(ushort x, ushort y);
+        Task SetGoodLocationAsync(WorldPoint point);
         Task<byte> StepAsync(byte direction, bool running);
         Task<int> StepQAsync(byte direction, bool running);
     }
