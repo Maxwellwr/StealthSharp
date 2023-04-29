@@ -21,13 +21,13 @@ public record WorldRect(WorldPoint BottomLeft, WorldPoint TopRight)
     public ushort XMax => TopRight.X;
     public ushort YMax => TopRight.Y;
 
-    public ushort Width => (ushort)(XMax - XMin);
-    public ushort Height => (ushort)(YMax - YMin);
+    public ushort Width => (ushort)(XMax - XMin + 1);
+    public ushort Height => (ushort)(YMax - YMin + 1);
 
-    public WorldRect(): this(0,0,0,0)
+    public WorldRect() : this(0, 0, 0, 0)
     {
     }
-    
+
     public WorldRect(ushort xmin, ushort ymin, ushort xmax, ushort ymax) :
         this(new WorldPoint(xmin, ymin), new WorldPoint(xmax, ymax))
     {
