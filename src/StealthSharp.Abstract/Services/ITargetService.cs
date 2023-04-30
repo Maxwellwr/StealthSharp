@@ -12,6 +12,7 @@
 #region
 
 using System.Threading.Tasks;
+using StealthSharp.Enumeration;
 using StealthSharp.Model;
 
 #endregion
@@ -34,7 +35,7 @@ namespace StealthSharp.Services
 
         Task CancelWaitTargetAsync();
 
-        Task<bool> CheckLOSAsync(ushort xf, ushort yf, sbyte zf, ushort xt, ushort yt, sbyte zt, byte worldNum);
+        Task<bool> CheckLOSAsync(WorldPoint3D from, WorldPoint3D to, byte worldNum, LOSCheckType checkType, LOSOptions options);
 
         Task ClientRequestObjectTargetAsync();
 
@@ -42,9 +43,9 @@ namespace StealthSharp.Services
 
         Task TargetToObjectAsync(uint objectId);
 
-        Task TargetToTileAsync(ushort tileModel, ushort x, ushort y, sbyte z);
+        Task TargetToTileAsync(ushort tileModel, WorldPoint3D point);
 
-        Task TargetToXYZAsync(ushort x, ushort y, sbyte z);
+        Task TargetToXYZAsync(WorldPoint3D point);
 
         Task<bool> WaitForClientTargetResponseAsync(int maxWaitTimeMs);
 
@@ -58,10 +59,10 @@ namespace StealthSharp.Services
 
         Task WaitTargetSelfAsync();
 
-        Task WaitTargetTileAsync(ushort tile, ushort x, ushort y, sbyte z);
+        Task WaitTargetTileAsync(ushort tile, WorldPoint3D point);
 
         Task WaitTargetTypeAsync(ushort objType);
 
-        Task WaitTargetXYZAsync(ushort x, ushort y, sbyte z);
+        Task WaitTargetXYZAsync(WorldPoint3D point);
     }
 }

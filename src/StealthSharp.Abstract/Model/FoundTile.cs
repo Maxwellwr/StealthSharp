@@ -27,13 +27,11 @@ namespace StealthSharp.Model
     public class FoundTile
     {
         public ushort Tile { get; set; }
-        public ushort X { get; set; }
-        public ushort Y { get; set; }
-        public sbyte Z { get; set; }
+        public WorldPoint3D Point { get; set; } = null!;
 
         public override bool Equals(object? obj)
         {
-            if (obj is FoundTile ft) return ft.X == X && ft.Y == Y && ft.Z == Z;
+            if (obj is FoundTile ft) return ft.Point == Point && ft.Tile == Tile;
 
             // ReSharper disable once BaseObjectEqualsIsObjectEquals
             return base.Equals(obj);
@@ -42,7 +40,7 @@ namespace StealthSharp.Model
         public override int GetHashCode()
         {
             // ReSharper disable NonReadonlyMemberInGetHashCode
-            return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
+            return Point.GetHashCode()^Tile.GetHashCode();
         }
     }
 
@@ -59,7 +57,7 @@ namespace StealthSharp.Model
 
         public int GetHashCode(FoundTile obj)
         {
-            return obj.X.GetHashCode() ^ obj.Y.GetHashCode() ^ obj.Z.GetHashCode();
+            return obj.Point.GetHashCode() ^ obj.Tile;
         }
     }
 }

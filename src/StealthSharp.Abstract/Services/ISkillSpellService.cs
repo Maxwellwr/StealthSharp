@@ -53,6 +53,7 @@ namespace StealthSharp.Services
         Task UsePrimaryAbilityAsync();
 
         Task UseSecondaryAbilityAsync();
+        Task<string> GetActiveAbilityAsync();
 
         Task UseSelfPaperdollScrollAsync();
 

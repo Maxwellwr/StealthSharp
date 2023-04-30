@@ -63,10 +63,10 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync(PacketType.SCCancelWaitTarget);
         }
 
-        public Task<bool> CheckLOSAsync(ushort xf, ushort yf, sbyte zf, ushort xt, ushort yt, sbyte zt, byte worldNum)
+        public Task<bool> CheckLOSAsync(WorldPoint3D from, WorldPoint3D to, byte worldNum, LOSCheckType checkType, LOSOptions options)
         {
-            return Client.SendPacketAsync<(ushort, ushort, sbyte, ushort, ushort, sbyte, byte), bool>(PacketType.SCCheckLOS,
-                (xf, yf, zf, xt, yt, zt, worldNum));
+            return Client.SendPacketAsync<(WorldPoint3D, WorldPoint3D, byte, LOSCheckType, LOSOptions), bool>(PacketType.SCCheckLOS,
+                (from, to, worldNum, checkType, options));
         }
 
         public Task ClientRequestObjectTargetAsync()
@@ -84,14 +84,14 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync(PacketType.SCTargetToObject, objectId);
         }
 
-        public Task TargetToTileAsync(ushort tileModel, ushort x, ushort y, sbyte z)
+        public Task TargetToTileAsync(ushort tileModel, WorldPoint3D point)
         {
-            return Client.SendPacketAsync(PacketType.SCTargetToTile, (tileModel, x, y, z));
+            return Client.SendPacketAsync(PacketType.SCTargetToTile, (tileModel, point));
         }
 
-        public Task TargetToXYZAsync(ushort x, ushort y, sbyte z)
+        public Task TargetToXYZAsync(WorldPoint3D point)
         {
-            return Client.SendPacketAsync(PacketType.SCTargetToXYZ, (x, y, z));
+            return Client.SendPacketAsync(PacketType.SCTargetToXYZ, point);
         }
 
         public async Task<bool> WaitForClientTargetResponseAsync(int maxWaitTimeMs)
@@ -135,9 +135,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync(PacketType.SCWaitTargetSelf);
         }
 
-        public Task WaitTargetTileAsync(ushort tile, ushort x, ushort y, sbyte z)
+        public Task WaitTargetTileAsync(ushort tile, WorldPoint3D point)
         {
-            return Client.SendPacketAsync(PacketType.SCWaitTargetTile, (tile, x, y, z));
+            return Client.SendPacketAsync(PacketType.SCWaitTargetTile, (tile, point));
         }
 
         public Task WaitTargetTypeAsync(ushort objType)
@@ -145,9 +145,9 @@ namespace StealthSharp.Services
             return Client.SendPacketAsync(PacketType.SCWaitTargetType, objType);
         }
 
-        public Task WaitTargetXYZAsync(ushort x, ushort y, sbyte z)
+        public Task WaitTargetXYZAsync(WorldPoint3D point)
         {
-            return Client.SendPacketAsync(PacketType.SCWaitTargetXYZ, (x, y, z));
+            return Client.SendPacketAsync(PacketType.SCWaitTargetXYZ, point);
         }
     }
 }
