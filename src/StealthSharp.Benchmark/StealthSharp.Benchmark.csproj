@@ -12,26 +12,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.13.5"/>
-        <PackageReference Include="Moq" Version="4.18.4"/>
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+        <PackageReference Include="Moq" Version="4.20.70" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\StealthSharp.Abstract\StealthSharp.Abstract.csproj"/>
-        <ProjectReference Include="..\StealthSharp.Serialization\StealthSharp.Serialization.csproj"/>
-        <ProjectReference Include="..\StealthSharp\StealthSharp.csproj"/>
+        <ProjectReference Include="..\StealthSharp.Abstract\StealthSharp.Abstract.csproj" />
+        <ProjectReference Include="..\StealthSharp.Serialization\StealthSharp.Serialization.csproj" />
+        <ProjectReference Include="..\StealthSharp\StealthSharp.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="publish\**"/>
+        <Compile Remove="publish\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="publish\**"/>
+        <EmbeddedResource Remove="publish\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="publish\**"/>
+        <None Remove="publish\**" />
     </ItemGroup>
 
 </Project>
