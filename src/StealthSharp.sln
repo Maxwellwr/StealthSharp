@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthSharp.Abstract", "StealthSharp.Abstract\StealthSharp.Abstract.csproj", "{4E2ED149-64CF-4291-9364-C9F15494F659}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthSharp", "StealthSharp\StealthSharp.csproj", "{63594FE1-07E8-4277-9C47-1ECDE1CAC66E}"
@@ -15,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthSharp.Network", "StealthSharp.Network\StealthSharp.Network.csproj", "{E0353BB4-8FC9-4BD9-821E-6D7A82CB995F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestScript", "TestScript\TestScript.csproj", "{DBE45084-73E8-4F83-8FEA-B6F5146B6443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StealthSharp.MockServer", "StealthSharp.MockServer\StealthSharp.MockServer.csproj", "{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +68,12 @@ Global
 		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Benchmark|Any CPU.ActiveCfg = Debug|Any CPU
 		{DBE45084-73E8-4F83-8FEA-B6F5146B6443}.Benchmark|Any CPU.Build.0 = Debug|Any CPU
+		{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}.Benchmark|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BD018F9-3B64-4568-9E48-A15B03EC2CFA}.Benchmark|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FA50A283-B4E4-4531-989F-D06BD2EF30E2} = {0359C859-D551-4642-B3C3-EA01D2834717}

@@ -12,6 +12,7 @@
 #region
 
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using StealthSharp.Enumeration;
 using StealthSharp.Event;
@@ -22,6 +23,7 @@ namespace StealthSharp.Serialization.Converters
 {
     public class ServerEventDataConverter : ICustomConverter<ServerEventData>
     {
+        private static readonly ConcurrentDictionary<Type, Type> EventDataTypes = new();
         private readonly IMarshaler _marshaler;
         private readonly IReflectionCache _reflectionCache;
 
@@ -44,7 +46,7 @@ namespace StealthSharp.Serialization.Converters
                     return false;
 
 
-                var propertyType = typeof(ServerEventData<>).MakeGenericType(eventDataType);
+                var propertyType = EventDataTypes.GetOrAdd(eventDataType, static t => typeof(ServerEventData<>).MakeGenericType(t));
                 var data = propertyType.GetProperty(nameof(ServerEventData<object>.EventData))?.GetValue(propertyValue);
                 if (data is null)
                     return false;
@@ -102,7 +104,7 @@ namespace StealthSharp.Serialization.Converters
                     return false;
                 var size = _marshaler.SizeOf(value);
 
-                var propertyType = typeof(ServerEventData<>).MakeGenericType(eventDataType);
+                var propertyType = EventDataTypes.GetOrAdd(eventDataType, static t => typeof(ServerEventData<>).MakeGenericType(t));
 
                 var eventDataValue = ActivatorHelper.CreateInstanceParameterless(eventDataType);
                 if (eventDataValue is null)

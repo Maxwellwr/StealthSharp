@@ -12,6 +12,8 @@
 #region
 
 using System;
+using System.Buffers;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipelines;
@@ -23,7 +25,6 @@ using System.Threading.Tasks;
 using Drenalol.WaitingDictionary;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MoreLinq.Extensions;
 using StealthSharp.Enumeration;
 using StealthSharp.Event;
 using StealthSharp.Serialization;
@@ -35,6 +36,7 @@ namespace StealthSharp.Network
     public class StealthSharpClient : IStealthSharpClient
     {
         private readonly IPacketCorrelationGenerator<ushort> _correlationGenerator;
+        private readonly SemaphoreSlim _writeLock = new(1, 1);
         private readonly CancellationTokenSource _baseCancellationTokenSource;
         private readonly CancellationToken _baseCancellationToken;
         private readonly TcpClient _tcpClient;
@@ -45,7 +47,9 @@ namespace StealthSharp.Network
         private PipeReader _networkStreamPipeReader;
         private PipeWriter _networkStreamPipeWriter;
         private bool _disposing;
-        private readonly List<IObserver<ServerEventData>> _observers = new();
+        private readonly object _observersLock = new();
+        // Copy-on-write: events are dispatched from the receive loop without taking the lock.
+        private IObserver<ServerEventData>[] _observers = Array.Empty<IObserver<ServerEventData>>();
 
         PipeReader IDuplexPipe.Input =>
             _networkStreamPipeReader;
@@ -118,21 +122,26 @@ namespace StealthSharp.Network
                 using var serializedHeader = _marshaler.Serialize(packetHeader);
                 using var correlation = _marshaler.Serialize(correlationId);
 
-                var writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(serializedHeader.Memory, _baseCancellationToken).ConfigureAwait(false);
-                if (writeResult.IsCanceled || writeResult.IsCompleted)
-                    return (false, correlationId);
-                writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(correlation.Memory, _baseCancellationToken).ConfigureAwait(false);
-                if (writeResult.IsCanceled || writeResult.IsCompleted)
-                    return (false, correlationId);
-                if (serializedBody.Length > 0)
+                // The whole packet goes to the pipe under a lock and is flushed once: concurrent senders must not
+                // interleave parts of their packets, and a header / id / body sent as separate small segments
+                // stalls on Nagle + delayed ACK (~40 ms per request).
+                await _writeLock.WaitAsync(_baseCancellationToken).ConfigureAwait(false);
+                try
                 {
-                    writeResult =
-                        await _networkStreamPipeWriter.WriteAsync(serializedBody.Memory, _baseCancellationToken).ConfigureAwait(false);
+                    var totalLength = serializedHeader.Length + correlation.Length + serializedBody.Length;
+                    var buffer = _networkStreamPipeWriter.GetMemory(totalLength);
+                    serializedHeader.Memory.CopyTo(buffer);
+                    correlation.Memory.CopyTo(buffer[serializedHeader.Length..]);
+                    serializedBody.Memory.CopyTo(buffer[(serializedHeader.Length + correlation.Length)..]);
+                    _networkStreamPipeWriter.Advance(totalLength);
 
-                    if (writeResult.IsCanceled || writeResult.IsCompleted)
+                    var flushResult = await _networkStreamPipeWriter.FlushAsync(_baseCancellationToken).ConfigureAwait(false);
+                    if (flushResult.IsCanceled || flushResult.IsCompleted)
                         return (false, correlationId);
+                }
+                finally
+                {
+                    _writeLock.Release();
                 }
 
                 return (true, correlationId);
@@ -161,9 +170,8 @@ namespace StealthSharp.Network
             if (_disposing)
                 throw new ObjectDisposedException(nameof(_tcpClient));
 
-            var serializationResult = await _completeResponses.WaitAsync(responseId, token).ConfigureAwait(false);
-            var response = _marshaler.Deserialize<TBody>(serializationResult);
-            return response;
+            using var serializationResult = await _completeResponses.WaitAsync(responseId, token).ConfigureAwait(false);
+            return _marshaler.Deserialize<TBody>(serializationResult);
         }
 
         public void Dispose()
@@ -181,6 +189,7 @@ namespace StealthSharp.Network
 
             _baseCancellationTokenSource.Dispose();
             _tcpClient.Dispose();
+            _writeLock.Dispose();
             _logger?.LogInformation("Dispose ended");
 
             GC.SuppressFinalize(this);
@@ -192,6 +201,7 @@ namespace StealthSharp.Network
                 throw new SocketException(10057);
 
             _logger?.LogInformation("Connected to {Endpoint}", _tcpClient.Client.RemoteEndPoint as IPEndPoint);
+            _tcpClient.NoDelay = _options.NoDelay;
             _tcpClient.SendTimeout = _options.TcpClientSendTimeout;
             _tcpClient.ReceiveTimeout = _options.TcpClientReceiveTimeout;
             _networkStreamPipeReader = PipeReader.Create(_tcpClient.GetStream(), _options.StreamPipeReaderOptions);
@@ -236,16 +246,14 @@ namespace StealthSharp.Network
                     {
                         case PacketType.SCExecEventProc:
                         {
-                            var ev = _marshaler.Deserialize<ServerEventData>(new SerializationResult(sequence));
-                            _observers
-                                .AsParallel()
-                                .ForEach(observer => observer.OnNext(ev));
+                            using var eventData = new SerializationResult(sequence);
+                            NotifyObservers(_marshaler.Deserialize<ServerEventData>(eventData));
                         }
                             break;
                         case PacketType.SCReturnValue:
                         {
-                            var requestId =
-                                _marshaler.Deserialize<ushort>(new SerializationResult(sequence.Slice(0, 2)));
+                            var requestId = ReadCorrelationId(sequence);
+                            // Ownership of the buffer passes to ReceiveAsync, which returns it to the pool.
                             await _completeResponses.SetAsync(requestId, new SerializationResult(sequence.Slice(2)),
                                 true).ConfigureAwait(false);
                         }
@@ -256,10 +264,9 @@ namespace StealthSharp.Network
                             break;
                         case PacketType.SCErrorReport:
                         {
-                            var requestId =
-                                _marshaler.Deserialize<ushort>(new SerializationResult(sequence.Slice(0, 2)));
-                            var errorCode =
-                                _marshaler.Deserialize<ErrorCode>(new SerializationResult(sequence.Slice(2)));
+                            var requestId = ReadCorrelationId(sequence);
+                            using var errorData = new SerializationResult(sequence.Slice(2));
+                            var errorCode = _marshaler.Deserialize<ErrorCode>(errorData);
                             _logger?.LogInformation("Error code {ErrorCode}. Terminate", errorCode);
                             _completeResponses[requestId]
                                 .TrySetException(StealthSharpException.StealthError(errorCode));
@@ -299,10 +306,48 @@ namespace StealthSharp.Network
 
         public IDisposable Subscribe(IObserver<ServerEventData> observer)
         {
-            // Check whether observer is already registered. If not, add it
-            if (!_observers.Contains(observer)) _observers.Add(observer);
+            lock (_observersLock)
+            {
+                // Check whether observer is already registered. If not, add it
+                if (Array.IndexOf(_observers, observer) < 0)
+                    _observers = _observers.Append(observer).ToArray();
+            }
 
-            return new Unsubscriber<ServerEventData>(_observers, observer);
+            return new Unsubscriber<ServerEventData>(Unsubscribe, observer);
+        }
+
+        private void Unsubscribe(IObserver<ServerEventData> observer)
+        {
+            lock (_observersLock)
+            {
+                _observers = _observers.Where(o => !ReferenceEquals(o, observer)).ToArray();
+            }
+        }
+
+        /// <summary>
+        ///     Runs observers one by one on the receive loop. A throwing observer is logged and must not stop
+        ///     the loop, otherwise one faulty user handler would break the whole connection.
+        /// </summary>
+        private void NotifyObservers(ServerEventData eventData)
+        {
+            foreach (var observer in Volatile.Read(ref _observers))
+            {
+                try
+                {
+                    observer.OnNext(eventData);
+                }
+                catch (Exception e)
+                {
+                    _logger?.LogError(e, "Observer failed on event {EventType}", eventData.EventType);
+                }
+            }
+        }
+
+        private static ushort ReadCorrelationId(ReadOnlySequence<byte> sequence)
+        {
+            Span<byte> buffer = stackalloc byte[sizeof(ushort)];
+            sequence.Slice(0, sizeof(ushort)).CopyTo(buffer);
+            return BinaryPrimitives.ReadUInt16LittleEndian(buffer);
         }
     }
 }

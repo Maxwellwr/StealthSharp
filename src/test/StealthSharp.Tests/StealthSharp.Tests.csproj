@@ -27,6 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\StealthSharp.MockServer\StealthSharp.MockServer.csproj" />
         <ProjectReference Include="..\..\StealthSharp.Network\StealthSharp.Network.csproj" />
         <ProjectReference Include="..\..\StealthSharp.Serialization\StealthSharp.Serialization.csproj" />
         <ProjectReference Include="..\..\StealthSharp\StealthSharp.csproj" />
