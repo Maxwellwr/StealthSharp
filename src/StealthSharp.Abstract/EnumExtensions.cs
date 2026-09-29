@@ -12,6 +12,7 @@
 #region
 
 using System;
+using System.Collections.Concurrent;
 using System.Reflection;
 using StealthSharp.Serialization;
 
@@ -27,12 +28,14 @@ namespace StealthSharp
             return Enum.TryParse(name.Replace(" ", string.Empty), true, out result);
         }
 
+        // Attribute lookup through reflection is done for every received event, so it is cached per enum value.
+        private static readonly ConcurrentDictionary<Enum, Type?> EnumDataTypes = new();
+
         public static Type? GetEnumDataType(this Enum @enum)
         {
-            var enumType = @enum.GetType();
-            return enumType.GetMember(@enum.ToString())[0]
+            return EnumDataTypes.GetOrAdd(@enum, static e => e.GetType().GetMember(e.ToString())[0]
                 .GetCustomAttribute<EventDataTypeAttribute>(false)?
-                .DataType;
+                .DataType);
         }
     }
 }
