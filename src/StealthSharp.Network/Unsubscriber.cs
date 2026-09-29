@@ -12,7 +12,6 @@
 #region
 
 using System;
-using System.Collections.Generic;
 
 #endregion
 
@@ -20,19 +19,18 @@ namespace StealthSharp.Network
 {
     internal class Unsubscriber<T> : IDisposable
     {
-        private readonly List<IObserver<T>> _observers;
+        private readonly Action<IObserver<T>> _unsubscribe;
         private readonly IObserver<T> _observer;
 
-        internal Unsubscriber(List<IObserver<T>> observers, IObserver<T> observer)
+        internal Unsubscriber(Action<IObserver<T>> unsubscribe, IObserver<T> observer)
         {
-            _observers = observers;
+            _unsubscribe = unsubscribe;
             _observer = observer;
         }
 
         public void Dispose()
         {
-            if (_observers.Contains(_observer))
-                _observers.Remove(_observer);
+            _unsubscribe(_observer);
         }
     }
 }

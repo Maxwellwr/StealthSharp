@@ -14,6 +14,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using StealthSharp.Enumeration;
@@ -150,6 +151,65 @@ namespace StealthSharp.Tests.Unit
             var ev = await Within(received.Task);
             Assert.Equal("Hello", ev.Text);
             Assert.Equal(7u, ev.Sender.Id);
+        }
+
+        [Fact]
+        public async Task Faulty_observer_should_not_break_others_or_the_connection()
+        {
+            await Within(_stealth.ConnectToStealthAsync());
+            var client = _provider.GetRequiredService<IStealthSharpClient>();
+            var faulty = new TestObserver(_ => throw new InvalidOperationException("boom"));
+            var received = new TaskCompletionSource<ServerEventData>();
+            var healthy = new TestObserver(e => received.TrySetResult(e));
+            client.Subscribe(faulty);
+            client.Subscribe(healthy);
+
+            await _server.PushEventAsync(SpeechEventData("first"));
+
+            await Within(received.Task);
+            // The receive loop must still be alive and answer requests.
+            Assert.Equal(MockDefaults.ProfileName, await Within(_stealth.GetStealthService<IStealthService>().GetProfileNameAsync()));
+        }
+
+        [Fact]
+        public async Task Unsubscribed_observer_should_not_receive_events_and_duplicates_are_ignored()
+        {
+            await Within(_stealth.ConnectToStealthAsync());
+            var client = _provider.GetRequiredService<IStealthSharpClient>();
+            var count = 0;
+            var gone = new TestObserver(_ => Interlocked.Increment(ref count));
+            var kept = new TestObserver(_ => Interlocked.Increment(ref count));
+            client.Subscribe(gone).Dispose();
+            client.Subscribe(kept);
+            client.Subscribe(kept);
+
+            await _server.PushEventAsync(SpeechEventData("hello"));
+            // A response after the event proves the event was already dispatched (same receive loop, in order).
+            await Within(_stealth.GetStealthService<IStealthService>().GetProfileNameAsync());
+
+            Assert.Equal(1, count);
+        }
+
+        private static ServerEventData SpeechEventData(string text)
+        {
+            return new ServerEventData<SpeechEvent>(EventType.Speech, new SpeechEvent
+            {
+                Text = text, SenderName = "Mock", Sender = new Identity { Id = 1 }
+            });
+        }
+
+        private sealed class TestObserver : IObserver<ServerEventData>
+        {
+            private readonly Action<ServerEventData> _onNext;
+
+            public TestObserver(Action<ServerEventData> onNext)
+            {
+                _onNext = onNext;
+            }
+
+            public void OnNext(ServerEventData value) => _onNext(value);
+            public void OnError(Exception error) { }
+            public void OnCompleted() { }
         }
 
         public void Dispose()
