@@ -44,6 +44,12 @@ namespace StealthSharp.Network
         public int TcpClientReceiveTimeout { get; init; }
 
         /// <summary>
+        ///     Disables Nagle's algorithm on the socket. Requests are small and each one is awaited, so leaving it
+        ///     enabled adds tens of milliseconds of latency per request.
+        /// </summary>
+        public bool NoDelay { get; init; } = true;
+
+        /// <summary>
         ///     Gets default options
         ///     <returns>
         ///         <see cref="StealthSharpClientOptions" />

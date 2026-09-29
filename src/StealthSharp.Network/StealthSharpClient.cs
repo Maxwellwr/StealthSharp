@@ -35,6 +35,7 @@ namespace StealthSharp.Network
     public class StealthSharpClient : IStealthSharpClient
     {
         private readonly IPacketCorrelationGenerator<ushort> _correlationGenerator;
+        private readonly SemaphoreSlim _writeLock = new(1, 1);
         private readonly CancellationTokenSource _baseCancellationTokenSource;
         private readonly CancellationToken _baseCancellationToken;
         private readonly TcpClient _tcpClient;
@@ -118,21 +119,26 @@ namespace StealthSharp.Network
                 using var serializedHeader = _marshaler.Serialize(packetHeader);
                 using var correlation = _marshaler.Serialize(correlationId);
 
-                var writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(serializedHeader.Memory, _baseCancellationToken).ConfigureAwait(false);
-                if (writeResult.IsCanceled || writeResult.IsCompleted)
-                    return (false, correlationId);
-                writeResult =
-                    await _networkStreamPipeWriter.WriteAsync(correlation.Memory, _baseCancellationToken).ConfigureAwait(false);
-                if (writeResult.IsCanceled || writeResult.IsCompleted)
-                    return (false, correlationId);
-                if (serializedBody.Length > 0)
+                // The whole packet goes to the pipe under a lock and is flushed once: concurrent senders must not
+                // interleave parts of their packets, and a header / id / body sent as separate small segments
+                // stalls on Nagle + delayed ACK (~40 ms per request).
+                await _writeLock.WaitAsync(_baseCancellationToken).ConfigureAwait(false);
+                try
                 {
-                    writeResult =
-                        await _networkStreamPipeWriter.WriteAsync(serializedBody.Memory, _baseCancellationToken).ConfigureAwait(false);
+                    var totalLength = serializedHeader.Length + correlation.Length + serializedBody.Length;
+                    var buffer = _networkStreamPipeWriter.GetMemory(totalLength);
+                    serializedHeader.Memory.CopyTo(buffer);
+                    correlation.Memory.CopyTo(buffer[serializedHeader.Length..]);
+                    serializedBody.Memory.CopyTo(buffer[(serializedHeader.Length + correlation.Length)..]);
+                    _networkStreamPipeWriter.Advance(totalLength);
 
-                    if (writeResult.IsCanceled || writeResult.IsCompleted)
+                    var flushResult = await _networkStreamPipeWriter.FlushAsync(_baseCancellationToken).ConfigureAwait(false);
+                    if (flushResult.IsCanceled || flushResult.IsCompleted)
                         return (false, correlationId);
+                }
+                finally
+                {
+                    _writeLock.Release();
                 }
 
                 return (true, correlationId);
@@ -181,6 +187,7 @@ namespace StealthSharp.Network
 
             _baseCancellationTokenSource.Dispose();
             _tcpClient.Dispose();
+            _writeLock.Dispose();
             _logger?.LogInformation("Dispose ended");
 
             GC.SuppressFinalize(this);
@@ -192,6 +199,7 @@ namespace StealthSharp.Network
                 throw new SocketException(10057);
 
             _logger?.LogInformation("Connected to {Endpoint}", _tcpClient.Client.RemoteEndPoint as IPEndPoint);
+            _tcpClient.NoDelay = _options.NoDelay;
             _tcpClient.SendTimeout = _options.TcpClientSendTimeout;
             _tcpClient.ReceiveTimeout = _options.TcpClientReceiveTimeout;
             _networkStreamPipeReader = PipeReader.Create(_tcpClient.GetStream(), _options.StreamPipeReaderOptions);

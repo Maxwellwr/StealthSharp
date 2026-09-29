@@ -12,7 +12,7 @@
 #region
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Reflection;
 
 #endregion
@@ -21,19 +21,13 @@ namespace StealthSharp.Serialization
 {
     public class ReflectionCache : IReflectionCache
     {
-        private readonly Dictionary<Type, IReflectionMetadata?> _dictionary = new();
+        // Used from sending threads and from the receive loop at the same time.
+        private readonly ConcurrentDictionary<Type, IReflectionMetadata?> _dictionary = new();
 
         public IReflectionMetadata? GetMetadata(Type type)
         {
-            if (_dictionary.ContainsKey(type))
-                return _dictionary[type];
-
-            if (type.GetCustomAttribute<SerializableAttribute>() is not null)
-                _dictionary[type] = new ReflectionMetadata(type);
-            else
-                _dictionary[type] = null;
-
-            return _dictionary[type];
+            return _dictionary.GetOrAdd(type, static t =>
+                t.GetCustomAttribute<SerializableAttribute>() is not null ? new ReflectionMetadata(t) : null);
         }
     }
 }
