@@ -15,9 +15,11 @@ dotnet restore
 dotnet build -c Release
 dotnet test --filter Category=Unit            # what CI runs
 dotnet test --filter "FullyQualifiedName~SerializationTest"   # single test class / name
-dotnet run -c Release --project StealthSharp.Benchmark        # BenchmarkDotNet
+dotnet run -c Release --project StealthSharp.Benchmark        # BenchmarkDotNet (legacy default: needs a real Stealth)
+dotnet run -c Release --project StealthSharp.Benchmark -- --filter '*MockNetwork*' --inProcess   # against the mock server
 ```
 
+- Projects target `net7.0`. If only a newer SDK is installed (e.g. `apt-get install dotnet-sdk-8.0` in the cloud container), set `DOTNET_ROLL_FORWARD=Major` so tests and the console apps run on the newer runtime.
 - Unit tests are tagged `[Trait("Category", "Unit")]`. Tests under `test/StealthSharp.Tests/Integration` need a running Stealth client and are excluded from CI — don't run them unfiltered.
 - CI (`.github/workflows/nuget.yml`) runs on release publish/manual dispatch: build with `-p:Version=<tag>`, unit tests, pack, push to NuGet. There is no separate lint step.
 - `TestScript` is a scratch console app for manual runs against a live Stealth client.
@@ -30,6 +32,10 @@ Four packages with a layered dependency: `StealthSharp` → `StealthSharp.Networ
 - **Serialization**: `Marshaler` is a reflection-based binary (de)serializer for the Stealth wire format (little-endian by default; `[Serializable(Endianness)]` on classes/structs). Property order in a model defines wire order. `ReflectionCache` caches metadata; special types use `ICustomConverter<T>` (`Converters/`, e.g. `DateTimeConverter`, `ServerEventDataConverter`) resolved through `CustomConverterFactory` via the service provider.
 - **Network**: `StealthSharpClient` owns a `TcpClient` plus `System.IO.Pipelines`. Each request is a `PacketHeader` (`PacketType` + length) followed by a 2‑byte correlation id and a serialized body. Responses are matched back to callers by correlation id through a `WaitingDictionary`; unsolicited server events are pushed to `IObserver<ServerEventData>` subscribers.
 - **StealthSharp** (main): `Stealth` is the facade. Base services are properties on it; the rest are fetched with `GetStealthService<T>()`. `ServiceProviderExtensions.AddStealthSharp()` wires everything into `IServiceCollection` (string/array length prefixes are configured as `uint` there). `EventSystemService` is a singleton; all other services are transient. `InternalService` handles connect handshake.
+
+### Mock server
+
+`StealthSharp.MockServer` (`MockStealthServer`) is an in-process TCP fake of Stealth, so the real client stack can be tested and benchmarked without a Windows Stealth/UO client. Its wire format is reverse engineered from the client code (see the class remarks), not from official docs. Register canned responses with `RespondWith(PacketType, value)` / `On(PacketType, handler)`; requests with no handler are counted in `UnhandledRequests` and never answered (the client would hang). `Unit/MockServerTest.cs` shows end-to-end usage (point `StealthOptions.Port` at `server.DiscoveryPort`).
 
 ### Adding or changing a Stealth command
 

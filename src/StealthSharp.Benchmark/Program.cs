@@ -21,6 +21,13 @@ namespace StealthSharp.Benchmark
     {
         private static void Main(string[] args)
         {
+            // With arguments: BenchmarkSwitcher, e.g. `--filter *Mock* --inProcess --job short`.
+            if (args.Length > 0)
+            {
+                BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+                return;
+            }
+
             var serializer = BenchmarkRunner.Run<SerializerBenchmark>();
             var network = BenchmarkRunner.Run<NetworkBenchmark>();
             //var waitingDictionary = BenchmarkRunner.Run<WaitingDictionaryBenchmark>();
